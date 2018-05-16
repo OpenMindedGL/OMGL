@@ -3,4 +3,5 @@
 !/src/
 !/include/
 !/shaders/
+!/lib/
 !Makefile
