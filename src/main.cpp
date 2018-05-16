@@ -15,7 +15,7 @@
 
 //GLM
 #include <glm/glm.hpp>
-#include <glm\gtc\matrix_transform.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 //.h
 #include "Cube.h"
@@ -93,9 +93,9 @@ int main(void){
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-		Cube cube(GL_TRIANGLES, positions, indices, "res/shaders/Basic.shader");
+		Cube cube(GL_TRIANGLES, positions, indices, "shaders/Basic.shader");
 
-		Cube cube2(GL_TRIANGLES, positions, indices, "res/shaders/Basic.shader");
+		Cube cube2(GL_TRIANGLES, positions, indices, "shaders/Basic.shader");
 		
 		vec3 translation(10.0f, 1.0f, 0.0f);
 
@@ -105,10 +105,10 @@ int main(void){
 		cube2.Scale(vec3(5.0f, 5.0f, 5.0f));
 
 
-		std::vector<Cube> cubes(500);
+		std::vector<Cube> cubes(200);
 		
 		for (int i = 0; i < cubes.size(); i++) {
-			cubes[i] = Cube(GL_TRIANGLE_STRIP, positions, indices, "res/shaders/Basic.shader");
+			cubes[i] = Cube(GL_TRIANGLES, positions, indices, "shaders/Basic.shader");
 			cubes[i].Translate( vec3(
 				(rand() / (float) RAND_MAX) * 200 - 100,
 				(rand() / (float)RAND_MAX) * 200 - 100,

@@ -1,7 +1,7 @@
 #pragma once
 #include <stdio.h>
-#include <GL\glew.h>
-#include <GLFW\glfw3.h>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 #include <vector>
 
@@ -13,7 +13,8 @@ class Shader;
 class Cube;
 
 
-#define ASSERT(x) if (!(x)) __debugbreak();
+/* for windows #define ASSERT(x) if (!(x)) __debugbreak(); */
+#define ASSERT(x) if (!(x)) __builtin_trap()
 #define GLCall(x) GLClearError();\
 	x;\
 	ASSERT(GLLogCall(#x, __FILE__, __LINE__))

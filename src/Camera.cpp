@@ -83,5 +83,5 @@ void Camera::ComputeMatricesFromInputs()
 
 void Camera::printCoord()
 {
-	printf("pos : %f x, %f y, %f z\n", m_Position.x, m_Position.y, m_Position.z);
+	//printf("pos : %f x, %f y, %f z\n", m_Position.x, m_Position.y, m_Position.z);
 }

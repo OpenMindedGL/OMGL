@@ -6,9 +6,9 @@
 #include <sstream>
 #include <unordered_map>
 
-#include <glm\glm.hpp>
+#include <glm/glm.hpp>
 
-#include "GL\glew.h"
+#include "GL/glew.h"
 
 #include "Renderer.h"
 
