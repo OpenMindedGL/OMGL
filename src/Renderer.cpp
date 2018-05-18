@@ -4,6 +4,7 @@
 #include "IndexBuffer.h"
 #include "Shader.h"
 #include "Cube.h"
+#include "Model.h"
 
 
 void GLClearError() {
@@ -43,6 +44,23 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader
 
 	GLCall(glDrawElements(GL_TRIANGLES, ib.GetCount(), GL_UNSIGNED_INT, nullptr));
 
+}
+
+template <class T>
+void Renderer::Draw(Model<T> model)
+{
+	m_Camera->printCoord();
+	m_Camera->ComputeMatricesFromInputs();
+	m_Camera->ComputeMVP();
+	m_Camera->SetModel(model.GetModelMatrix());
+	glm::mat4 mvp = m_Camera->GetMVP();
+
+	model.Bind();
+	model.SetShaderUniformMat4f("u_MVP", mvp);
+
+	GLCall(glDrawElements(model.GetRendererType(), model.GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
+
+	model.Unbind();
 }
 
 void Renderer::Draw(Cube cube)

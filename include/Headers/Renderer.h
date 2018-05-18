@@ -6,18 +6,15 @@
 #include <vector>
 
 #include "Camera.h"
+#include "Debug.h"
+#include "Model.h"
+
 
 class VertexArray;
 class IndexBuffer;
 class Shader;
 class Cube;
 
-
-/* for windows #define ASSERT(x) if (!(x)) __debugbreak(); */
-#define ASSERT(x) if (!(x)) __builtin_trap()
-#define GLCall(x) GLClearError();\
-	x;\
-	ASSERT(GLLogCall(#x, __FILE__, __LINE__))
 
 void GLClearError(); 
 
@@ -36,5 +33,9 @@ public :
 	void Clear() const;
 	void Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader);
 	void Draw(Cube cube);
-	void Draw(std::vector<Cube> cubes);
+
+        template <class T>
+	void Draw(Model<T> model);
+	
+        void Draw(std::vector<Cube> cubes);
 };
