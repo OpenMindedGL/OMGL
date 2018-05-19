@@ -9,9 +9,9 @@ class NoiseGen {
 
   private :
 
-    std::vector<FastNoise> simplex_fractal;
-    FastNoise simplex;
-    FastNoise mix;
+    std::vector<FastNoise> simplex_fractal; //mountains
+    FastNoise simplex;                      //flat land
+    FastNoise mix;                          //mix factor
     
     long long int seed;
     float lacunarity;
