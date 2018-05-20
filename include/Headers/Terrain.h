@@ -1,30 +1,29 @@
-#pragma once
-
+#ifndef Terrain_H
+#define Terrain_H
 #include <string>
 #include <vector>
 #include "Vertex.h"
 #include "Model.h"
+#include "NoiseGen.h"
 
 #define CHUNK_SIZE 32
-#define LENGTH 3
+#define NB_CHUNK_PER_SIDE 3
+#define TERRAIN_SZ (NB_CHUNK_PER_SIDE*CHUNK_SIZE)
+#define RENDER_DISTANCE (TERRAIN_SZ/2)
 
 
-typedef struct Chunk { Vertexun v[CHUNK_SIZE][CHUNK_SIZE]; } Chunk;
 
-class Terrain : public Model<Vertexun>
+class Terrain : public Model<Vertex>
 {
 
   private : 
-    std::vector<unsigned int> indices;
-    std::vector<Chunk> chunks; 
-    int buffer_map[LENGTH][2];
-    std::string shaderpath;
+    int buffer_map[NB_CHUNK_PER_SIDE][2];
+    NoiseGen noise;
 
 
   public: 
 
     Terrain();
-    ~Terrain();
     
     void initload(glm::vec2 center);
     void load(glm::vec2 chunkcoords);
@@ -32,3 +31,4 @@ class Terrain : public Model<Vertexun>
 
 };
 
+#endif

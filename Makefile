@@ -16,7 +16,7 @@ CPPFLAGS := -Wall -g -I./$(H_DIR)
 main: $(OBJ_FILES)
 	   g++ $(LDFLAGS) -o $@ $^
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp 
 	   g++ $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 $(OBJ_DIR)/%.o: $(LIB_DIR)/*/%.cpp
@@ -25,7 +25,4 @@ $(OBJ_DIR)/%.o: $(LIB_DIR)/*/%.cpp
 clean: 
 	rm $(OBJ_DIR)/*
 debug:
-	@echo $(LIB_FILES)
-	@echo $(OBJ_FILES)
-	@echo $(foreach lib_dir,$(LIB_DIRS),$(patsubst $(lib_dir)%.cpp,$(OBJ_DIR)/%.o,$(wildcard $(lib_dir)*.cpp)))
-	@echo $(foreach lib_dir,$(LIB_DIRS),$(lib_dir)\%.cpp)
+	@echo $(LIB_I)

@@ -1,3 +1,5 @@
+#ifndef VertexBufferLayout_H
+#define VertexBufferLayout_H
 #pragma once
 #include <vector>
 #include <GL/glew.h>
@@ -39,3 +41,4 @@ public :
 
 
 
+#endif

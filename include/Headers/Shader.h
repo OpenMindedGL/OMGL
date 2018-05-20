@@ -1,3 +1,5 @@
+#ifndef Shader_H
+#define Shader_H
 #pragma once
 
 #include <iostream>
@@ -48,3 +50,4 @@ private :
 	unsigned int CreateShader(const std::string& vertexShader, const std::string& fragmentShader);
 	int GetUniformLocation(const std::string& name);
 };
+#endif

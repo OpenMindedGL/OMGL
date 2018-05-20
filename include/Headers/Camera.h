@@ -1,3 +1,5 @@
+#ifndef Camera_H
+#define Camera_H
 #pragma once
 #include <GLFW/glfw3.h>
 
@@ -42,3 +44,4 @@ public:
 	
 	void printCoord();
 };
+#endif

@@ -5,3 +5,4 @@
 !/shaders/
 !/lib/
 !Makefile
+/include/Headers/Debug.h

@@ -74,26 +74,26 @@ int init(){
 
 int main(void){
 
+  init();
   Renderer renderer(*window, WIDTH, HEIGHT);
 
   Terrain t;
-    while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
-    {
+  while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
+  {
 
-      renderer.Clear();
+    renderer.Clear();
 
-      renderer.Draw(model);
+    renderer.Draw<Vertex>(t);
 
 
-      /* Swap frint and back buffers */
-      glfwSwapBuffers(window);
+    /* Swap frint and back buffers */
+    glfwSwapBuffers(window);
 
-      /* Poll for and process envents */
-      glfwPollEvents();
-    }
-}
+    /* Poll for and process envents */
+    glfwPollEvents();
+  }
 
-glfwTerminate();
-return 0;
+  glfwTerminate();
+  return 0;
 }
 

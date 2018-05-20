@@ -1,3 +1,5 @@
+#ifndef Cube_H
+#define Cube_H
 #pragma once
 
 #include <string>
@@ -56,3 +58,4 @@ public:
 	inline unsigned int GetRendererType() const { return m_RendererType; }
 	inline glm::mat4 GetModel() const { return m_Model; }
 };
+#endif

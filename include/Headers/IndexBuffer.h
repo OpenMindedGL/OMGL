@@ -1,3 +1,5 @@
+#ifndef IndexBuffer_H
+#define IndexBuffer_H
 #pragma once
 
 class IndexBuffer {
@@ -8,7 +10,7 @@ private:
 public:
 
 	IndexBuffer();
-	IndexBuffer(const unsigned int* data, unsigned int count);
+	IndexBuffer(const void* data, unsigned int count);
 	~IndexBuffer();
 
 	void Bind() const;
@@ -16,3 +18,4 @@ public:
 
 	inline unsigned int GetCount() const { return m_Count;  }
 };
+#endif

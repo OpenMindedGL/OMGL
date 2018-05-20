@@ -1,5 +1,4 @@
 #include "Cube.h"
-#include "Vertex.h"
 
 Cube::Cube() {}
 
