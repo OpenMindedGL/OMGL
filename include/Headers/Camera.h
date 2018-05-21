@@ -41,6 +41,7 @@ public:
 	inline glm::mat4 GetView() const { return m_View; }
 	inline glm::mat4 GetProj() const { return m_Proj; }
 	inline glm::mat4 GetMVP() const { return m_MVP; }
+	inline glm::vec3 getPosition() const { return m_Position; }
 	
 	void printCoord();
 };

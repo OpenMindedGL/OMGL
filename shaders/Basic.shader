@@ -20,6 +20,11 @@ in vec2 pos;
 
 void main()
 {
-	color = vec4(0.0f,0.0f,1.0f,1.0f);
-	//color = vec4(pos.x/4.0f,pos.y/4.0f,0.0f,1.0f);
+        /*if( mod(pos.x,31.0f) == 0.0f || mod(pos.y,31.0f) == 0.0f ){
+          color = vec4(0.0f,1.0f,0.0f,1.0f);
+        }
+        else{
+          color = vec4(0.0f,0.0f,1.0f,1.0f);
+        }*/
+	color = vec4(0.0f,0.0f,mod(pos.y,31.0f),1.0f);
 };

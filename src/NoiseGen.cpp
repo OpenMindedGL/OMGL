@@ -1,7 +1,14 @@
 #include "NoiseGen.h"
 
 NoiseGen::NoiseGen(){
-  zoom = 0;
+  zoom = 5.0f;
+  nbOctave = 2;
+  lacunarity = 2.0f;
+  persistence = 0.5f;
+  seed = 69;
+  mix_freq = 0.03f;
+  simplex_freq = 0.03f;
+
   simplex = FastNoise(seed);
   mix = FastNoise(seed);
   mix.SetNoiseType(FastNoise::Perlin); // Set the desired
@@ -24,11 +31,18 @@ float NoiseGen::compute(float x, float y){
   for(std::vector<FastNoise>::iterator iter_noise = 
   simplex_fractal.begin(); 
   iter_noise < simplex_fractal.end(); iter_noise++){
-    a += (*iter_noise).GetNoise(x,y) 
+    a += (*iter_noise).GetNoise(x*10,y*10) 
          * pow(persistence, d); 
     d++;
   }
-  b = simplex.GetNoise(x,y)*0.2f;
-  c = (mix.GetNoise(x,y)+1)/2.0f;
-  return a*(3*c*c) + b * (1-c);
+  b = simplex.GetNoise(x*10,y*10)*0.2f;
+  c = ((mix.GetNoise(x*10,y*10)+1)/2.0f);
+  return (a*(3*c*c) + b * (1-c) )*zoom;
+  /*FastNoise p(0);
+  p.SetNoiseType(FastNoise::SimplexFractal);
+  p.SetFractalLacunarity(2.0f);
+  p.SetFractalGain(0.5f);
+  p.SetFractalOctaves(5);
+  return p.GetNoise(x*10,y*10)*5.0f;*/
+
 }

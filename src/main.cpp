@@ -1,3 +1,6 @@
+// Allow vec3(1,2,3).xz
+#define GLM_SWIZZLE
+
 //Includes necessaires
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,6 +33,7 @@
 
 
 using namespace glm;
+
 
 #define WIDTH 1920 
 #define HEIGHT 1080
@@ -82,6 +86,10 @@ int main(void){
   {
 
     renderer.Clear();
+
+    glm::vec2 pos = renderer.getCameraPosition().xz;
+    printf("x:%f y:%f \n",pos.x,pos.y);
+    t.load(pos);
 
     renderer.Draw<Vertex>(t);
 

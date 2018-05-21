@@ -42,6 +42,8 @@ public :
    
         template <class T>
         void Draw(std::vector<Model<T>> models);
+
+        inline glm::vec3 getCameraPosition() const{ return m_Camera->getPosition(); };
 };
 
 template <class T>

@@ -2,13 +2,14 @@
 #define Terrain_H
 #include <string>
 #include <vector>
+#include <glm/glm.hpp>
 #include "Vertex.h"
 #include "Model.h"
 #include "NoiseGen.h"
 
 #define CHUNK_SIZE 32
-#define NB_CHUNK_PER_SIDE 3
-#define TERRAIN_SZ (NB_CHUNK_PER_SIDE*CHUNK_SIZE)
+#define CHUNK_PER_SIDE 3
+#define TERRAIN_SZ (CHUNK_PER_SIDE*CHUNK_SIZE)
 #define RENDER_DISTANCE (TERRAIN_SZ/2)
 
 
@@ -17,8 +18,16 @@ class Terrain : public Model<Vertex>
 {
 
   private : 
-    int buffer_map[NB_CHUNK_PER_SIDE][2];
+
+    glm::i32vec2 buffer_map[CHUNK_PER_SIDE*CHUNK_PER_SIDE];
+
+    glm::i32vec2 last_chunk; 
+    
+    float precision;
     NoiseGen noise;
+
+    void loadchunk(glm::i32vec2 coords, glm::i32vec2 replace);
+    int getOffset(glm::i32vec2 coords);
 
 
   public: 
@@ -26,7 +35,7 @@ class Terrain : public Model<Vertex>
     Terrain();
     
     void initload(glm::vec2 center);
-    void load(glm::vec2 chunkcoords);
+    void load(glm::vec2 coords);
     void compute_indices();
 
 };
