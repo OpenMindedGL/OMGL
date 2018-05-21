@@ -22,7 +22,6 @@ class Model
     unsigned int m_RendererType; 
 
     VertexArray * m_Va;
-    VertexBuffer * m_Vb;
     VertexBufferLayout m_Layout;
     IndexBuffer * m_Ib;
 
@@ -37,6 +36,7 @@ class Model
     void Push();
   public: 
 
+    VertexBuffer * m_Vb;
     std::vector<unsigned int> m_Indices; 
     std::vector<T> m_Positions; 
     unsigned int m_nbIndices;

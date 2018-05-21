@@ -6,7 +6,7 @@
 
 Camera::Camera(GLFWwindow & window, int w, int h)
 	: m_Window(window), m_HorizontalAngle(3.14f), m_VertivaleAngle(0.0f), m_InitialFoV(45.0f),
-	  m_Speed(3.0f), m_MouseSpeed(0.002f), m_Position(glm::vec3(0, 0, 0)), m_Model(glm::mat4(1.0)), 
+	  m_Speed(3.0f), m_MouseSpeed(0.002f), m_Position(glm::vec3(50, 30, 50)), m_Model(glm::mat4(1.0)), 
 	  m_View(glm::mat4(0.0)), m_MVP(glm::mat4(1.0)), m_Width(w), m_Height(h)
 {
 }

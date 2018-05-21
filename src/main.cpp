@@ -1,5 +1,5 @@
 // Allow vec3(1,2,3).xz
-#define GLM_SWIZZLE
+//#define GLM_SWIZZLE
 
 //Includes necessaires
 #include <stdio.h>
@@ -87,9 +87,9 @@ int main(void){
 
     renderer.Clear();
 
-    glm::vec2 pos = renderer.getCameraPosition().xz;
-    printf("x:%f y:%f \n",pos.x,pos.y);
-    t.load(pos);
+    glm::vec3 pos = renderer.getCameraPosition();
+    //printf("x:%f y:%f \n",pos.x,pos.z);
+    t.load(glm::vec2(pos.x,pos.z));
 
     renderer.Draw<Vertex>(t);
 
