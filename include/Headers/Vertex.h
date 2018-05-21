@@ -1,3 +1,5 @@
+#ifndef Vertex_H
+#define Vertex_H
 #ifndef CLASS_VERTEX
 #define CLASS_VERTEX
 
@@ -31,4 +33,5 @@ public:
 	Vertexun(glm::vec3 p, glm::vec2 u, glm::vec3 n);
 	~Vertexun();
 };
+#endif
 #endif

@@ -1,3 +1,5 @@
+#ifndef VertexArray_H
+#define VertexArray_H
 #pragma once
 #include "VertexBuffer.h"
 
@@ -16,3 +18,4 @@ public :
 	void Unbind() const; 
 
 };
+#endif

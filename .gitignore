@@ -3,3 +3,6 @@
 !/src/
 !/include/
 !/shaders/
+!/lib/
+!Makefile
+/include/Headers/Debug.h

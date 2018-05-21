@@ -1,3 +1,5 @@
+#ifndef Texture_H
+#define Texture_H
 #pragma once
 
 #include "Renderer.h"
@@ -25,3 +27,4 @@ public:
 
 
 };
+#endif
