@@ -81,7 +81,8 @@ int main(void){
   init();
   Renderer renderer(*window, WIDTH, HEIGHT);
 
-  Terrain t;
+  glm::vec3 pos = renderer.getCameraPosition();
+  Terrain t(glm::vec2(pos.x,pos.z));
   Cube c;
   c.Init(GL_TRIANGLES, "shaders/Cube.shader");
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
@@ -89,7 +90,7 @@ int main(void){
 
     renderer.Clear();
 
-    glm::vec3 pos = renderer.getCameraPosition();
+    pos = renderer.getCameraPosition();
     //printf("x:%f y:%f \n",pos.x,pos.z);
     t.load(glm::vec2(pos.x,pos.z));
 

@@ -8,9 +8,9 @@
 #include "NoiseGen.h"
 
 #define CHUNK_SIZE 32
-#define CHUNK_PER_SIDE 3
+#define CHUNK_PER_SIDE 7   // KEEP ODD !!!!
+#define RENDER_DISTANCE (CHUNK_PER_SIDE/2)
 #define TERRAIN_SZ (CHUNK_PER_SIDE*CHUNK_SIZE)
-#define RENDER_DISTANCE (TERRAIN_SZ/2)
 
 
 
@@ -28,11 +28,12 @@ class Terrain : public Model<Vertexun>
 
     void loadchunk(glm::i32vec2 coords, glm::i32vec2 replace);
     int getOffset(glm::i32vec2 coords);
+    glm::i32vec2 GetChunk(glm::vec2 coords);
 
 
   public: 
 
-    Terrain();
+    Terrain(glm::vec2 center);
     
     void initload(glm::vec2 center);
     void load(glm::vec2 coords);

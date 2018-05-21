@@ -5,10 +5,9 @@
 #include <glm/gtx/rotate_vector.hpp>
 #include <glm/gtc/matrix_integer.hpp> 
 
-Terrain::Terrain(){
+Terrain::Terrain(glm::vec2 center){
   precision = 2.0f;
-  last_chunk = glm::i32vec2(1);
-  initload(glm::vec2(0.0f, 0.0f)); 
+  initload(center); 
   compute_indices();
  // ComputeNormals();
   Init(GL_TRIANGLE_STRIP, "shaders/Basic.shader");
@@ -29,36 +28,43 @@ void Terrain::compute_indices(){
   }
 }
 
+glm::i32vec2 Terrain::GetChunk(glm::vec2 coords){
+  short signum_x = (coords.x > 0) - (coords.x < 0);
+  short signum_y = (coords.y > 0) - (coords.y < 0);
+  int p = ((-0.5f) * signum_x * signum_x + (0.5f) * signum_x);
+  int r = ((-0.5f) * signum_y * signum_y + (0.5f) * signum_y);
+  return  glm::i32vec2(p + coords.x/CHUNK_SIZE, r + coords.y/CHUNK_SIZE);
+}
+
 void Terrain::initload(glm::vec2 center){
-  float offset_x;
-  float offset_y = 0;
+  last_chunk = GetChunk(center);
+  glm::i32vec2 firstChunk = (last_chunk-CHUNK_PER_SIDE/2);
+  glm::i32vec2 firstPoint = (firstChunk*CHUNK_SIZE) - firstChunk;
+  glm::i32vec2 offset = firstPoint;
   float a,b;
   for(int k=0;k<CHUNK_PER_SIDE;){
-    offset_x = 0;
+    offset.x = firstPoint.x;
     for(int l=0;l<CHUNK_PER_SIDE;){
-      buffer_map[k*CHUNK_PER_SIDE+l] = glm::i32vec2(l,k);
+      buffer_map[k*CHUNK_PER_SIDE+l] = glm::i32vec2(firstChunk.x+l,firstChunk.y+k);
       for(int i=0;i<=(CHUNK_SIZE-1)*precision;i++){
         for(int j=0;j<=(CHUNK_SIZE-1)*precision;j++){
-          a = (float)j/precision + offset_x;
-          b = (float)i/precision + offset_y;
+          a = (float)j/precision + offset.x;
+          b = (float)i/precision + offset.y;
           m_Vertices.push_back(Vertexun( glm::vec3(a, noise.compute(a,b), b), glm::vec2(), glm::vec3()));
         }
       }
 
       l++;
-      offset_x = l * (CHUNK_SIZE-1)/**precision*/;
+      offset.x = firstPoint.x + l * (CHUNK_SIZE-1)/**precision*/;
     }
     k++;
-    offset_y = k * (CHUNK_SIZE - 1)/**precision*/;
+    offset.y = firstPoint.y + k * (CHUNK_SIZE - 1)/**precision*/;
   }
 }
 
 void Terrain::loadchunk(glm::i32vec2 coords, glm::i32vec2 replace){
 
-
-    
-
-  printf("loading chunk %d %d in place of %d %d\n",coords.x, coords.y,replace.x,replace.y);
+  //printf("loading chunk %d %d in place of %d %d\n",coords.x, coords.y,replace.x,replace.y);
   // upload
   glm::i32vec2 temp_coords = (coords*CHUNK_SIZE)-coords;
   int vertices_per_chunk = (CHUNK_SIZE*precision -1)* (CHUNK_SIZE*precision -1);
@@ -95,34 +101,24 @@ int Terrain::getOffset(glm::i32vec2 coords){
      if(buffer_map[i] == coords)
       return i;
   } 
-  printf("chunk %d %d is not in buffer map \n");
+  printf("[ERROR] Chunk %d %d is not in buffer map \n",coords.x, coords.y);
   return -1;
 }
 
-
-
 void Terrain::load(glm::vec2 coords){
   // round ?
-  glm::i32vec2 chunk_coords = static_cast<glm::i32vec2>(coords)/CHUNK_SIZE;
-  //printf("chunk_coords: %d %d \n",chunk_coords.x, chunk_coords.y);
-  printf("last_chunk: %d %d \n",last_chunk.x, last_chunk.y);
+  glm::i32vec2 chunk_coords = GetChunk(coords);
+//  printf("coords: %f %f \n",coords.x, coords.y);
+//  printf("chunk_coords: %d %d \n",chunk_coords.x, chunk_coords.y);
   glm::i32vec2 direction = chunk_coords - last_chunk;
 
-  printf("direction: %d %d \n",direction.x, direction.y);
-  //printf("rot: %d %d \n",(glm::imat2(0,1,-1,0)*direction).x,(glm::imat2(0,1,-1,0)*direction).y);
-
-
   if(!(direction == glm::i32vec2(0,0)) ){
+  //printf("last_chunk: %d %d \n",last_chunk.x, last_chunk.y);
+  //printf("direction: %d %d \n",direction.x, direction.y);
 
-    /*glm::i32vec2 add = last_chunk-(glm::i32vec2)(glm::imat2(0,1,-1,0)*direction)*(CHUNK_PER_SIDE/2) + direction*((CHUNK_PER_SIDE/2)+1);
-    glm::i32vec2 remove = last_chunk-(glm::i32vec2)(glm::imat2(0,1,-1,0)*direction)*(CHUNK_PER_SIDE/2)+direction*(CHUNK_PER_SIDE/2);
-    for(int i=0; i<CHUNK_PER_SIDE;i++){
-      loadchunk(last_chunk+add+(glm::i32vec2)(glm::imat2(0,-1,1,0)*direction)*i, last_chunk+remove+(glm::i32vec2)(glm::imat2(0,-1,1,0)*direction)*i);
-    }*/
-
-    glm::i32vec2 add = direction * 2;
-    glm::i32vec2 remove = direction * (-1);
-    for (int i = -1; i < CHUNK_PER_SIDE -1; i++)
+    glm::i32vec2 add = direction * (RENDER_DISTANCE+1);
+    glm::i32vec2 remove = direction * (-1)*RENDER_DISTANCE;
+    for (int i = -RENDER_DISTANCE; i < RENDER_DISTANCE+1; i++)
       loadchunk(last_chunk + add + glm::i32vec2(direction.y * i, direction.x * i), last_chunk + remove + glm::i32vec2(direction.y * i, direction.x * i));
     last_chunk = chunk_coords;
   
