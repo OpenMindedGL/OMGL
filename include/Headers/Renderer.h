@@ -49,16 +49,24 @@ public :
 template <class T>
 void Renderer::Draw(Model<T> model)
 {
-	m_Camera->printCoord();
 	m_Camera->ComputeMatricesFromInputs();
 	m_Camera->SetModel(model.GetModelMatrix());
 	m_Camera->ComputeMVP();
 	glm::mat4 mvp = m_Camera->GetMVP();
 
 	model.Bind();
+
+        if(model.GetRendererType() == GL_TRIANGLE_STRIP){
+          GLCall(glEnable(GL_PRIMITIVE_RESTART));
+          GLCall(glPrimitiveRestartIndex(model.GetVertices().size()));
+        }
+        else{
+          GLCall(glDisable(GL_PRIMITIVE_RESTART));
+        }
+
 	model.SetShaderUniformMat4f("u_MVP", mvp);
-	model.SetShaderUniformMat4f("M", model.GetModelMatrix());
-	model.SetShaderUniformMat4f("V", m_Camera->GetView());
+	//model.SetShaderUniformMat4f("M", model.GetModelMatrix());
+	//model.SetShaderUniformMat4f("V", m_Camera->GetView());
 
 	GLCall(glDrawElements(model.GetRendererType(), model.GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
 

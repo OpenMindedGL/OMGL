@@ -47,24 +47,30 @@ void Camera::ComputeMatricesFromInputs()
 	);
 
 	// Up vector
-	glm::vec3 up = glm::cross(right, direction);
+        glm::vec3 up = glm::cross(right, direction);
 
-	// Move forward
-	if (glfwGetKey(&m_Window, GLFW_KEY_UP) == GLFW_PRESS) {
-		m_Position += direction * deltaTime * m_Speed ;
-	}
-	// Move backward
-	if (glfwGetKey(&m_Window, GLFW_KEY_DOWN) == GLFW_PRESS) {
-		m_Position -= direction * deltaTime * m_Speed;
-	}
-	// Strafe right
-	if (glfwGetKey(&m_Window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
-		m_Position += right * deltaTime * m_Speed;
-	}
-	// Strafe left
-	if (glfwGetKey(&m_Window, GLFW_KEY_LEFT) == GLFW_PRESS) {
-		m_Position -= right * deltaTime * m_Speed;
-	}
+
+        if (glfwGetKey(&m_Window, GLFW_KEY_W) == GLFW_PRESS) {
+          if (glfwGetKey(&m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+            m_Position.y += deltaTime * m_Speed;
+          else 
+            m_Position += direction * deltaTime * m_Speed ;
+        }
+
+        if (glfwGetKey(&m_Window, GLFW_KEY_S) == GLFW_PRESS) {
+          if (glfwGetKey(&m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+            m_Position.y -= deltaTime * m_Speed;
+          else
+            m_Position -= direction * deltaTime * m_Speed;
+        }
+
+        if (glfwGetKey(&m_Window, GLFW_KEY_D) == GLFW_PRESS) {
+          m_Position += right * deltaTime * m_Speed;
+        }
+
+        if (glfwGetKey(&m_Window, GLFW_KEY_A) == GLFW_PRESS) {
+          m_Position -= right * deltaTime * m_Speed;
+        }
 
 	float FoV = m_InitialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
 
@@ -83,5 +89,5 @@ void Camera::ComputeMatricesFromInputs()
 
 void Camera::printCoord()
 {
-	//printf("pos : %f x, %f y, %f z\n", m_Position.x, m_Position.y, m_Position.z);
+	printf("pos : %f x, %f y, %f z\n", m_Position.x, m_Position.y, m_Position.z);
 }

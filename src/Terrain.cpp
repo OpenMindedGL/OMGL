@@ -24,7 +24,7 @@ void Terrain::compute_indices(){
         m_Indices.push_back(j+(i * scale) + scale*scale*k);
         m_Indices.push_back(j+((i+1)*scale) + scale*scale*k);
       }
-      m_Indices.push_back(m_Positions.size());
+      m_Indices.push_back(m_Vertices.size());
     }
   }
 }
@@ -41,7 +41,7 @@ void Terrain::initload(glm::vec2 center){
         for(int j=0;j<=(CHUNK_SIZE-1)*precision;j++){
           a = (float)j/precision + offset_x;
           b = (float)i/precision + offset_y;
-          m_Positions.push_back(Vertexun( glm::vec3(a, noise.compute(a,b), b), glm::vec2(), glm::vec3()));
+          m_Vertices.push_back(Vertexun( glm::vec3(a, noise.compute(a,b), b), glm::vec2(), glm::vec3()));
         }
       }
 
@@ -85,7 +85,7 @@ void Terrain::loadchunk(glm::i32vec2 coords, glm::i32vec2 replace){
    
   buffer_map[offset] = coords;
   offset*=size;
-  m_Vb->Bind();
+  BindVertexBuffer();
   GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, size, chunk_to_load));
 
 }

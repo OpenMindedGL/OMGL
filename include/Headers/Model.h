@@ -17,10 +17,16 @@ template <class T>
 class Model
 {
 
+  protected : 
+
+    std::vector<unsigned int> m_Indices; 
+    std::vector<T> m_Vertices; 
+
   private : 
 
     unsigned int m_RendererType; 
 
+    VertexBuffer * m_Vb;
     VertexArray * m_Va;
     VertexBufferLayout m_Layout;
     IndexBuffer * m_Ib;
@@ -33,13 +39,10 @@ class Model
     glm::mat4 m_Rotation;
     
 
+
     void Push();
   public: 
 
-    VertexBuffer * m_Vb;
-    std::vector<unsigned int> m_Indices; 
-    std::vector<T> m_Positions; 
-    unsigned int m_nbIndices;
     Model();
     Model(unsigned int renderType, std::vector<T>& positions, std::vector<unsigned int>& indices, std::string shaderPath);
 
@@ -58,15 +61,19 @@ class Model
     void Upload();
     void Init(unsigned int renderType, std::string shaderPat);
     void ComputeNormals();
+    inline void BindVertexBuffer(){ m_Vb->Bind(); };
 
 
 
     // GETTERS
     inline VertexArray & GetVertexArray() const { return *m_Va; }
     inline IndexBuffer & GetIndexBuffer() const { return *m_Ib; }
+    inline VertexBuffer & GetVertexBuffer() const { return *m_Vb; }
     inline Shader & GetShader() const { return *m_Shader; }
     inline unsigned int GetRendererType() const { return m_RendererType; }
     inline glm::mat4 GetModelMatrix() const { return m_ModelMatrix; }
+    inline std::vector<T> GetVertices() const { return m_Vertices; }
+    inline std::vector<unsigned int> GetIndices() const { return m_Indices; }
 };
 
 template <class T>
@@ -78,7 +85,7 @@ void Model<T>::ComputeNormals(){
   glm::vec3 triangle_normal;
   bool order = true;
   for(unsigned int i=2;i<m_Indices.size();i++){
-    if(m_Indices[i] == m_Positions.size()){
+    if(m_Indices[i] == m_Vertices.size()){
       // reached end of line (index == restart index)
       i1 = m_Indices[++i];
       i2 = m_Indices[++i];
@@ -88,18 +95,18 @@ void Model<T>::ComputeNormals(){
     i3 = m_Indices[i];
     // compute cross product in right order
     if(order)
-      triangle_normal = normalize(cross(m_Positions[i2].pos-m_Positions[i1].pos,m_Positions[i3].pos-m_Positions[i1].pos));
+      triangle_normal = normalize(cross(m_Vertices[i2].pos-m_Vertices[i1].pos,m_Vertices[i3].pos-m_Vertices[i1].pos));
     else
-      triangle_normal = normalize(cross(m_Positions[i2].pos-m_Positions[i3].pos,m_Positions[i1].pos-m_Positions[i3].pos));
-    m_Positions[i1].normal += triangle_normal;
-    m_Positions[i2].normal += triangle_normal;
-    m_Positions[i3].normal += triangle_normal;
+      triangle_normal = normalize(cross(m_Vertices[i2].pos-m_Vertices[i3].pos,m_Vertices[i1].pos-m_Vertices[i3].pos));
+    m_Vertices[i1].normal += triangle_normal;
+    m_Vertices[i2].normal += triangle_normal;
+    m_Vertices[i3].normal += triangle_normal;
     i1 = i2;
     i2 = i3;
     order = !order;
   }
-  for(unsigned int i = 0; i<m_Positions.size();i++){
-    m_Positions[i].normal = normalize(m_Positions[i].normal);
+  for(unsigned int i = 0; i<m_Vertices.size();i++){
+    m_Vertices[i].normal = normalize(m_Vertices[i].normal);
   } 
 
 }
@@ -114,16 +121,13 @@ void Model<T>::Init(unsigned int renderType, std::string shaderPath)
   m_Layout.Push<float>(3);
 
   m_Va = new VertexArray();
-  m_Vb = new VertexBuffer((const void *) &m_Positions[0], m_Positions.size() *  sizeof(T));
+  m_Vb = new VertexBuffer((const void *) &m_Vertices[0], m_Vertices.size() *  sizeof(T));
   m_Shader = new Shader(shaderPath);
 
   m_Va->AddBuffer(*m_Vb, m_Layout);
 
-  GLCall(glEnable(GL_PRIMITIVE_RESTART));
-  GLCall(glPrimitiveRestartIndex(m_Positions.size()));
   m_Ib = new IndexBuffer((const unsigned int *) &m_Indices[0], m_Indices.size());
 
-  //if(renderType == GL_TRIANGLE_STRIP)
 
   m_Va->Unbind();
   m_Vb->Unbind();
@@ -144,7 +148,7 @@ Model<T>::Model()
 
 template <class T>
 Model<T>::Model(unsigned int renderType, std::vector<T>& positions, std::vector<unsigned int>& indices, std::string shaderPath)
-	: m_RendererType(renderType),  m_Positions(positions),
+	: m_RendererType(renderType),  m_Vertices(positions),
 	  m_Indices(indices), m_ModelMatrix(glm::mat4(1.0f))
 {
 
@@ -168,7 +172,6 @@ template <class T>
 void Model<T>::Bind()
 {
 	m_Va->Bind();
-	//m_Vb->Bind();
 	m_Ib->Bind();
 	m_Shader->Bind();
 }
@@ -177,7 +180,6 @@ template <class T>
 void Model<T>::Unbind()
 {
 	m_Va->Unbind();
-	//m_Vb->Unbind();
 	m_Ib->Unbind();
 	m_Shader->Unbind();
 }

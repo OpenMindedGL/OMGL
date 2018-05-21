@@ -82,6 +82,8 @@ int main(void){
   Renderer renderer(*window, WIDTH, HEIGHT);
 
   Terrain t;
+  Cube c;
+  c.Init(GL_TRIANGLES, "shaders/Cube.shader");
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
@@ -91,6 +93,8 @@ int main(void){
     //printf("x:%f y:%f \n",pos.x,pos.z);
     t.load(glm::vec2(pos.x,pos.z));
 
+
+    renderer.Draw<Vertexun>(c);
     renderer.Draw<Vertexun>(t);
 
 
