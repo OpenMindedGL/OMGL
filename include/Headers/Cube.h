@@ -1,58 +1,92 @@
 #pragma once
 
-#include <string>
-#include "VertexArray.h"
-#include "VertexBuffer.h"
-#include "VertexBufferLayout.h"
-#include "IndexBuffer.h"
-#include "Shader.h"
-#include "Texture.h"
+#include "Model.h"
+#include "Vertex.h"
 
-class Cube
+class Cube : public Model<Vertexun>
 {
 
 private : 
 
-	float * m_Positions;
-	unsigned int * m_Indices;
-	unsigned int m_RendererType; 
+	std::vector<Vertexun> m_InitVertexUN = {
+		Vertexun(glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		Vertexun(glm::vec3(-1.0f,-1.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		Vertexun(glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		Vertexun(glm::vec3( 1.0f, 1.0f,-1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		Vertexun(glm::vec3(-1.0f, 1.0f,-1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		Vertexun(glm::vec3( 1.0f,-1.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		Vertexun(glm::vec3( 1.0f,-1.0f,-1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		Vertexun(glm::vec3( 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f))
+	};
 
-	VertexArray * m_Va;
-	VertexBuffer * m_Vb;
-	VertexBufferLayout m_Layout;
-	IndexBuffer * m_Ib;
 
-	Shader * m_Shader;
-	Texture m_Texture;
-	
-	glm::mat4 m_Model;
-	glm::mat4 m_Position; 
-	glm::mat4 m_Rotation;
+	std::vector<unsigned int> m_Indices = {
+		0, 1, 2,
+		3, 0, 4,
+		5, 0, 6,
+		3, 6, 0,
+		0, 2, 4,
+		5, 1, 0,
+		2, 1, 5,
+		7, 6, 3,
+		6, 7, 5,
+		7, 3, 4,
+		7, 4, 2,
+		7, 2, 5
+	};
 
 public: 
-	
 	Cube();
-	Cube(unsigned int m_RendererType, float * positions, unsigned int * indices, std::string shaderPath);
-	
-	//void initTexture(const std::string name, unsigned int id);
-	void Bind();
-	void Unbind();
-
-	//SETTER
-	void SetShader(const std::string path);
-	void SetTexture(const std::string path);
-	void SetShaderUniformMat4f(const std::string name, glm::mat4 mvp);
-
-	void Translate(glm::vec3 position);
-	void Rotation(float angle, glm::vec3 axis);
-	void Scale(glm::vec3 scale);
-
-
-
-	// GETTERS
-	inline VertexArray & GetVertexArray() const { return *m_Va; }
-	inline IndexBuffer & GetIndexBuffer() const { return *m_Ib; }
-	inline Shader & GetShader() const { return *m_Shader; }
-	inline unsigned int GetRendererType() const { return m_RendererType; }
-	inline glm::mat4 GetModel() const { return m_Model; }
+	Cube(unsigned int m_RendererType, std::string shaderPath);
+	//vector<T> & getTypePosition();
 };
+
+
+/*
+template<typename T>
+inline T Cube<T>::getTypePosition()
+{
+	assert(false);
+};
+
+template<>
+inline vector<Vertex> & Cube<Vertex>::getTypePosition()
+{
+	return m_InitVertex;
+};
+
+template<>
+inline vector<Vertexu> & Cube<Vertexu>::getTypePosition()
+{
+	return m_InitVertexU;
+};
+
+template<>
+inline vector<Vertexun> Cube<Vertexun>::getTypePosition()
+{
+	return m_InitVertexUN;
+};*/
+
+/*
+static vector<Vertex> m_InitVertex[] = {
+Vertex(-1.0f,-1.0f,-1.0f),
+Vertex(-1.0f,-1.0f, 1.0f),
+Vertex(-1.0f, 1.0f, 1.0f),
+Vertex(1.0f, 1.0f,-1.0f),
+Vertex(-1.0f, 1.0f,-1.0f),
+Vertex(1.0f,-1.0f, 1.0f),
+Vertex(1.0f,-1.0f,-1.0f),
+Vertex(1.0f, 1.0f, 1.0f)
+};
+
+/*
+static vector<Vertexu> m_InitVertexU[] = {
+Vertexu(glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec2(0.0f, 0.0f)),
+Vertexu(glm::vec3(-1.0f,-1.0f, 1.0f), glm::vec2(0.0f, 0.0f)),
+Vertexu(glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)),
+Vertexu(glm::vec3(1.0f, 1.0f,-1.0f),  glm::vec2(0.0f, 0.0f)),
+Vertexu(glm::vec3(-1.0f, 1.0f,-1.0f), glm::vec2(0.0f, 0.0f)),
+Vertexu(glm::vec3(1.0f,-1.0f, 1.0f),  glm::vec2(0.0f, 0.0f)),
+Vertexu(glm::vec3(1.0f,-1.0f,-1.0f),  glm::vec2(0.0f, 0.0f)),
+Vertexu(glm::vec3(1.0f, 1.0f, 1.0f),  glm::vec2(0.0f, 0.0f))
+};*/

@@ -4,6 +4,11 @@
 Vertex::Vertex(glm::vec3 p)
   :pos(p)
 {}
+
+Vertex::Vertex(float x, float y, float z):
+	pos(glm::vec3(x, y, z))
+{}
+
 Vertex::~Vertex(){}
 unsigned int Vertex::nbattrib = 1;
 

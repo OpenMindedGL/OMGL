@@ -6,6 +6,8 @@
 #include <sstream>
 #include <signal.h>
 #include <time.h>
+#include <math.h>
+#include <vector>
 
 //Glew
 #include <GL/glew.h>
@@ -15,18 +17,12 @@
 
 //GLM
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
+#include <glm\gtc\matrix_transform.hpp>
 
 //.h
-#include "Cube.h"
+#include "Vertex.h"
 #include "Renderer.h"
-#include "VertexBuffer.h"
-#include "IndexBuffer.h"
-#include "VertexArray.h"
-#include "Shader.h"
-#include "VertexBufferLayout.h"
-#include "Texture.h"
-
+#include "Cube.h"
 
 using namespace glm;
 
@@ -61,61 +57,45 @@ int main(void){
 		return -1;
 		//std::cout << "Error!" << std::endl;
 
+	Vertex va(1.0, 1.0, 1.0);
+
 	std::cout << glGetString(GL_VERSION) << std::endl;
 	{
-
-		float positions[] = {
-			-1.0f,-1.0f,-1.0f, //0.0f, 0.0f,  // 0
-			-1.0f,-1.0f, 1.0f, //1.0f, 0.0f,  // 1 
-			-1.0f, 1.0f, 1.0f, //1.0f, 1.0f,  // 2
-			 1.0f, 1.0f,-1.0f, //0.0f, 1.0f,  // 3
-			-1.0f, 1.0f,-1.0f, //0.0f, 0.0f,  // 4
-			 1.0f,-1.0f, 1.0f, //1.0f, 0.0f,  // 5
-			 1.0f,-1.0f,-1.0f, //1.0f, 1.0f,  // 6
-			 1.0f, 1.0f, 1.0f, //0.0f, 1.0f   // 7
-		};		
-
-		unsigned int indices[] = {
-			0, 1, 2,
-			3, 0, 4,
-			5, 0, 6,
-			3, 6, 0,
-			0, 2, 4,
-			5, 1, 0,
-			2, 1, 5,
-			7, 6, 3,
-			6, 7, 5,
-			7, 3, 4,
-			7, 4, 2,
-			7, 2, 5
-		};
 
 		GLCall(glEnable(GL_BLEND));
 		GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
 
-		Cube cube(GL_TRIANGLES, positions, indices, "shaders/Basic.shader");
+		Cube cube(GL_TRIANGLES, "res/shaders/Basic.shader");
+		cube.Init();
 
-		Cube cube2(GL_TRIANGLES, positions, indices, "shaders/Basic.shader");
+		Cube cube2(GL_TRIANGLES, "res/shaders/Basic.shader");
 		
-		vec3 translation(10.0f, 1.0f, 0.0f);
+		vec3 translation(5.0f, 0.0f, 0.0f);
 
 		cube2.Translate(translation);
-		cube2.Rotation(15.0f, vec3(0.0f, 0.0f, 1.0f));
-		cube2.Rotation(-15.0f, vec3(1.0f, 0.0f, 0.0f));
-		cube2.Scale(vec3(5.0f, 5.0f, 5.0f));
 
+		//cube2.Rotation(15.0f, vec3(0.0f, 0.0f, 1.0f));
+		//cube2.Rotation(-15.0f, vec3(1.0f, 0.0f, 0.0f));
+		/*cube2.Scale(vec3(5.0f, 5.0f, 5.0f));
+		cube.Scale(vec3(2.5f, 2.5f, 2.5f));
+		cube.Scale(vec3(2.0f, 2.0f, 2.0f));
+		cube.Scale(vec3(-5.0f, -5.0f, -5.0f));
+		*/
 
-		std::vector<Cube> cubes(200);
+		//Model<unsigned int> m(indices);
+		//Model<Vertex> m(positions);
+
+		/*std::vector<Cube> cubes(500);
 		
 		for (int i = 0; i < cubes.size(); i++) {
-			cubes[i] = Cube(GL_TRIANGLES, positions, indices, "shaders/Basic.shader");
+			cubes[i] = Cube(GL_TRIANGLE_STRIP, "res/shaders/Basic.shader");
 			cubes[i].Translate( vec3(
 				(rand() / (float) RAND_MAX) * 200 - 100,
 				(rand() / (float)RAND_MAX) * 200 - 100,
 				(rand() / (float)RAND_MAX) * 200 - 100
 			));
-		}
-	
+		}*/
+		
 		Renderer renderer(*window, WIDTH, HEIGHT);
 		
 		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -126,17 +106,17 @@ int main(void){
 			/* Render here */
 			renderer.Clear();
 			
-			renderer.Draw(cubes);
-
-			/*for (int i = 0; i < cubes.size(); i++) {
-				cubes[i].Rotation(0.1f, vec3(1.0f, 1.0f, 1.0f));
-			}*/
+			//renderer.Draw(cubes);
 
 			//renderer.Draw(cube.GetVertexArray(), cube.GetIndexBuffer(), cube.GetShader());
-			//renderer.Draw(cube);
+			
+			renderer.Draw(cube);
+			//renderer.Draw(cube2);
+			
+			//cube2.Rotation(0.05f, vec3(1.0f, 0.0f, 1.0f));
+
 			//renderer.Draw(cube2);
 
-			//cube2.Rotation(0.05f, vec3(1.0f, 0.0f, 1.0f));
 
 			/* Swap frint and back buffers */
 			glfwSwapBuffers(window);
