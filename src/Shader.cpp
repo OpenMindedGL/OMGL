@@ -56,7 +56,7 @@ int Shader::GetUniformLocation(const std::string& name)
 
 	GLCall(int location = glGetUniformLocation(m_RendererId, name.c_str()));
 	if (location == -1)
-		printf("Warning uniform %s doesn't exist ! ", (char*)&name);
+		printf("Warning uniform %s doesn't exist ! \n", (char*)&name);
 	
 	m_UniformLocationCache[name] = location;
 

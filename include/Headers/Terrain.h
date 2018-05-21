@@ -14,7 +14,7 @@
 
 
 
-class Terrain : public Model<Vertex>
+class Terrain : public Model<Vertexun>
 {
 
   private : 

@@ -57,6 +57,7 @@ class Model
     void Scale(glm::vec3 scale);
     void Upload();
     void Init(unsigned int renderType, std::string shaderPat);
+    void ComputeNormals();
 
 
 
@@ -69,9 +70,47 @@ class Model
 };
 
 template <class T>
+void Model<T>::ComputeNormals(){
+  
+  unsigned int i1 = m_Indices[0];
+  unsigned int i2 = m_Indices[1];
+  unsigned int i3;
+  glm::vec3 triangle_normal;
+  bool order = true;
+  for(unsigned int i=2;i<m_Indices.size();i++){
+    if(m_Indices[i] == m_Positions.size()){
+      // reached end of line (index == restart index)
+      i1 = m_Indices[++i];
+      i2 = m_Indices[++i];
+      i++;
+      order = true;
+    }
+    i3 = m_Indices[i];
+    // compute cross product in right order
+    if(order)
+      triangle_normal = normalize(cross(m_Positions[i2].pos-m_Positions[i1].pos,m_Positions[i3].pos-m_Positions[i1].pos));
+    else
+      triangle_normal = normalize(cross(m_Positions[i2].pos-m_Positions[i3].pos,m_Positions[i1].pos-m_Positions[i3].pos));
+    m_Positions[i1].normal += triangle_normal;
+    m_Positions[i2].normal += triangle_normal;
+    m_Positions[i3].normal += triangle_normal;
+    i1 = i2;
+    i2 = i3;
+    order = !order;
+  }
+  for(unsigned int i = 0; i<m_Positions.size();i++){
+    m_Positions[i].normal = normalize(m_Positions[i].normal);
+  } 
+
+}
+
+
+template <class T>
 void Model<T>::Init(unsigned int renderType, std::string shaderPath)
 {
   m_RendererType = renderType;
+  m_Layout.Push<float>(3);
+  m_Layout.Push<float>(2);
   m_Layout.Push<float>(3);
 
   m_Va = new VertexArray();

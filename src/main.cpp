@@ -91,7 +91,7 @@ int main(void){
     //printf("x:%f y:%f \n",pos.x,pos.z);
     t.load(glm::vec2(pos.x,pos.z));
 
-    renderer.Draw<Vertex>(t);
+    renderer.Draw<Vertexun>(t);
 
 
     /* Swap frint and back buffers */

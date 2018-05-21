@@ -10,6 +10,7 @@ Terrain::Terrain(){
   last_chunk = glm::i32vec2(1);
   initload(glm::vec2(0.0f, 0.0f)); 
   compute_indices();
+ // ComputeNormals();
   Init(GL_TRIANGLE_STRIP, "shaders/Basic.shader");
 }
 
@@ -40,7 +41,7 @@ void Terrain::initload(glm::vec2 center){
         for(int j=0;j<=(CHUNK_SIZE-1)*precision;j++){
           a = (float)j/precision + offset_x;
           b = (float)i/precision + offset_y;
-          m_Positions.push_back(Vertex( glm::vec3(a, noise.compute(a,b), b)));
+          m_Positions.push_back(Vertexun( glm::vec3(a, noise.compute(a,b), b), glm::vec2(), glm::vec3()));
         }
       }
 
@@ -62,7 +63,7 @@ void Terrain::loadchunk(glm::i32vec2 coords, glm::i32vec2 replace){
   glm::i32vec2 temp_coords = (coords*CHUNK_SIZE)-coords;
   int vertices_per_chunk = (CHUNK_SIZE*precision -1)* (CHUNK_SIZE*precision -1);
   // Make buffer
-  Vertex * chunk_to_load = (Vertex*) malloc(sizeof(Vertex) * static_cast<int>(precision*precision)*CHUNK_SIZE*CHUNK_SIZE);
+  Vertexun * chunk_to_load = (Vertexun*) malloc(sizeof(Vertexun) * static_cast<int>(precision*precision)*CHUNK_SIZE*CHUNK_SIZE);
 
   // Generate data
   unsigned int index1 = 0;
@@ -71,11 +72,11 @@ void Terrain::loadchunk(glm::i32vec2 coords, glm::i32vec2 replace){
     for(int j=0;j<=(CHUNK_SIZE-1)*precision;j++){
       a = (float)j/precision + temp_coords.x;
       b = (float)i/precision + temp_coords.y;
-      chunk_to_load[index1++] = Vertex( glm::vec3(a, noise.compute(a,b), b));
+      chunk_to_load[index1++] = Vertexun( glm::vec3(a, noise.compute(a,b), b), glm::vec2(),glm::vec3());
     }
   }
   
-  int size = vertices_per_chunk * sizeof(Vertex);
+  int size = vertices_per_chunk * sizeof(Vertexun);
 
   // Locate where it needs to go in the GPU memory
   int offset = getOffset(replace);
