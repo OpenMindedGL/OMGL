@@ -3,7 +3,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 
-#include "../../lib/FastNoise/FastNoise.h"
+#include "FastNoise.h"
 
 #define MAX_OCTAVES 10
 

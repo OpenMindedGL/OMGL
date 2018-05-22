@@ -64,6 +64,9 @@ int init(){
 
   glfwSwapInterval(1);
 
+  // Needed by some drivers/hardware
+  glewExperimental = GL_TRUE; 
+
   if (glewInit() != GLEW_OK)
     return -1;
   //std::cout << "Error!" << std::endl;
@@ -72,7 +75,10 @@ int init(){
 
   GLCall(glEnable(GL_BLEND));
   GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  // Enable depth test
+  GLCall(glEnable(GL_DEPTH_TEST));
+  // Accept fragment if it closer to the camera than the former one
+  GLCall(glDepthFunc(GL_LESS));
 }
 
 
