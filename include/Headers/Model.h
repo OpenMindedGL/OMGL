@@ -116,9 +116,7 @@ template <class T>
 void Model<T>::Init(unsigned int renderType, std::string shaderPath)
 {
   m_RendererType = renderType;
-  m_Layout.Push<float>(3);
-  m_Layout.Push<float>(2);
-  m_Layout.Push<float>(3);
+  Push();
 
   m_Va = new VertexArray();
   m_Vb = new VertexBuffer((const void *) &m_Vertices[0], m_Vertices.size() *  sizeof(T));
