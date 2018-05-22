@@ -1,4 +1,5 @@
 #include "Shader.h"
+#include "Shader.h"
 
 
 Shader::Shader()
@@ -51,12 +52,13 @@ void Shader::SetUniformMat4f(const std::string & name, glm::mat4 & matrix)
 
 int Shader::GetUniformLocation(const std::string& name)
 {
+  //  printf("getting uniform location for %s ! \n", name.c_str());
 	if (m_UniformLocationCache.find(name) != m_UniformLocationCache.end())
 		return m_UniformLocationCache[name];
 
 	GLCall(int location = glGetUniformLocation(m_RendererId, name.c_str()));
 	if (location == -1)
-		printf("Warning uniform %s doesn't exist ! \n", (char*)&name);
+		printf("Warning uniform %s doesn't exist ! \n", name.c_str());
 	
 	m_UniformLocationCache[name] = location;
 

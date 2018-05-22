@@ -72,7 +72,11 @@ int init(){
 
   GLCall(glEnable(GL_BLEND));
   GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  // Enable depth test
+  GLCall(glEnable(GL_DEPTH_TEST));
+  // Accept fragment if it closer to the camera than the former one
+  GLCall(glDepthFunc(GL_LESS));
 }
 
 
@@ -83,8 +87,8 @@ int main(void){
 
   glm::vec3 pos = renderer.getCameraPosition();
   Terrain t(glm::vec2(pos.x,pos.z));
-  Cube c;
-  c.Init(GL_TRIANGLES, "shaders/Cube.shader");
+//  Cube c;
+//  c.Init(GL_TRIANGLES, "shaders/Cube.shader");
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
@@ -95,7 +99,7 @@ int main(void){
     t.load(glm::vec2(pos.x,pos.z));
 
 
-    renderer.Draw<Vertexun>(c);
+//    renderer.Draw<Vertexun>(c);
     renderer.Draw<Vertexun>(t);
 
 

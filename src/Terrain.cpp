@@ -9,8 +9,8 @@ Terrain::Terrain(glm::vec2 center){
   precision = 2.0f;
   initload(center); 
   compute_indices();
- // ComputeNormals();
-  Init(GL_TRIANGLE_STRIP, "shaders/Basic.shader");
+  ComputeNormals();
+  Init(GL_TRIANGLE_STRIP, "shaders/Terrain.shader");
 }
 
 

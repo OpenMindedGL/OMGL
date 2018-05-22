@@ -9,74 +9,58 @@ layout(location = 2) in vec3 normals;
 out vec2 uv;
 out vec3 normal;
 out vec3 lightdir;
+out vec2 pos;
   
 // Values that stay constant for the whole mesh.
 uniform mat4 u_MVP;
-uniform mat4 V;
-uniform mat4 M;
+uniform mat4 u_M;
+uniform mat4 u_V;
   
 void main(){
+  pos = vPos.xz;
   gl_Position =  u_MVP * vec4(vPos,1);
   uv = uv_coords;
 
   vec3 LightPosition_worldspace = vec3(-10.0f,8.0f,-10.0f);
-  vec3 Position_worldspace = (M * vec4(vPos,1)).xyz;
+  vec3 Position_worldspace = (u_M * vec4(vPos,1)).xyz;
 
-  vec3 vertexPosition_cameraspace = ( V * M * vec4(vPos,1)).xyz;
+  vec3 vertexPosition_cameraspace = ( u_V * u_M * vec4(vPos,1)).xyz;
   vec3 EyeDirection_cameraspace = vec3(0,0,0) - vertexPosition_cameraspace;
 
-  vec3 LightPosition_cameraspace = ( V * vec4(LightPosition_worldspace,1)).xyz;
+  vec3 LightPosition_cameraspace = ( u_V * vec4(LightPosition_worldspace,1)).xyz;
   lightdir = LightPosition_cameraspace + EyeDirection_cameraspace;
 
-  normal = ( V * M * vec4(normals,0)).xyz; 
+  normal = ( u_V * u_M * vec4(normals,0)).xyz; 
 
 
-}
-
-/*#version 330 core
-
-layout(location = 0) in vec4 position;
-
-uniform mat4 u_MVP;
-out vec2 pos;
-
-void main()
-{
-        pos = position.xz;
-	gl_Position = u_MVP * position;
-};*/
+};
 
 #shader fragment
 #version 330 core
+
+layout(location = 0) out vec4 color;
 in vec2 uv;
 in vec3 normal;
 in vec3 lightdir;
+in vec2 pos;
 
-out vec3 color;
+//out vec3 color;
 
 void main(){
+  /*if(0.01f  > mod(pos.y,31.0f) || 0.01f  > mod(pos.x,31.0f)){
+    color = vec4(0.0f,1.0f,0.0f,1.0f);
+  }
+  else{
+    color = vec4(0.0f,0.0f,1.0f,1.0f);
+  }*/
+  //color = vec4(0.0f,mod(pos.y,2.0f),mod(pos.x,2.0f),1.0f);
   vec3 blue = vec3(0.2f,0.2f,0.8f);
 
   vec3 n = normalize( normal );
   vec3 l = normalize( lightdir );
   float cost = clamp( dot( n,l ), 0,1 );
   float ambient = 0.1f;
-  //color = vec3(ambient) + blue * cost;
-  color = vec3(0.1f,0.5f,0.1f);
+  color = vec4(vec3(ambient) + blue * cost,1.0f);
+  //color = vec4(0.0f,0.0f,1.0f,1.0f);
   
-}
-/*#version 330 core
-
-layout(location = 0) out vec4 color;
-in vec2 pos;
-
-void main()
-{
-        if(0.01f  > mod(pos.y,31.0f) || 0.01f  > mod(pos.x,31.0f)){
-          color = vec4(0.0f,1.0f,0.0f,1.0f);
-        }
-        else{
-          color = vec4(0.0f,0.0f,1.0f,1.0f);
-        }
-	//color = vec4(0.0f,mod(pos.y,2.0f),mod(pos.x,2.0f),1.0f);
-};*/
+};
