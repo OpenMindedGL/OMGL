@@ -31,13 +31,13 @@ float NoiseGen::compute(float x, float y){
   for(std::vector<FastNoise>::iterator iter_noise = 
   simplex_fractal.begin(); 
   iter_noise < simplex_fractal.end(); iter_noise++){
-    a += (*iter_noise).GetNoise(x*10,y*10) 
-         * pow(persistence, d); 
+    a += glm::abs((*iter_noise).GetNoise(x*10,y*10) 
+         * pow(persistence, d)); 
     d++;
   }
   //b = simplex.GetNoise(x*10,y*10)*0.2f;
   //c = ((mix.GetNoise(x*10,y*10)+1)/2.0f);
-  return abs(a*zoom);//(a*(3*c*c) + b * (1-c) )*zoom;
+  return (-1)* a*zoom;//(a*(3*c*c) + b * (1-c) )*zoom;
   /*FastNoise p(0);
   p.SetNoiseType(FastNoise::SimplexFractal);
   p.SetFractalLacunarity(2.0f);
