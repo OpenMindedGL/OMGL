@@ -1,8 +1,8 @@
 #include "NoiseGen.h"
 
 NoiseGen::NoiseGen(){
-  zoom = 5.0f;
-  nbOctave = 2;
+  zoom = 50.0f;
+  nbOctave = 8;
   lacunarity = 2.0f;
   persistence = 0.5f;
   seed = 69;
@@ -35,9 +35,9 @@ float NoiseGen::compute(float x, float y){
          * pow(persistence, d); 
     d++;
   }
-  b = simplex.GetNoise(x*10,y*10)*0.2f;
-  c = ((mix.GetNoise(x*10,y*10)+1)/2.0f);
-  return (a*(3*c*c) + b * (1-c) )*zoom;
+  //b = simplex.GetNoise(x*10,y*10)*0.2f;
+  //c = ((mix.GetNoise(x*10,y*10)+1)/2.0f);
+  return abs(a*zoom);//(a*(3*c*c) + b * (1-c) )*zoom;
   /*FastNoise p(0);
   p.SetNoiseType(FastNoise::SimplexFractal);
   p.SetFractalLacunarity(2.0f);
