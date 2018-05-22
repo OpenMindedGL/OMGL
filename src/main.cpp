@@ -64,6 +64,9 @@ int init(){
 
   glfwSwapInterval(1);
 
+  // Needed by some drivers/hardware
+  glewExperimental = GL_TRUE; 
+
   if (glewInit() != GLEW_OK)
     return -1;
   //std::cout << "Error!" << std::endl;

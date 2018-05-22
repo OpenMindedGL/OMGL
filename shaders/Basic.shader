@@ -12,7 +12,8 @@ void main()
 {
         pos = position.xz;
 	gl_Position = u_MVP * position;
-};
+} // no ; here
+
 
 #shader fragment
 #version 330 core
@@ -29,4 +30,4 @@ void main()
           color = vec4(0.0f,0.0f,1.0f,1.0f);
         }
 	//color = vec4(0.0f,mod(pos.y,2.0f),mod(pos.x,2.0f),1.0f);
-};
+}

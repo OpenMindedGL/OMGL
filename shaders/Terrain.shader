@@ -33,7 +33,7 @@ void main(){
   normal = ( u_V * u_M * vec4(normals,0)).xyz; 
 
 
-};
+}
 
 #shader fragment
 #version 330 core
@@ -63,4 +63,4 @@ void main(){
   color = vec4(vec3(ambient) + blue * cost,1.0f);
   //color = vec4(0.0f,0.0f,1.0f,1.0f);
   
-};
+}
