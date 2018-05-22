@@ -28,6 +28,7 @@ class NoiseGen {
     NoiseGen();
 
     float compute(float x, float y);
+    glm::vec3 lerp(glm::vec3 start, glm::vec3 end, float percent);
     inline float compute(glm::vec2 a) { return compute(a.x, a.y); }
 
     inline float    GetLacunarity(){ return lacunarity; };
