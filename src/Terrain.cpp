@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_integer.hpp> 
 
 Terrain::Terrain(glm::vec2 center){
-  precision = 2.0f;
+  precision = 5.0f;
   initload(center); 
   compute_indices();
   Model<Vertexun>::ComputeNormals();
@@ -16,7 +16,7 @@ Terrain::Terrain(glm::vec2 center){
 
 
 void Terrain::compute_indices(){
-  int scale = CHUNK_SIZE*precision -1;
+  int scale = CHUNK_SIZE*precision -(precision-1.0f);
   for(unsigned int k=0;k<CHUNK_PER_SIDE*CHUNK_PER_SIDE;k++){
     for(unsigned int i=0;i<=(CHUNK_SIZE-1) * precision -1;i++){
       for(unsigned int j=0;j<=(CHUNK_SIZE-1) * precision;j++){
@@ -28,7 +28,7 @@ void Terrain::compute_indices(){
   }
 }
 
-void Terrain::ComputeNormals(glm::i32vec2 chunk_coords, Vertex * buffer){
+void Terrain::ComputeNormals(glm::i32vec2 chunk_coords, Vertexun * buffer, unsigned int offset){
 
 
 }
@@ -73,7 +73,7 @@ void Terrain::loadchunk(glm::i32vec2 coords, glm::i32vec2 replace){
   //printf("loading chunk %d %d in place of %d %d\n",coords.x, coords.y,replace.x,replace.y);
   // upload
   glm::i32vec2 temp_coords = (coords*CHUNK_SIZE)-coords;
-  int vertices_per_chunk = (CHUNK_SIZE*precision -1)* (CHUNK_SIZE*precision -1);
+  int vertices_per_chunk = (CHUNK_SIZE*precision -(precision-1.0f))* (CHUNK_SIZE*precision -(precision-1.0f));
   // Make buffer
   Vertexun * chunk_to_load = (Vertexun*) malloc(sizeof(Vertexun) * static_cast<int>(precision*precision)*CHUNK_SIZE*CHUNK_SIZE);
 

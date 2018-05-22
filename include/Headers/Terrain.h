@@ -29,7 +29,7 @@ class Terrain : public Model<Vertexun>
     void loadchunk(glm::i32vec2 coords, glm::i32vec2 replace);
     int getOffset(glm::i32vec2 coords);
     glm::i32vec2 GetChunk(glm::vec2 coords);
-    void ComputeNormals(glm::i32vec2 chunk_coords, Vertex * buffer);
+    void ComputeNormals(glm::i32vec2 chunk_coords, Vertexun * buffer, unsigned int offset);
 
 
   public: 
