@@ -9,7 +9,7 @@ Terrain::Terrain(glm::vec2 center){
   precision = 2.0f;
   initload(center); 
   compute_indices();
-  ComputeNormals();
+  Model<Vertexun>::ComputeNormals();
   Init(GL_TRIANGLE_STRIP, "shaders/Terrain.shader");
 }
 
@@ -27,6 +27,12 @@ void Terrain::compute_indices(){
     }
   }
 }
+
+void Terrain::ComputeNormals(glm::i32vec2 chunk_coords, Vertex * buffer){
+
+
+}
+
 
 glm::i32vec2 Terrain::GetChunk(glm::vec2 coords){
   short signum_x = (coords.x > 0) - (coords.x < 0);
