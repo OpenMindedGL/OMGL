@@ -1,7 +1,9 @@
 /*
 /*/
-!/src/
+!/src/*
 !/include/
 !/shaders/
 !/lib/
 !Makefile
+/src/Debug.cpp
+/include/Headers/Debug.h

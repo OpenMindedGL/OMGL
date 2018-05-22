@@ -17,7 +17,7 @@ main: $(OBJ_FILES)
 	   g++ -o $@ $^ $(LDFLAGS)
 
 $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp 
-	   g++ $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
+	   g++ $(LIB_I) $(CPPFLAGS) $(CXXFLAGS) -c -o $@ $<
 
 $(OBJ_DIR)/%.o: $(LIB_DIR)/*/%.cpp
 	g++ $(LIB_I) $(CPPFLAGS) -c -o $@ $<

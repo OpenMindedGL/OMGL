@@ -2,7 +2,7 @@
 
 NoiseGen::NoiseGen(){
   zoom = 50.0f;
-  nbOctave = 8;
+  nbOctave = 6;
   lacunarity = 2.0f;
   persistence = 0.5f;
   seed = 69;
@@ -31,13 +31,14 @@ float NoiseGen::compute(float x, float y){
   for(std::vector<FastNoise>::iterator iter_noise = 
   simplex_fractal.begin(); 
   iter_noise < simplex_fractal.end(); iter_noise++){
-    a += glm::abs((*iter_noise).GetNoise(x*10,y*10) 
-         * pow(persistence, d)); 
+    a += (*iter_noise).GetNoise(x*10,y*10) 
+         * pow(persistence, d); 
     d++;
   }
-  //b = simplex.GetNoise(x*10,y*10)*0.2f;
-  //c = ((mix.GetNoise(x*10,y*10)+1)/2.0f);
-  return (-1)* a*zoom;//(a*(3*c*c) + b * (1-c) )*zoom;
+  return a*zoom;
+  /*b = simplex.GetNoise(x*10,y*10)*0.2f;
+  c = ((mix.GetNoise(x*10,y*10)+1)/2.0f);
+  return (a*(3*c*c) + b * (1-c) )*zoom;*/
   /*FastNoise p(0);
   p.SetNoiseType(FastNoise::SimplexFractal);
   p.SetFractalLacunarity(2.0f);
