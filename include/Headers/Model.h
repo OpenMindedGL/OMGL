@@ -84,7 +84,7 @@ void Model<T>::ComputeNormals(){
   unsigned int i3;
   glm::vec3 triangle_normal;
   bool order = true;
-  for(unsigned int i=2;i<m_Indices.size();i++){
+  for(unsigned int i=2;i<m_Indices.size()-1;i++){
     if(m_Indices[i] == m_Vertices.size()){
       // reached end of line (index == restart index)
       i1 = m_Indices[++i];
