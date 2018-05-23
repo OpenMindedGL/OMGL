@@ -21,7 +21,7 @@ void main(){
   gl_Position =  u_MVP * vec4(vPos,1);
   uv = uv_coords;
 
-  vec3 LightPosition_worldspace = vec3(-10.0f,8.0f,-10.0f);
+  vec3 LightPosition_worldspace = vec3(-10.0f,40.0f,-10.0f);
   vec3 Position_worldspace = (u_M * vec4(vPos,1)).xyz;
 
   vec3 vertexPosition_cameraspace = ( u_V * u_M * vec4(vPos,1)).xyz;
@@ -47,20 +47,20 @@ in vec2 pos;
 //out vec3 color;
 
 void main(){
-  /*if(0.01f  > mod(pos.y,31.0f) || 0.01f  > mod(pos.x,31.0f)){
+/*  if(0.01f  > mod(pos.y,31.0f) || 0.01f  > mod(pos.x,31.0f)){
     color = vec4(0.0f,1.0f,0.0f,1.0f);
   }
   else{
     color = vec4(0.0f,0.0f,1.0f,1.0f);
-  }*/
+  */
   //color = vec4(0.0f,mod(pos.y,2.0f),mod(pos.x,2.0f),1.0f);
   vec3 blue = vec3(0.2f,0.2f,0.8f);
 
   vec3 n = normalize( normal );
   vec3 l = normalize( lightdir );
   float cost = clamp( dot( n,l ), 0,1 );
-  float ambient = 0.1f;
+  float ambient = 0.15f;
   color = vec4(vec3(ambient) + blue * cost,1.0f);
   //color = vec4(0.0f,0.0f,1.0f,1.0f);
-  
+ // }
 }

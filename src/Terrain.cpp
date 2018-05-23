@@ -1,8 +1,9 @@
 #include "Terrain.h"
 #include "Model.h"
 #include "Vertex.h"
+#include <vector>
 #include <GL/glew.h>
-#include <glm/gtx/rotate_vector.hpp>
+#include <glm/gtx/component_wise.hpp>
 #include <glm/gtc/matrix_integer.hpp> 
 
 Terrain::Terrain(glm::vec2 center){
@@ -28,8 +29,98 @@ void Terrain::compute_indices(){
   }
 }
 
-void Terrain::ComputeNormals(glm::i32vec2 chunk_coords, Vertexun * buffer, unsigned int offset){
 
+glm::vec2 Terrain::GetPoint(glm::i32vec2 chunk){
+
+  return static_cast<glm::vec2>( chunk*CHUNK_SIZE - chunk );
+
+}
+
+glm::i32vec2 Terrain::Surround(glm::i32vec2 chunk, unsigned int count){
+
+  return chunk + surroundings[count];
+
+}
+
+bool Terrain::IsLoaded(glm::i32vec2 chunk){
+  glm::i32vec2 coordsArea = chunk - (last_chunk-CHUNK_PER_SIDE/2);
+  return glm::compMin(coordsArea) < 0 || glm::compMax(coordsArea) > CHUNK_PER_SIDE-1;
+}
+
+void Terrain::ComputeNormals(glm::i32vec2 chunk_coords, Vertexun * vertices, unsigned int * indices, unsigned int offset){
+/*
+  // Bottom left point of chunk_coords
+  glm::vec2 firstPoint = GetPoint(chunk_coords);
+
+  // Bottom left chunk of loaded area
+  glm::i32vec2 firstChunk = (last_chunk-CHUNK_PER_SIDE/2);
+  
+  // coords of chunk_coords relative to bottom left of loaded area
+  glm::i32vec2 coordsArea = chunk_coords - firstChunk;
+
+  indices_per_chunk = 2*pow(2,(CHUNK_SIZE-1)*precision) - 1;
+
+  unsigned int indices_offset = indices_per_chunk*coordsArea.y+coordsArea.x;
+  
+  std::vector<Vertex> sidesVb;
+  std::vector<Vertex> sidesIb;
+  glm::i32vec2 side;
+  glm::i32vec2 dir;
+  for(unsigned int side=0; side<4; i++){                             // for each side of the chunk
+      dir = surroundings[side];
+      if(glm::compMin(coordsArea+dir) < 0                           
+          || glm::comMax(coordsArea+dir) > CHUNK_PER_SIDE-1){        // if there is no chunk loaded on this side
+    
+        surrChunk = Surround(chunk_coords,side);                     // gotta compute points for that side
+        glm::vec2 start = dir*precision;
+        for(unsigned int j = 0; j<(CHUNK_SIZE-1)*precision; j++){
+          firstPoint+sdir
+        }
+      
+      }
+      else{                                     // chunk is loaded
+                                                // lets get the relevant points
+        
+      
+      }
+      
+
+  }
+  Vertexun* surroundingVb;
+  //ComputeSurroundingVb(glm::i32vec2& start, surroundingVb);
+
+
+
+
+  unsigned int i1 = m_Indices[0];
+  unsigned int i2 = m_Indices[1];
+  unsigned int i3;
+  glm::vec3 triangle_normal;
+  bool order = true;
+  for(unsigned int i=2;i<m_Indices.size()-1;i++){
+    if(m_Indices[i] == m_Vertices.size()){
+      // reached end of line (index == restart index)
+      i1 = m_Indices[++i];
+      i2 = m_Indices[++i];
+      i++;
+      order = true;
+    }
+    i3 = m_Indices[i];
+    // compute cross product in right order
+    if(order)
+      triangle_normal = normalize(cross(m_Vertices[i2].pos-m_Vertices[i1].pos,m_Vertices[i3].pos-m_Vertices[i1].pos));
+    else
+      triangle_normal = normalize(cross(m_Vertices[i2].pos-m_Vertices[i3].pos,m_Vertices[i1].pos-m_Vertices[i3].pos));
+    m_Vertices[i1].normal += triangle_normal;
+    m_Vertices[i2].normal += triangle_normal;
+    m_Vertices[i3].normal += triangle_normal;
+    i1 = i2;
+    i2 = i3;
+    order = !order;
+  }
+  for(unsigned int i = 0; i<m_Vertices.size();i++){
+    m_Vertices[i].normal = normalize(m_Vertices[i].normal);
+  }*/ 
 
 }
 
@@ -68,37 +159,90 @@ void Terrain::initload(glm::vec2 center){
   }
 }
 
-void Terrain::loadchunk(glm::i32vec2 coords, glm::i32vec2 replace){
+void Terrain::loadchunk(glm::i32vec2 coords, glm::i32vec2 replace, std::vector<glm::i32vec2> sides){
+
+
+  // Bottom left chunk of loaded area
+  glm::i32vec2 firstChunk = (last_chunk-CHUNK_PER_SIDE/2);
+  
+  // coords of chunk_coords relative to bottom left of loaded area
+  glm::i32vec2 coordsArea = coords - firstChunk;
 
   //printf("loading chunk %d %d in place of %d %d\n",coords.x, coords.y,replace.x,replace.y);
-  // upload
-  glm::i32vec2 temp_coords = (coords*CHUNK_SIZE)-coords;
-  int vertices_per_chunk = (CHUNK_SIZE*precision -(precision-1.0f))* (CHUNK_SIZE*precision -(precision-1.0f));
-  // Make buffer
-  Vertexun * chunk_to_load = (Vertexun*) malloc(sizeof(Vertexun) * static_cast<int>(precision*precision)*CHUNK_SIZE*CHUNK_SIZE);
+  glm::vec2 temp_coords = GetPoint(coords);
+  
+  unsigned int vPerChunk = (CHUNK_SIZE*precision -(precision-1.0f))* (CHUNK_SIZE*precision -(precision-1.0f));
+   
+  // Locate where it needs to go in the GPU memory
+  unsigned int offset = getOffset(replace);
+ // Vertexun * chunk_to_load = (Vertexun*) malloc(sizeof(Vertexun) * static_cast<int>(precision*precision)*CHUNK_SIZE*CHUNK_SIZE);
+
+  unsigned int vOffset = vPerChunk * offset;
 
   // Generate data
-  unsigned int index1 = 0;
+  unsigned int index1 = vOffset;
   float a,b;
   for(int i=0;i<=(CHUNK_SIZE-1)*precision;i++){
     for(int j=0;j<=(CHUNK_SIZE-1)*precision;j++){
       a = (float)j/precision + temp_coords.x;
       b = (float)i/precision + temp_coords.y;
-      chunk_to_load[index1++] = Vertexun( glm::vec3(a, noise.compute(a,b), b), glm::vec2(),glm::vec3());
+      m_Vertices[index1++] = Vertexun( glm::vec3(a, noise.compute(a,b), b), glm::vec2(),glm::vec3());
     }
   }
   
-  int size = vertices_per_chunk * sizeof(Vertexun);
 
-  // Locate where it needs to go in the GPU memory
-  int offset = getOffset(replace);
+  // compute normals
+  unsigned int iPerChunk = (2*(CHUNK_SIZE*precision -(precision-1.0f))-1) * (CHUNK_SIZE*precision -(precision-1.0f))-1;
+
+  unsigned int iOffset = iPerChunk*offset;
+
+  unsigned int i1 = m_Indices[iOffset];
+  unsigned int i2 = m_Indices[iOffset+1];
+  unsigned int i3;
+  glm::vec3 triangle_normal;
+  bool order = true;
+  for(unsigned int i=iOffset+2;i<iOffset+iPerChunk-1;i++){
+    if(m_Indices[i] == m_Vertices.size()){
+      // reached end of line (index == restart index)
+      i1 = m_Indices[++i];
+      i2 = m_Indices[++i];
+      i++;
+      order = true;
+    }
+    i3 = m_Indices[i];
+    // compute cross product in right order
+    if(order)
+      triangle_normal = normalize(cross(m_Vertices[i2].pos-m_Vertices[i1].pos,m_Vertices[i3].pos-m_Vertices[i1].pos));
+    else
+      triangle_normal = normalize(cross(m_Vertices[i2].pos-m_Vertices[i3].pos,m_Vertices[i1].pos-m_Vertices[i3].pos));
+    m_Vertices[i1].normal += triangle_normal;
+    m_Vertices[i2].normal += triangle_normal;
+    m_Vertices[i3].normal += triangle_normal;
+    i1 = i2;
+    i2 = i3;
+    order = !order;
+  }
+  for(unsigned int i = vOffset; i<vOffset+vPerChunk;i++){
+    m_Vertices[i].normal = normalize(m_Vertices[i].normal);
+  } 
+  
+  
+  // compute normals for borders
+  for(int s=0;s<sides.size();s++){
+    
+  }
+    
+
+  int size = vPerChunk * sizeof(Vertexun);
+
    
-    //update buffermap
-   
+  //update buffermap
   buffer_map[offset] = coords;
-  offset*=size;
+  unsigned int gpuOffset=size*offset;
+
+  // upload
   BindVertexBuffer();
-  GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, size, chunk_to_load));
+  GLCall(glBufferSubData(GL_ARRAY_BUFFER, gpuOffset, size, &m_Vertices[vOffset]));
 
 }
 
@@ -107,7 +251,7 @@ int Terrain::getOffset(glm::i32vec2 coords){
      if(buffer_map[i] == coords)
       return i;
   } 
-  printf("[ERROR] Chunk %d %d is not in buffer map \n",coords.x, coords.y);
+  //printf("[ERROR] Chunk %d %d is not in buffer map \n",coords.x, coords.y);
   return -1;
 }
 
@@ -122,11 +266,13 @@ void Terrain::load(glm::vec2 coords){
   //printf("last_chunk: %d %d \n",last_chunk.x, last_chunk.y);
   //printf("direction: %d %d \n",direction.x, direction.y);
 
-    glm::i32vec2 add = direction * (RENDER_DISTANCE+1);
-    glm::i32vec2 remove = direction * (-1)*RENDER_DISTANCE;
-    for (int i = -RENDER_DISTANCE; i < RENDER_DISTANCE+1; i++)
-      loadchunk(last_chunk + add + glm::i32vec2(direction.y * i, direction.x * i), last_chunk + remove + glm::i32vec2(direction.y * i, direction.x * i));
+    std::vector<glm::i32vec2> sides;
+
     last_chunk = chunk_coords;
+    glm::i32vec2 add = direction * (RENDER_DISTANCE);
+    glm::i32vec2 remove = direction * (-1)*(RENDER_DISTANCE+1);
+    for (int i = -RENDER_DISTANCE; i < RENDER_DISTANCE+1; i++)
+      loadchunk(last_chunk + add + glm::i32vec2(direction.y * i, direction.x * i), last_chunk + remove + glm::i32vec2(direction.y * i, direction.x * i),sides);
   
   
   }

@@ -1,8 +1,8 @@
 #include "NoiseGen.h"
 
 NoiseGen::NoiseGen(){
-  zoom = 50.0f;
-  nbOctave = 6;
+  zoom = 5.0f;
+  nbOctave = 8;
   lacunarity = 2.0f;
   persistence = 0.5f;
   seed = 69;
