@@ -84,7 +84,7 @@ void Model<T>::ComputeNormals(){
   unsigned int i3;
   glm::vec3 triangle_normal;
   bool order = true;
-  for(unsigned int i=2;i<m_Indices.size();i++){
+  for(unsigned int i=2;i<m_Indices.size()-1;i++){
     if(m_Indices[i] == m_Vertices.size()){
       // reached end of line (index == restart index)
       i1 = m_Indices[++i];
@@ -116,9 +116,7 @@ template <class T>
 void Model<T>::Init(unsigned int renderType, std::string shaderPath)
 {
   m_RendererType = renderType;
-  m_Layout.Push<float>(3);
-  m_Layout.Push<float>(2);
-  m_Layout.Push<float>(3);
+  Push();
 
   m_Va = new VertexArray();
   m_Vb = new VertexBuffer((const void *) &m_Vertices[0], m_Vertices.size() *  sizeof(T));
