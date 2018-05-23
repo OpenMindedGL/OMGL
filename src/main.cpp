@@ -81,7 +81,6 @@ int init(){
   GLCall(glDepthFunc(GL_LESS));
 }
 
-
 int main(void){
 
   init();

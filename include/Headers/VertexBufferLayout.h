@@ -29,13 +29,11 @@ public :
 	VertexBufferLayout()
 		: m_Stride(0) {}
 
-        template<typename T>
-          void Push(unsigned int count);
-
+    template<typename T>
+	void Push(unsigned int count);
 
 	inline const std::vector <VertexBufferElement > GetElements() const { return m_Elements; }
 	inline unsigned int GetStride() const { return m_Stride; }
-
 };
 
 

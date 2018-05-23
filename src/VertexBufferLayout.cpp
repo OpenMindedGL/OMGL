@@ -1,4 +1,4 @@
-/*#include "VertexBufferLayout.h"
+#include "VertexBufferLayout.h"
 
 template<>
 void VertexBufferLayout::Push<float>(unsigned int count) {
@@ -17,5 +17,3 @@ void VertexBufferLayout::Push<unsigned char>(unsigned int count) {
   m_Elements.push_back({ GL_UNSIGNED_BYTE, count, GL_TRUE });
   m_Stride += count * VertexBufferElement::GetSizeOfType(GL_UNSIGNED_BYTE);
 }
-*/
-
