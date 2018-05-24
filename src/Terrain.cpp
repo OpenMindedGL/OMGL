@@ -14,8 +14,6 @@ Terrain::Terrain(glm::vec2 center){
   Init(GL_TRIANGLE_STRIP, "shaders/Terrain.shader");
 }
 
-
-
 void Terrain::compute_indices(){
   int scale = CHUNK_SIZE*precision -(precision-1.0f);
   for(unsigned int k=0;k<CHUNK_PER_SIDE*CHUNK_PER_SIDE;k++){

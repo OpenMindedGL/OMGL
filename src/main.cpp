@@ -30,6 +30,7 @@
 #include "VertexBufferLayout.h"
 #include "Texture.h"
 #include "Terrain.h"
+#include "Object.h"
 
 
 using namespace glm;
@@ -87,9 +88,14 @@ int main(void){
   Renderer renderer(*window, WIDTH, HEIGHT);
 
   glm::vec3 pos = renderer.getCameraPosition();
-  Terrain t(glm::vec2(pos.x,pos.z));
+  /*Terrain t(glm::vec2(pos.x,pos.z));
   Cube c;
-  c.Init(GL_TRIANGLES, "shaders/Cube.shader");
+  c.Init(GL_TRIANGLES, "shaders/Cube.shader");*/
+  Object o("res/objects/dodge/CHALLENGER71.obj");
+  o.Init(GL_TRIANGLE_STRIP, "shaders/Terrain.shader");
+  //o.Rotation(90.0f, vec3(0.0f, 0.0f, 1.0f));
+  //GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
@@ -97,11 +103,12 @@ int main(void){
 
     pos = renderer.getCameraPosition();
     //printf("x:%f y:%f \n",pos.x,pos.z);
-    t.load(glm::vec2(pos.x,pos.z));
+    //t.load(glm::vec2(pos.x,pos.z));
 
 
-    renderer.Draw<Vertexun>(c);
-    renderer.Draw<Vertexun>(t);
+   // renderer.Draw<Vertexun>(c);
+   // renderer.Draw<Vertexun>(t);
+	renderer.Draw<Vertexun>(o);
 
 
     /* Swap frint and back buffers */

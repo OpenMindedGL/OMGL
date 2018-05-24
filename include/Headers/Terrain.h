@@ -13,7 +13,6 @@
 #define TERRAIN_SZ (CHUNK_PER_SIDE*CHUNK_SIZE)
 
 
-
 class Terrain : public Model<Vertexun>
 {
 

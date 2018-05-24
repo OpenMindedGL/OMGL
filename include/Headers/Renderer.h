@@ -30,7 +30,7 @@ public :
 
 	void Clear() const;
 	void Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader);
-	void Draw(Cube cube);
+	//void Draw(Cube cube);
 
         template <class T>
 	void Draw(Model<T> model);

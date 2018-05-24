@@ -118,7 +118,7 @@ void Model<T>::Init(unsigned int renderType, std::string shaderPath)
   Push();
 
   m_Va = new VertexArray();
-  m_Vb = new VertexBuffer((const void *) &m_Vertices[0], m_Vertices.size() *  sizeof(T));
+  m_Vb = new VertexBuffer((const void *) &m_Vertices[0], m_Vertices.size() * sizeof(T));
   m_Shader = new Shader(shaderPath);
 
   m_Va->AddBuffer(*m_Vb, m_Layout);
