@@ -88,9 +88,9 @@ int main(void){
   Renderer renderer(*window, WIDTH, HEIGHT);
 
   glm::vec3 pos = renderer.getCameraPosition();
-  /*Terrain t(glm::vec2(pos.x,pos.z));
+  Terrain t(glm::vec2(pos.x,pos.z));
   Cube c;
-  c.Init(GL_TRIANGLES, "shaders/Cube.shader");*/
+  c.Init(GL_TRIANGLES, "shaders/Cube.shader");
   Object o("nice.obj");
   o.Init(GL_TRIANGLES, "shaders/Terrain.shader");
   o.Rotation(180.0f, vec3(1.0f, 0.0f, 0.0f));
