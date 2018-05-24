@@ -91,9 +91,9 @@ int main(void){
   /*Terrain t(glm::vec2(pos.x,pos.z));
   Cube c;
   c.Init(GL_TRIANGLES, "shaders/Cube.shader");*/
-  Object o("res/objects/dodge/CHALLENGER71.obj");
-  o.Init(GL_TRIANGLE_STRIP, "shaders/Terrain.shader");
-  //o.Rotation(90.0f, vec3(0.0f, 0.0f, 1.0f));
+  Object o("nice.obj");
+  o.Init(GL_TRIANGLES, "shaders/Terrain.shader");
+  o.Rotation(180.0f, vec3(1.0f, 0.0f, 0.0f));
   //GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
 
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
