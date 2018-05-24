@@ -38,16 +38,15 @@ class Model
     glm::mat4 m_Position; 
     glm::mat4 m_Rotation;
     
-
-
     void Push();
+
   public: 
 
     Model();
     Model(unsigned int renderType, std::vector<T>& positions, std::vector<unsigned int>& indices, std::string shaderPath);
 
-      //void initTexture(const std::string name, unsigned int id);
-      void Bind();
+    //void initTexture(const std::string name, unsigned int id);
+    void Bind();
     void Unbind();
 
     //SETTER
@@ -119,7 +118,7 @@ void Model<T>::Init(unsigned int renderType, std::string shaderPath)
   Push();
 
   m_Va = new VertexArray();
-  m_Vb = new VertexBuffer((const void *) &m_Vertices[0], m_Vertices.size() *  sizeof(T));
+  m_Vb = new VertexBuffer((const void *) &m_Vertices[0], m_Vertices.size() * sizeof(T));
   m_Shader = new Shader(shaderPath);
 
   m_Va->AddBuffer(*m_Vb, m_Layout);
@@ -133,6 +132,11 @@ void Model<T>::Init(unsigned int renderType, std::string shaderPath)
   m_Shader->Unbind();
 }
 
+/*template <class T>
+void Model<T>::Push()
+{
+  m_Layout.Push<float>(3);
+}*/
 
 template <class T>
 Model<T>::Model()

@@ -19,9 +19,6 @@ class Cube;
 template <class T>
 class Model;
 
-
-
-
 class Renderer
 {
 private : 
@@ -33,7 +30,7 @@ public :
 
 	void Clear() const;
 	void Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader);
-	void Draw(Cube cube);
+	//void Draw(Cube cube);
 
         template <class T>
 	void Draw(Model<T> model);
@@ -56,13 +53,13 @@ void Renderer::Draw(Model<T> model)
 
 	model.Bind();
 
-        if(model.GetRendererType() == GL_TRIANGLE_STRIP){
-          GLCall(glEnable(GL_PRIMITIVE_RESTART));
-          GLCall(glPrimitiveRestartIndex(model.GetVertices().size()));
-        }
-        else{
-          GLCall(glDisable(GL_PRIMITIVE_RESTART));
-        }
+    if(model.GetRendererType() == GL_TRIANGLE_STRIP){
+      GLCall(glEnable(GL_PRIMITIVE_RESTART));
+      GLCall(glPrimitiveRestartIndex(model.GetVertices().size()));
+    }
+    else{
+      GLCall(glDisable(GL_PRIMITIVE_RESTART));
+    }
 
 	model.SetShaderUniformMat4f("u_MVP", mvp);
 	model.SetShaderUniformMat4f("u_M", model.GetModelMatrix());
