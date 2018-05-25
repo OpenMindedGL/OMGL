@@ -32,7 +32,7 @@ class Model
     IndexBuffer * m_Ib;
 
     Shader * m_Shader;
-    Texture m_Texture;
+    Texture * m_Texture;
 
     glm::mat4 m_ModelMatrix;
     glm::mat4 m_Position; 
@@ -46,8 +46,8 @@ class Model
     Model();
     Model(unsigned int renderType, std::vector<T>& positions, std::vector<unsigned int>& indices, std::string shaderPath);
 
-      //void initTexture(const std::string name, unsigned int id);
-      void Bind();
+    void initTexture(const std::string name, unsigned int id);
+    void Bind();
     void Unbind();
 
     //SETTER
@@ -74,6 +74,7 @@ class Model
     inline glm::mat4 GetModelMatrix() const { return m_ModelMatrix; }
     inline std::vector<T> GetVertices() const { return m_Vertices; }
     inline std::vector<unsigned int> GetIndices() const { return m_Indices; }
+    inline Texture* GetTexture() const { return m_Texture; }
 };
 
 template <class T>
@@ -187,7 +188,7 @@ void Model<T>::SetShader(const std::string path)
 template <class T>
 void Model<T>::SetTexture(const std::string path)
 {
-	Texture texture(path);
+	m_Texture = new Texture(path);
 }
 
 template <class T>
@@ -218,13 +219,15 @@ template <class T>
 void Model<T>::Upload(){
         (*m_Vb).Upload();
 }
-/*void Model<T>::initTexture(const std::string name, unsigned int id)
+
+template <class T>
+void Model<T>::initTexture(const std::string name, unsigned int id)
 {
-	m_Shader.Bind();
-	m_Texture.Bind(id);
-	m_Shader.setUniform1i(name, id);
-	m_Texture.Unbind();
-	m_Shader.Unbind();
-}*/
+	m_Shader->Bind();
+	m_Texture->Bind(id);
+	m_Shader->SetUniform1i(name, id);
+//	m_Texture->Unbind();
+	m_Shader->Unbind();
+}
 
 #endif

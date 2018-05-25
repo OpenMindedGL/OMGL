@@ -68,6 +68,7 @@ void Renderer::Draw(Model<T> model)
 	model.SetShaderUniformMat4f("u_M", model.GetModelMatrix());
 	model.SetShaderUniformMat4f("u_V", m_Camera->GetView());
 
+
 	GLCall(glDrawElements(model.GetRendererType(), model.GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
 
 	model.Unbind();

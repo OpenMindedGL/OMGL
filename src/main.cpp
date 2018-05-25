@@ -1,6 +1,7 @@
 // Allow vec3(1,2,3).xz
 //#define GLM_SWIZZLE
 
+
 //Includes necessaires
 #include <stdio.h>
 #include <stdlib.h>
@@ -89,8 +90,9 @@ int main(void){
 
   glm::vec3 pos = renderer.getCameraPosition();
   Terrain t(glm::vec2(pos.x,pos.z));
-  Cube c;
-  c.Init(GL_TRIANGLES, "shaders/Cube.shader");
+  Cube c("shaders/Cube.shader");
+  c.SetTexture("textures/gravel.jpg");
+  c.initTexture("u_TextureSampler", 0);
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
@@ -111,7 +113,7 @@ int main(void){
     /* Poll for and process envents */
     glfwPollEvents();
   }
-
+  //glDeleteTextures(1,c.GetTexture()->m_RendererID);
   glfwTerminate();
   return 0;
 }

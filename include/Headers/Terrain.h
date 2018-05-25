@@ -1,5 +1,6 @@
 #ifndef Terrain_H
 #define Terrain_H
+
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
