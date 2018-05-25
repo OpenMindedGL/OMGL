@@ -8,9 +8,7 @@ OBJ_FILES := $(patsubst $(SRC_DIR)/%.cpp,$(OBJ_DIR)/%.o,$(SRC_FILES)) $(foreach 
 H_DIR := include/Headers
 LIB_I := $(foreach lib_dir,$(LIB_DIRS), -I./$(lib_dir))
 LIB_FLAGS := $(foreach lib_dir,$(LIB_DIRS), -L$(lib_dir))
-CFLAGS = -Wall -g -std=c++11
-LIBS = $(LIB_FLAGS) -lGLEW -lglfw -lGL 
-LDFLAGS := -Llib/SOIL -lGLEW -lglfw -lGL 
+LDFLAGS := -lGLEW -lglfw -lGL 
 CPPFLAGS := -Wall -g -std=c++11 -I./$(H_DIR)
 #CXXFLAGS := 
 

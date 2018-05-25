@@ -91,8 +91,7 @@ int main(void){
   glm::vec3 pos = renderer.getCameraPosition();
   Terrain t(glm::vec2(pos.x,pos.z));
   Cube c("shaders/Cube.shader");
-  c.SetTexture("textures/gravel.jpg");
-  c.initTexture("u_TextureSampler", 0);
+  c.SetTexture("textures/grass.jpg", "u_TextureSampler");
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 

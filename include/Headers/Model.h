@@ -46,12 +46,13 @@ class Model
     Model();
     Model(unsigned int renderType, std::vector<T>& positions, std::vector<unsigned int>& indices, std::string shaderPath);
 
-    void initTexture(const std::string name, unsigned int id);
+    void InitTexture(const std::string name, unsigned int id);
     void Bind();
     void Unbind();
 
     //SETTER
     void SetShader(const std::string path);
+    void SetTexture(const std::string path, const std::string name, unsigned int slot=0);
     void SetTexture(const std::string path);
     void SetShaderUniformMat4f(const std::string name, glm::mat4 mvp);
 
@@ -186,9 +187,31 @@ void Model<T>::SetShader(const std::string path)
 }
 
 template <class T>
+void Model<T>::SetTexture(const std::string path, const std::string name, unsigned int slot)
+{
+  switch(Texture::ParseFormat(path)){
+    case TEX_DDS:
+      m_Texture = new DDSTexture(path);
+      break;
+    case TEX_OTHER:
+      m_Texture = new OtherTexture(path);
+      break;
+  }
+  InitTexture(name, slot);
+}
+
+template <class T>
 void Model<T>::SetTexture(const std::string path)
 {
-	m_Texture = new Texture(path);
+  // degueu
+  switch(Texture::ParseFormat(path)){
+    case TEX_DDS:
+      m_Texture = new DDSTexture(path);
+      break;
+    case TEX_OTHER:
+      m_Texture = new OtherTexture(path);
+      break;
+  }
 }
 
 template <class T>
@@ -221,7 +244,7 @@ void Model<T>::Upload(){
 }
 
 template <class T>
-void Model<T>::initTexture(const std::string name, unsigned int id)
+void Model<T>::InitTexture(const std::string name, unsigned int id)
 {
 	m_Shader->Bind();
 	m_Texture->Bind(id);
