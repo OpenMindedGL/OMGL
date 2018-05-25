@@ -1,9 +1,11 @@
 #include "Cube.h"
 
-Cube::Cube() {
+Cube::Cube(glm::vec3 foot)
+: GravityObject(foot){
+
 
 	m_Vertices = {
-		Vertexun(glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		/*Vertexun(glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
 		Vertexun(glm::vec3(-1.0f,-1.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
 		Vertexun(glm::vec3(-1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
 		Vertexun(glm::vec3( 1.0f, 1.0f,-1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
@@ -11,9 +13,24 @@ Cube::Cube() {
 		Vertexun(glm::vec3( 1.0f,-1.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
 		Vertexun(glm::vec3( 1.0f,-1.0f,-1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
 		Vertexun(glm::vec3( 1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f))
+	};*/
+                Vertexun(glm::vec3(GetFoot().x-1.0f,GetFoot().y, GetFoot().z-1.0f),
+                         glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		Vertexun(glm::vec3(GetFoot().x-1.0f,GetFoot().y,GetFoot().z+1.0f),
+                         glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		Vertexun(glm::vec3(GetFoot().x-1.0f,GetFoot().y+2.0f,GetFoot().z+1.0f),
+                         glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		Vertexun(glm::vec3(GetFoot().x+1.0f,GetFoot().y+2.0f,GetFoot().z-1.0f),
+                         glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		Vertexun(glm::vec3(GetFoot().x-1.0f,GetFoot().y+2.0f,GetFoot().z-1.0f),
+                         glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		Vertexun(glm::vec3(GetFoot().x+1.0f,GetFoot().y,GetFoot().z+1.0f),
+                         glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		Vertexun(glm::vec3(GetFoot().x+1.0f,GetFoot().y,GetFoot().z-1.0f),
+                         glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),
+		Vertexun(glm::vec3(GetFoot().x+1.0f,GetFoot().y+2.0f,GetFoot().z+1.0f),
+                         glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f))
 	};
-
-
 
 	m_Indices = {
 		0, 1, 2,

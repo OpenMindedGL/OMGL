@@ -44,6 +44,10 @@ public :
         void Draw(std::vector<Model<T>> models);
 
         inline glm::vec3 getCameraPosition() const{ return m_Camera->getPosition(); };
+        inline void setCameraPosition(glm::vec3 new_pos) { m_Camera->setPosition(new_pos); };
+        inline void setCameraHorAngle(float new_angle) { m_Camera->setHorizontalAngle(new_angle); };
+        inline void setCameraVerAngle(float new_angle) { m_Camera->setVerticalAngle(new_angle); };
+        inline void setCameraChar(GravityObject* new_char) { m_Camera->setCharacter(new_char); };
 };
 
 template <class T>

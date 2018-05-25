@@ -28,6 +28,8 @@ class NoiseGen {
     NoiseGen();
 
     float compute(float x, float y);
+    glm::vec4 noised( glm::vec3 x );
+    float hash( glm::vec3 p );
     inline float compute(glm::vec2 a) { return compute(a.x, a.y); }
 
     inline float    GetLacunarity(){ return lacunarity; };

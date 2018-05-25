@@ -59,6 +59,8 @@ class Terrain : public Model<Vertexun>
     void load(glm::vec2 coords);
     void compute_indices();
 
+    inline NoiseGen GetNoise(){return noise;};
+
 };
 
 #endif

@@ -63,6 +63,8 @@ class Model
     void ComputeNormals();
     inline void BindVertexBuffer(){ m_Vb->Bind(); };
 
+    inline glm::mat4 GetRotation(){ return m_Rotation; };
+
 
 
     // GETTERS
