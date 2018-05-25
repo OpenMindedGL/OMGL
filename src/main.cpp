@@ -88,18 +88,30 @@ int main(void){
   Renderer renderer(*window, WIDTH, HEIGHT);
 
   glm::vec3 pos = renderer.getCameraPosition();
-  Terrain t(glm::vec2(pos.x,pos.z));
-  Cube c;
+  Terrain t(vec2(pos.x,pos.z));
+  Cube c(vec3(0.0,95.0f,0.0f));
   c.Init(GL_TRIANGLES, "shaders/Cube.shader");
+  renderer.setCameraChar(&c);
+
+  double lastTime = glfwGetTime();
+  double currentTime;
+  double tps = lastTime;
+
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
     renderer.Clear();
 
-    pos = renderer.getCameraPosition();
+    //pos = renderer.getCameraPosition();
     //printf("x:%f y:%f \n",pos.x,pos.z);
-    t.load(glm::vec2(pos.x,pos.z));
+    //t.load(vec2(pos.x,pos.z));
+    t.load(vec2((c.GetFoot()).x, (c.GetFoot()).z));
 
+    c.ApplyGravity((t.GetNoise()).compute((c.GetFoot()).x, (c.GetFoot()).z), tps, lastTime, currentTime);
+
+    /*renderer.setCameraPosition(vec3((c.GetFoot()).x + 10.0f, (c.GetFoot()).y + 6.0f, (c.GetFoot()).z + 10.0f));
+    renderer.setCameraHorAngle(pi<float>() * 5.0f /4.0f);
+    renderer.setCameraVerAngle((-1)*pi<float>()* 1.0f/12.0f);*/
 
     renderer.Draw<Vertexun>(c);
     renderer.Draw<Vertexun>(t);

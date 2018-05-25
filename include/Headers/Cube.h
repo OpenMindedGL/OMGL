@@ -1,17 +1,15 @@
 #pragma once
 
 #include "Model.h"
+#include "GravityObject.h"
 #include "Vertex.h"
 
-class Cube : public Model<Vertexun>
-{
+class Cube : public GravityObject {
 
 private : 
 
 
-
-
 public: 
-	Cube();
+	Cube(glm::vec3 foot);
 };
 

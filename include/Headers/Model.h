@@ -63,6 +63,8 @@ class Model
     void ComputeNormals();
     inline void BindVertexBuffer(){ m_Vb->Bind(); };
 
+    inline glm::mat4 GetRotation(){ return m_Rotation; };
+
 
 
     // GETTERS
@@ -84,7 +86,7 @@ void Model<T>::ComputeNormals(){
   unsigned int i3;
   glm::vec3 triangle_normal;
   bool order = true;
-  for(unsigned int i=2;i<m_Indices.size();i++){
+  for(unsigned int i=2;i<m_Indices.size()-1;i++){
     if(m_Indices[i] == m_Vertices.size()){
       // reached end of line (index == restart index)
       i1 = m_Indices[++i];
@@ -133,11 +135,6 @@ void Model<T>::Init(unsigned int renderType, std::string shaderPath)
   m_Shader->Unbind();
 }
 
-template <class T>
-void Model<T>::Push()
-{
-  m_Layout.Push<float>(3);
-}
 
 template <class T>
 Model<T>::Model()
