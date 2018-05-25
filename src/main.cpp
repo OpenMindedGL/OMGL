@@ -31,6 +31,7 @@
 #include "VertexBufferLayout.h"
 #include "Texture.h"
 #include "Terrain.h"
+#include "Skybox.h"
 
 
 using namespace glm;
@@ -92,6 +93,7 @@ int main(void){
   Terrain t(glm::vec2(pos.x,pos.z));
   Cube c("shaders/Cube.shader");
   c.SetTexture("textures/grass.jpg", "u_TextureSampler");
+  Skybox s("shaders/Skybox.shader");
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
@@ -104,6 +106,7 @@ int main(void){
 
     renderer.Draw<Vertexun>(c);
     renderer.Draw<Vertexun>(t);
+    renderer.Draw(s);
 
 
     /* Swap frint and back buffers */

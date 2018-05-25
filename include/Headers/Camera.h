@@ -36,6 +36,7 @@ public:
 	inline void ComputeMVP() { m_MVP = m_Proj * m_View * m_Model; }
 
 	inline void SetModel(glm::mat4 model) { m_Model = model; }
+	inline void SetView(glm::mat4 view) { m_View = view; }
 
 	inline glm::mat4 GetModel() const { return m_Model; }
 	inline glm::mat4 GetView() const { return m_View; }

@@ -4,14 +4,15 @@
 
 #include <string>
 #include <vector>
+#include <glm/glm.hpp>
 #include "Texture.h"
-#include "VertexBufferLayout.h"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "Vertex.h"
+#include "VertexBufferLayout.h"
 
 template <class T>
 class Model
@@ -21,6 +22,7 @@ class Model
 
     std::vector<unsigned int> m_Indices; 
     std::vector<T> m_Vertices; 
+    Texture * m_Texture;
 
   private : 
 
@@ -32,7 +34,6 @@ class Model
     IndexBuffer * m_Ib;
 
     Shader * m_Shader;
-    Texture * m_Texture;
 
     glm::mat4 m_ModelMatrix;
     glm::mat4 m_Position; 

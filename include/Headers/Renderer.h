@@ -5,6 +5,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+class Skybox;
+
 #include <vector>
 
 #include "Camera.h"
@@ -42,6 +44,8 @@ public :
    
         template <class T>
         void Draw(std::vector<Model<T>> models);
+
+        void Draw(Skybox s);
 
         inline glm::vec3 getCameraPosition() const{ return m_Camera->getPosition(); };
 };
