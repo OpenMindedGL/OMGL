@@ -30,16 +30,19 @@
 #include "VertexBufferLayout.h"
 #include "Texture.h"
 #include "Terrain.h"
+#include "Gui.h"
 
 
 using namespace glm;
 
 
-#define WIDTH 1024 
-#define HEIGHT 768
+#define WIDTH 1920 
+#define HEIGHT 1080
 
 int init();
 GLFWwindow* window;
+
+Gui gui;
 
 int init(){
 
@@ -85,6 +88,7 @@ int init(){
 int main(void){
 
   init();
+  gui.Init(window);
   Renderer renderer(*window, WIDTH, HEIGHT);
 
   glm::vec3 pos = renderer.getCameraPosition();
@@ -97,11 +101,15 @@ int main(void){
   double currentTime;
   double tps = lastTime;
 
+
+
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
-    renderer.Clear();
 
+    renderer.Clear();
+    
+    gui.Draw();
     //pos = renderer.getCameraPosition();
     //printf("x:%f y:%f \n",pos.x,pos.z);
     //t.load(vec2(pos.x,pos.z));

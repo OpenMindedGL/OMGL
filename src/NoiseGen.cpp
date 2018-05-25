@@ -1,8 +1,11 @@
 #include "NoiseGen.h"
+#include "Gui.h"
+
+Gui gui;
 
 NoiseGen::NoiseGen(){
   zoom = 50.0f;
-  nbOctave = 8;
+  nbOctave = 2;
   lacunarity = 2.0f;
   persistence = 0.5f;
   seed = 69;
@@ -14,18 +17,19 @@ NoiseGen::NoiseGen(){
   mix.SetNoiseType(FastNoise::Perlin); // Set the desired
                                        // noise type
   mix.SetFrequency(mix_freq);*/
-  simplex.SetNoiseType(FastNoise::Cubic); // Set the
-                                       //desired noise type
+  simplex.SetNoiseType(FastNoise::Simplex); // Set the
+  /*                                     //desired noise type
   for(unsigned int k=0;k < nbOctave;k++){
     FastNoise temp_noise(seed);
     temp_noise.SetNoiseType(FastNoise::Simplex);
     temp_noise.SetFrequency(pow(lacunarity, k) * 0.01f * (1.0f/zoom) );
     simplex_fractal.push_back(temp_noise);
-  }
+  }*/
   
 }
 
 float NoiseGen::hash( glm::vec3 p){
+  //return simplex.GetNoise(p.x*20.0f,p.y*20.0f,p.z*20.0f);
     //return glm::fract( n*17.0f*glm::fract( n*0.3183099f ) );
     p  = 50.0f*glm::fract( p*0.3183099f + glm::vec3(0.71f,0.113f,0.419f));
     return -1.0f+2.0f*glm::fract( p.x*p.y*p.z*(p.x+p.y+p.z) );
@@ -69,7 +73,10 @@ glm::vec4 NoiseGen::noised(glm::vec3 x){
 }
 
 float NoiseGen::compute(float x, float y){
-  glm::vec3 r(x, simplex.GetNoise(x*10,y*10),y);
+  //return hash(glm::vec3(x,0,y*0.0001));
+  //return simplex.GetNoise(x*20.0f,y*20.0f);
+  //glm::vec3 r(x, simplex.GetNoise(x*0.1f,y*0.1f),y);
+  glm::vec3 r(x*5.0f, 0.0f,y*5.0f);
   glm::mat3 m3( 0.0f,  0.8f,  0.6f,
                -0.8f,  0.36f, -0.48f,
                -0.6f, -0.48f,  0.64f );
@@ -90,10 +97,10 @@ float NoiseGen::compute(float x, float y){
     a += b*n.x;          // accumulate values		
     d += b*m*n2;
     b *= s;
-    r = ((float)(pow(f,i) / zoom))*m3*r;
-    m = ((float)(pow(f,i) / zoom))*m3i*m;
+    r = f*m3*r;
+    m = f*m3i*m;
   }
-  return d.x*d.y*d.z*a*zoom;      // *(1.0f/3.0f) //vec4( a, d );
+  return d.x*d.y*d.z*a;      // *(1.0f/3.0f) //vec4( a, d );
 
   /*float a,b,c;
   a = 0;

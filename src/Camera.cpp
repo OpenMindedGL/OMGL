@@ -3,11 +3,10 @@
 #include "GravityObject.h"
 
 #include <iostream>
-#include <GL/glut.h>
 
 
 Camera::Camera(GLFWwindow & window, int w, int h)
-	: m_Window(window), m_HorizontalAngle(glm::pi<float>()), m_VerticalAngle(20.0f),
+	: m_Window(window), m_HorizontalAngle(glm::pi<float>()), m_VerticalAngle(glm::pi<float>()),
           m_InitialFoV(45.0f), m_Speed(3.0f), m_MouseSpeed(0.01f), m_Position(glm::vec3(1, 100, 1)),
           m_Model(glm::mat4(1.0)), m_View(glm::mat4(0.0)), m_MVP(glm::mat4(1.0)), m_Width(w), m_Height(h),
           m_DistFromChar(50.0f), m_AngleAroundChar(0.0f)
