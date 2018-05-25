@@ -1,6 +1,6 @@
 /*
 /*/
-!/src/*
+!/src/
 !/include/
 !/shaders/
 !/lib/

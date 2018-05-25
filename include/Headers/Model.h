@@ -135,11 +135,6 @@ void Model<T>::Init(unsigned int renderType, std::string shaderPath)
   m_Shader->Unbind();
 }
 
-template <class T>
-void Model<T>::Push()
-{
-  m_Layout.Push<float>(3);
-}
 
 template <class T>
 Model<T>::Model()
