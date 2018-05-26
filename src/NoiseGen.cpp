@@ -76,22 +76,27 @@ float NoiseGen::compute(float x, float y){
   //return hash(glm::vec3(x,0,y*0.0001));
   //return simplex.GetNoise(x*20.0f,y*20.0f);
   //glm::vec3 r(x, simplex.GetNoise(x*0.1f,y*0.1f),y);
-  glm::vec3 r(x*5.0f, 0.0f,y*5.0f);
+  float sc = gui.ptr["sc"]*0.1f;
+
+  if(gui.ptri["choose"]==1)
+    return hash(glm::vec3(x*sc,0,y*sc));
+
+  glm::vec3 r(x*sc, 0.0f,y*sc);
   glm::mat3 m3( 0.0f,  0.8f,  0.6f,
                -0.8f,  0.36f, -0.48f,
                -0.6f, -0.48f,  0.64f );
   glm::mat3 m3i( 0.0f, -0.8f, -0.6f,
                  0.8f,  0.36f, -0.48f,
                  0.6f, -0.48f,  0.64f );
-  float f = 2.0f;
-  float s = 0.5f;
-  float a = 0.0f;
-  float b = 0.5f;
+  float f = gui.ptr["f"];
+  float s = gui.ptr["s"];
+  float a = gui.ptr["a"];
+  float b = gui.ptr["b"];
   glm::vec3 d(0.0f, 0.0f, 0.0f);
   glm::mat3 m(1.0f,0.0f,0.0f,
               0.0f,1.0f,0.0f,
               0.0f,0.0f,1.0f);
-  for(int i=0; i < nbOctave; i++ ){
+  for(int i=0; i < gui.ptri["nboctave"]; i++ ){
     glm::vec4 n = (*this).noised(r);
     glm::vec3 n2(n.y, n.z, n.w); 
     a += b*n.x;          // accumulate values		

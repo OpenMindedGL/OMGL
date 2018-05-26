@@ -6,8 +6,8 @@
 
 
 Camera::Camera(GLFWwindow & window, int w, int h)
-	: m_Window(window), m_HorizontalAngle(glm::pi<float>()), m_VerticalAngle(glm::pi<float>()),
-          m_InitialFoV(45.0f), m_Speed(3.0f), m_MouseSpeed(0.01f), m_Position(glm::vec3(1, 100, 1)),
+	: m_Window(window), m_HorizontalAngle(M_PI*(-1.0f/4.0f)), m_VerticalAngle(M_PI*(-1.0f/4.0f)),
+          m_InitialFoV(45.0f), m_Speed(3.0f), m_MouseSpeed(0.01f), m_Position(glm::vec3(20, 10, 20)),
           m_Model(glm::mat4(1.0)), m_View(glm::mat4(0.0)), m_MVP(glm::mat4(1.0)), m_Width(w), m_Height(h),
           m_DistFromChar(50.0f), m_AngleAroundChar(0.0f)
 {
@@ -51,11 +51,14 @@ void Camera::ComputeMatricesFromInputs()
 	double xpos, ypos;
 	GLCall(glfwGetCursorPos(&m_Window, &xpos, &ypos));
 
-	// Reset mouse position for next frame
-	GLCall(glfwSetCursorPos(&m_Window, m_Width / 2, m_Height/ 2));
+        if(!m_CursorRelease){
+          // Reset mouse position for next frame
+          GLCall(glfwSetCursorPos(&m_Window, m_Width / 2, m_Height/ 2));
 
-	// Compute new orientation
-        Move(xpos, ypos);
+          // Compute new orientation
+
+          Move(xpos, ypos);
+        }
 
 
 	// Direction : Spherical coordinates to Cartesian coordinates conversion
@@ -103,6 +106,12 @@ void Camera::ComputeMatricesFromInputs()
         }
         if (glfwGetKey(&m_Window, GLFW_KEY_E) == GLFW_PRESS) {
           glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+        }
+        if (glfwGetKey(&m_Window, GLFW_KEY_SPACE) == GLFW_PRESS) {
+          m_CursorRelease = false;
+        }
+        if (glfwGetKey(&m_Window, GLFW_KEY_J) == GLFW_PRESS) {
+          m_CursorRelease = true;
         }
 	float FoV = m_InitialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
 

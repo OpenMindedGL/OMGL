@@ -42,7 +42,6 @@ using namespace glm;
 int init();
 GLFWwindow* window;
 
-Gui gui;
 
 int init(){
 
@@ -109,7 +108,9 @@ int main(void){
 
     renderer.Clear();
     
-    gui.Draw();
+    if(gui.GetHasChanged()){
+      t.Reload(glm::vec2(0));
+    }
     //pos = renderer.getCameraPosition();
     //printf("x:%f y:%f \n",pos.x,pos.z);
     //t.load(vec2(pos.x,pos.z));
@@ -124,6 +125,7 @@ int main(void){
     renderer.Draw<Vertexun>(c);
     renderer.Draw<Vertexun>(t);
 
+    gui.Draw();
 
     /* Swap frint and back buffers */
     glfwSwapBuffers(window);

@@ -33,6 +33,7 @@ private:
         float m_DistFromChar;
         float m_AngleAroundChar;
         GravityObject * m_Character;
+        bool m_CursorRelease;
 
 public:
 	Camera(GLFWwindow & window, int w, int h);

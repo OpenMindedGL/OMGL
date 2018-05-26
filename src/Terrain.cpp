@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_integer.hpp> 
 
 Terrain::Terrain(glm::vec2 center){
-  precision = 5.0f; // Beware of 2
+  precision = 3.0f; // Beware of 2
   initload(center); 
   compute_indices();
   Model<Vertexun>::ComputeNormals();
@@ -45,6 +45,13 @@ glm::i32vec2 Terrain::Surround(glm::i32vec2 chunk, unsigned int count){
 bool Terrain::IsLoaded(glm::i32vec2 chunk){
   glm::i32vec2 coordsArea = chunk - (last_chunk-CHUNK_PER_SIDE/2);
   return glm::compMin(coordsArea) < 0 || glm::compMax(coordsArea) > CHUNK_PER_SIDE-1;
+}
+
+void Terrain::Reload(glm::vec2 center){
+  ClearVertices();
+  initload(center);
+  Model<Vertexun>::ComputeNormals();
+  Upload();
 }
 
 void Terrain::ComputeNormals(glm::i32vec2 chunk_coords, Vertexun * vertices, unsigned int * indices, unsigned int offset){

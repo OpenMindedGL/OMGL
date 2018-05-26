@@ -76,6 +76,9 @@ class Model
     inline glm::mat4 GetModelMatrix() const { return m_ModelMatrix; }
     inline std::vector<T> GetVertices() const { return m_Vertices; }
     inline std::vector<unsigned int> GetIndices() const { return m_Indices; }
+
+
+    inline void ClearVertices() { m_Vertices.clear(); }
 };
 
 template <class T>
@@ -218,7 +221,9 @@ void Model<T>::Scale(glm::vec3 scale)
 
 template <class T>
 void Model<T>::Upload(){
-        (*m_Vb).Upload();
+  Bind();
+  m_Vb->Bind();
+  (*m_Vb).Upload();
 }
 /*void Model<T>::initTexture(const std::string name, unsigned int id)
 {
