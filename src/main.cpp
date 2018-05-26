@@ -83,18 +83,24 @@ int init(){
 }
 
 int main(void){
-
   init();
   Renderer renderer(*window, WIDTH, HEIGHT);
 
   glm::vec3 pos = renderer.getCameraPosition();
-  /*Terrain t(glm::vec2(pos.x,pos.z));
-  Cube c;
+  //Terrain t(glm::vec2(pos.x,pos.z));
+  /*Cube c;
   c.Init(GL_TRIANGLES, "shaders/Cube.shader");*/
-  Object o("res/objects/dodge/CHALLENGER71.obj");
-  o.Init(GL_TRIANGLE_STRIP, "shaders/Terrain.shader");
-  //o.Rotation(90.0f, vec3(0.0f, 0.0f, 1.0f));
+  Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl",false);
+  o.Init(GL_TRIANGLES, "shaders/Terrain.shader");
+
+  //o.Rotation(45, vec3(0.0f, 0.0f, 0.0f));
+  
+  /*o.Rotation(29.8f, vec3(1.0f, 0.0f, 0.0f));
+  o.Rotation(15.0f, vec3(0.0f, 0.0f, 1.0f));*/
+
   //GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
+  glEnable(GL_LIGHTING);
+  glEnable(GL_LIGHT0);
 
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {

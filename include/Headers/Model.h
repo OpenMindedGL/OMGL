@@ -58,8 +58,8 @@ class Model
     void Rotation(float angle, glm::vec3 axis);
     void Scale(glm::vec3 scale);
     void Upload();
-    void Init(unsigned int renderType, std::string shaderPat);
-    void ComputeNormals();
+	void Init(unsigned int renderType, std::string shaderPat);
+	void ComputeNormals();
     inline void BindVertexBuffer(){ m_Vb->Bind(); };
 
 
