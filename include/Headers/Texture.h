@@ -22,13 +22,16 @@ class Texture
     unsigned int m_Format;
 
     //  virtual
-    unsigned int Load(const std::string& path, unsigned int target = m_Target);
+    unsigned int Load(const std::string& path, unsigned int target = m_Target){}
     unsigned int LoadDDS(const std::string& path, unsigned int target = m_Target);
     unsigned int LoadOther(const std::string& path, unsigned int target = m_Target);
 
-  public: 
+    Texture(const std::string& path) : m_FilePath(path){}
+    Texture(){}
     ~Texture();
-    Texture();
+
+  public: 
+  
 
     void Bind(unsigned int slot = 0) const; 
     void Unbind() const;

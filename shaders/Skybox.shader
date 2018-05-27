@@ -13,7 +13,8 @@ uniform mat4 u_V;
   
 void main(){
   pos = vPos;
-  gl_Position =  u_MVP * vec4(vPos,1);
+  vec4 pos1 = u_MVP * vec4(vPos,1);
+  gl_Position =  pos1.xyww;
 
 }
 

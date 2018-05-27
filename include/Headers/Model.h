@@ -129,6 +129,7 @@ void Model<T>::Init(unsigned int renderType, std::string shaderPath)
 
   m_Ib = new IndexBuffer((const unsigned int *) &m_Indices[0], m_Indices.size());
 
+  m_Texture = NULL;
 
   m_Va->Unbind();
   m_Vb->Unbind();
@@ -169,6 +170,9 @@ void Model<T>::Bind()
 {
 	m_Va->Bind();
 	m_Ib->Bind();
+        if(m_Texture != NULL){
+          m_Texture->Bind();
+        }
 	m_Shader->Bind();
 }
 
@@ -250,7 +254,7 @@ void Model<T>::InitTexture(const std::string name, unsigned int id)
 	m_Shader->Bind();
 	m_Texture->Bind(id);
 	m_Shader->SetUniform1i(name, id);
-//	m_Texture->Unbind();
+	m_Texture->Unbind();
 	m_Shader->Unbind();
 }
 

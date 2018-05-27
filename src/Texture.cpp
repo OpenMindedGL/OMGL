@@ -4,11 +4,15 @@
 #include "stb_image_aug.h" 
 
 
-OtherTexture::OtherTexture(const std::string& path){
+OtherTexture::OtherTexture(const std::string& path)
+  : Texture(path)
+{
   Load(path);
 }
 
-DDSTexture::DDSTexture(const std::string& path){
+DDSTexture::DDSTexture(const std::string& path)
+  : Texture(path)
+{
   Load(path);
 }
 
@@ -75,12 +79,7 @@ Texture::~Texture()
 {
 	GLCall(glDeleteTextures(-1, &m_RendererID));
 }
-unsigned int Load(const std::string& path, unsigned int target){
-}
 
-Texture::Texture()
-{
-}
 void Texture::Bind(unsigned int slot) const
 {
 	GLCall(glActiveTexture(GL_TEXTURE0 + slot));
@@ -91,9 +90,6 @@ void Texture::Unbind() const
 {
   GLCall(glBindTexture(m_Target, 0));
 }
-
-
-
 
 
 #define FOURCC_DXT1 0x31545844 // Equivalent to "DXT1" in ASCII
@@ -142,8 +138,7 @@ unsigned int Texture::LoadDDS(const std::string& path, unsigned int target){
   /* close the file pointer */ 
   fclose(fp);
 
-  unsigned int components  = (fourCC == FOURCC_DXT1) ? 3 : 4; 
-  unsigned int m_Format;
+  //unsigned int components  = (fourCC == FOURCC_DXT1) ? 3 : 4; 
   switch(fourCC) 
   { 
     case FOURCC_DXT1: 

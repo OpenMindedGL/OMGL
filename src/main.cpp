@@ -92,8 +92,8 @@ int main(void){
   glm::vec3 pos = renderer.getCameraPosition();
   Terrain t(glm::vec2(pos.x,pos.z));
   Cube c("shaders/Cube.shader");
-  c.SetTexture("textures/grass.jpg", "u_TextureSampler");
-  Skybox s("shaders/Skybox.shader");
+  c.SetTexture("textures/grass.dds", "u_TextureSampler");
+  Skybox s;
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
@@ -106,6 +106,8 @@ int main(void){
 
     renderer.Draw<Vertexun>(c);
     renderer.Draw<Vertexun>(t);
+
+    // Always draw last
     renderer.Draw(s);
 
 

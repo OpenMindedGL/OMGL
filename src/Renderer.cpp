@@ -58,8 +58,11 @@ void Renderer::Draw(Skybox s)
 	s.SetShaderUniformMat4f("u_M", s.GetModelMatrix());
 	s.SetShaderUniformMat4f("u_V", m_Camera->GetView());
 
+        // draw skybox behind everything
+        glDepthFunc(GL_LEQUAL);
 
 	GLCall(glDrawElements(s.GetRendererType(), s.GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
-
+        
+        glDepthFunc(GL_LESS);
 	s.Unbind();
 }

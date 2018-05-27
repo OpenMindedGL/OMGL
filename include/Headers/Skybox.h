@@ -6,12 +6,17 @@
 
 class Skybox : public Cube{
 
-  private: 
-
-//    Cubemap * m_Cubemap; 
   public:
     
-    Skybox(std::string shaderPath);
+    Skybox(std::string shaderPath = "shaders/Skybox.shader", std::vector<std::string> faces = {
+        "textures/skybox_right.jpg",
+        "textures/skybox_left.jpg",
+        "textures/skybox_top.jpg",
+        "textures/skybox_bottom.jpg",
+        "textures/skybox_front.jpg",
+        "textures/skybox_back.jpg"
+        }
+    );
 };
 
 

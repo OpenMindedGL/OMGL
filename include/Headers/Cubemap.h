@@ -14,12 +14,12 @@ class Cubemap : public Texture {
   private :
 
     static const unsigned int m_Target = GL_TEXTURE_CUBE_MAP;
-    std::vector<std::string> faces;
+    std::vector<std::string> m_Faces;
 
     void LoadFaces();
   public : 
 
-    Cubemap();
+    Cubemap(std::vector<std::string> faces);
 };
 
 #endif
