@@ -18,23 +18,6 @@ Camera::Camera(GLFWwindow & window, int w, int h)
 void Camera::Move(int xpos, int ypos){
 	m_HorizontalAngle += m_MouseSpeed* float(m_Width/ 2 - xpos);
         m_VerticalAngle += m_MouseSpeed* float(m_Height / 2 - ypos);
-
-/*  if (glfwGetKey(&m_Window, GLFW_KEY_C) == GLFW_PRESS) {
-    if (glfwGetKey(&m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-      m_DistFromChar -= 0.2f;
-    else 
-      m_DistFromChar += 0.2f;
-  }
-
-    m_VerticalAngle = m_MouseSpeed * *//*float(m_Height/ 2 -*//* ypos;
-    m_AngleAroundChar = m_MouseSpeed **/ /*float(m_Width/ 2 -*/ /*xpos;
-    float HDist = m_DistFromChar * glm::cos(glm::radians(m_VerticalAngle));
-    float VDist = m_DistFromChar * glm::sin(glm::radians(m_VerticalAngle));
-    float Xoffset = HDist * glm::sin(glm::radians(m_AngleAroundChar));
-    float Zoffset = HDist * glm::cos(glm::radians(m_AngleAroundChar));
-    m_Position.x = ((*m_Character).GetFoot()).x + Xoffset; 
-    m_Position.y = ((*m_Character).GetFoot()).y + VDist;
-    m_Position.z = ((*m_Character).GetFoot()).z + Zoffset;*/
 }
 
 void Camera::ComputeMatricesFromInputs()
@@ -62,18 +45,22 @@ void Camera::ComputeMatricesFromInputs()
 
 
 	// Direction : Spherical coordinates to Cartesian coordinates conversion
-	glm::vec3 direction(
-		cos(m_VerticalAngle) * sin(m_HorizontalAngle),
-		sin(m_VerticalAngle),
-		cos(m_VerticalAngle) * cos(m_HorizontalAngle)
-	);
-
+	m_Position = glm::vec3(
+            cos(m_VerticalAngle) * sin(m_HorizontalAngle),
+            sin(m_VerticalAngle),
+            cos(m_VerticalAngle) * cos(m_HorizontalAngle) 
+            );
+        
+        glm::vec3 direction = -m_Position;
+        m_Position*=10.0f;
+        m_Position+=m_Character->GetFoot();
 	// Right vector
 	glm::vec3 right = glm::vec3(
 		sin(m_HorizontalAngle - 3.14f / 2.0f),
 		0,
 		cos(m_HorizontalAngle - 3.14f / 2.0f)
 	);
+        
 
 	// Up vector
         glm::vec3 up = glm::cross(right, direction);
@@ -83,22 +70,27 @@ void Camera::ComputeMatricesFromInputs()
           if (glfwGetKey(&m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
             m_Position.y += deltaTime * m_Speed;
           else 
-            m_Position += direction * deltaTime * m_Speed ;
+            m_Character->Translate(glm::vec3(1.0f,0.0f,0.0f) * deltaTime * m_Speed );
+          m_Character->SetFoot(m_Character->GetFoot()+glm::vec3(1.0f,0.0f,0.0f)* deltaTime * m_Speed);
         }
 
         if (glfwGetKey(&m_Window, GLFW_KEY_S) == GLFW_PRESS) {
           if (glfwGetKey(&m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
             m_Position.y -= deltaTime * m_Speed;
           else
-            m_Position -= direction * deltaTime * m_Speed;
+            m_Character->Translate(glm::vec3(-1.0f,0.0f,0.0f)* deltaTime * m_Speed);
+          m_Character->SetFoot(m_Character->GetFoot()+glm::vec3(-1.0f,0.0f,0.0f)* deltaTime * m_Speed);
         }
 
         if (glfwGetKey(&m_Window, GLFW_KEY_D) == GLFW_PRESS) {
-          m_Position += right * deltaTime * m_Speed;
+          m_Character->Translate(glm::vec3(0.0f,0.0f,1.0f)* deltaTime * m_Speed);
+          m_Character->SetFoot(m_Character->GetFoot()+glm::vec3(0.0f,0.0f,1.0f)* deltaTime * m_Speed);
         }
 
         if (glfwGetKey(&m_Window, GLFW_KEY_A) == GLFW_PRESS) {
-          m_Position -= right * deltaTime * m_Speed;
+          m_Character->Translate(glm::vec3(0.0f,0.0f,-1.0f)* deltaTime * m_Speed);
+          m_Character->SetFoot(m_Character->GetFoot()+glm::vec3(0.0f,0.0f,-1.0f)* deltaTime * m_Speed);
+
         }
 
         if (glfwGetKey(&m_Window, GLFW_KEY_R) == GLFW_PRESS) {
@@ -119,8 +111,8 @@ void Camera::ComputeMatricesFromInputs()
 	m_Proj = glm::perspective(glm::radians(FoV), 4.0f / 3.0f, 0.1f, 1000.0f);
 	// Camera matrix
 	m_View = glm::lookAt(
-		m_Position,             // Camera is here
-		m_Position + direction, // and looks here : at the same position, plus "direction"
+		m_Position+m_Character->GetFoot(),             // Camera is here
+		m_Character->GetFoot(), // and looks here : at the same position, plus "direction"
 		up                  // Head is up (set to 0,-1,0 to look upside-down)
 	);
 	// For the next frame, the "last time" will be "now"

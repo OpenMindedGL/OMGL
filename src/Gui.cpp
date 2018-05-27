@@ -17,6 +17,7 @@ void Gui::InitPointers(){
     {"zoom", 2.0f},
     {"lacunarity", 2.0f},
     {"persistence", 2.0f},
+    {"hash freq", 2.0f},
     {"f", 2.2f},
     {"s", 0.5f},
     {"a", 0.0f},
@@ -51,11 +52,12 @@ void Gui::DrawElements(){
   //ImGui::SliderFloat("persistence", &ptr["persistence"], -1.0f, 1.0f);      
   //ImGui::SliderFloat("flatcoef", &ptr["flatcoef"], 0.0f, 5.0f);      
   //ImGui::SliderFloat("mod freq", &ptr["modfreq"], 0.0f, 0.01f);
+  ImGui::SliderFloat("hash freq", &ptr["hash freq"], 0.0f, 10.0f);
   ImGui::SliderFloat("f", &ptr["f"], 0.0f, 10.0f);
   ImGui::SliderFloat("s", &ptr["s"], 0.0f, 1.0f);
   ImGui::SliderFloat("a", &ptr["a"], 0.0f, 10.0f);
   ImGui::SliderFloat("b", &ptr["b"], 0.0f, 1.0f);
-  ImGui::SliderFloat("sc", &ptr["sc"], 0.0f, 0.1f);
+  ImGui::SliderFloat("sc", &ptr["sc"], 0.0f, 1.0f);
   ImGui::SliderInt("a=1, b=2, c=3", &ptri["choose"], 0, 3);
   ImGui::Text("Press SPACE while you need to move");
   ImGui::Text("the camera, J to release it");

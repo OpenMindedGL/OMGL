@@ -29,7 +29,7 @@ NoiseGen::NoiseGen(){
 }
 
 float NoiseGen::hash( glm::vec3 p){
-  //return simplex.GetNoise(p.x*20.0f,p.y*20.0f,p.z*20.0f);
+  return simplex.GetNoise(p.x,p.y,p.z);
     //return glm::fract( n*17.0f*glm::fract( n*0.3183099f ) );
     p  = 50.0f*glm::fract( p*0.3183099f + glm::vec3(0.71f,0.113f,0.419f));
     return -1.0f+2.0f*glm::fract( p.x*p.y*p.z*(p.x+p.y+p.z) );
@@ -77,6 +77,7 @@ float NoiseGen::compute(float x, float y){
   //return simplex.GetNoise(x*20.0f,y*20.0f);
   //glm::vec3 r(x, simplex.GetNoise(x*0.1f,y*0.1f),y);
   float sc = gui.ptr["sc"]*0.1f;
+  simplex.SetFrequency(gui.ptr["hash freq"]);
 
   if(gui.ptri["choose"]==1)
     return hash(glm::vec3(x*sc,0,y*sc));
