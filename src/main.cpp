@@ -32,6 +32,7 @@
 #include "Texture.h"
 #include "Terrain.h"
 #include "Skybox.h"
+#include "Tree.h"
 
 
 using namespace glm;
@@ -94,6 +95,7 @@ int main(void){
   Cube c("shaders/Cube.shader");
   c.SetTexture("textures/grass.dds", "u_TextureSampler");
   Skybox s;
+  Tree tr;
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
@@ -104,8 +106,9 @@ int main(void){
     t.load(glm::vec2(pos.x,pos.z));
 
 
-    renderer.Draw<Vertexun>(c);
+    //renderer.Draw<Vertexun>(c);
     renderer.Draw<Vertexun>(t);
+    renderer.Draw<Vertexun>(tr);
 
     // Always draw last
     renderer.Draw(s);
