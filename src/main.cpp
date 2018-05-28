@@ -88,8 +88,9 @@ int main(void){
 
   glm::vec3 pos = renderer.getCameraPosition();
   //Terrain t(glm::vec2(pos.x,pos.z));
-  /*Cube c;
-  c.Init(GL_TRIANGLES, "shaders/Cube.shader");*/
+  //Cube c;
+  //c.Init(GL_TRIANGLES, "shaders/Cube.shader");
+  
   Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl",false);
   o.Init(GL_TRIANGLES, "shaders/Terrain.shader");
 
@@ -99,8 +100,6 @@ int main(void){
   o.Rotation(15.0f, vec3(0.0f, 0.0f, 1.0f));*/
 
   //GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
-  glEnable(GL_LIGHTING);
-  glEnable(GL_LIGHT0);
 
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
@@ -109,12 +108,12 @@ int main(void){
 
     pos = renderer.getCameraPosition();
     //printf("x:%f y:%f \n",pos.x,pos.z);
-    //t.load(glm::vec2(pos.x,pos.z));
+   // t.load(glm::vec2(pos.x,pos.z));
 
-
-   // renderer.Draw<Vertexun>(c);
-   // renderer.Draw<Vertexun>(t);
-	renderer.Draw<Vertexun>(o);
+	//renderer.Draw<Vertexun>(c);
+	
+    //renderer.Draw<Vertexun>(t);	
+  renderer.Draw<Vertexun>(o);
 
 
     /* Swap frint and back buffers */
