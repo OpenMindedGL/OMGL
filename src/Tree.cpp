@@ -8,10 +8,10 @@
 #define NOISYNESS   0.6f
 #define FACES 10
 
-Tree::Tree(){
+Tree::Tree(int seed){
   noise.SetNoiseType(FastNoise::Simplex);
   noise.SetFrequency(1.0f);
-  noise.SetSeed(15);
+  noise.SetSeed(seed);
   generate(14);
   //compute_indices();
   //Model<Vertexun>::ComputeNormals();

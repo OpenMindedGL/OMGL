@@ -95,7 +95,11 @@ int main(void){
   Cube c("shaders/Cube.shader");
   c.SetTexture("textures/grass.dds", "u_TextureSampler");
   Skybox s;
-  Tree tr;
+  std::vector<Tree> tr;
+  for(unsigned int j=0;j<36;j++){
+    tr.push_back(Tree(j));
+    tr[j].Translate(glm::vec3((j/6.0f)*3,2.0f,(j%6)*3));
+  }
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
@@ -108,7 +112,9 @@ int main(void){
 
     //renderer.Draw<Vertexun>(c);
     renderer.Draw<Vertexun>(t);
-    renderer.Draw<Vertexun>(tr);
+  for(unsigned int j=0;j<30;j++){
+    renderer.Draw<Vertexun>(tr[j]);
+  }
 
     // Always draw last
     renderer.Draw(s);
