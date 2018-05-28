@@ -1,3 +1,5 @@
+#ifndef Cube_H
+#define Cube_H
 #pragma once
 
 #include "Model.h"
@@ -12,6 +14,6 @@ private :
 
 
 public: 
-	Cube();
+	Cube(std::string shaderPat);
 };
-
+#endif

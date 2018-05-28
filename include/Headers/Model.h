@@ -4,14 +4,15 @@
 
 #include <string>
 #include <vector>
+#include <glm/glm.hpp>
 #include "Texture.h"
-#include "VertexBufferLayout.h"
 #include "VertexArray.h"
 #include "VertexBuffer.h"
 #include "IndexBuffer.h"
 #include "Shader.h"
 #include "Texture.h"
 #include "Vertex.h"
+#include "VertexBufferLayout.h"
 
 template <class T>
 class Model
@@ -21,6 +22,7 @@ class Model
 
     std::vector<unsigned int> m_Indices; 
     std::vector<T> m_Vertices; 
+    Texture * m_Texture;
 
   private : 
 
@@ -32,7 +34,6 @@ class Model
     IndexBuffer * m_Ib;
 
     Shader * m_Shader;
-    Texture m_Texture;
 
     glm::mat4 m_ModelMatrix;
     glm::mat4 m_Position; 
@@ -45,12 +46,14 @@ class Model
     Model();
     Model(unsigned int renderType, std::vector<T>& positions, std::vector<unsigned int>& indices, std::string shaderPath);
 
-    //void initTexture(const std::string name, unsigned int id);
+    void InitTexture(const std::string name, unsigned int id);
+
     void Bind();
     void Unbind();
 
     //SETTER
     void SetShader(const std::string path);
+    void SetTexture(const std::string path, const std::string name, unsigned int slot=0);
     void SetTexture(const std::string path);
     void SetShaderUniformMat4f(const std::string name, glm::mat4 mvp);
 
@@ -73,6 +76,7 @@ class Model
     inline glm::mat4 GetModelMatrix() const { return m_ModelMatrix; }
     inline std::vector<T> GetVertices() const { return m_Vertices; }
     inline std::vector<unsigned int> GetIndices() const { return m_Indices; }
+    inline Texture* GetTexture() const { return m_Texture; }
 };
 
 template <class T>
@@ -125,18 +129,13 @@ void Model<T>::Init(unsigned int renderType, std::string shaderPath)
 
   m_Ib = new IndexBuffer((const unsigned int *) &m_Indices[0], m_Indices.size());
 
+  m_Texture = NULL;
 
   m_Va->Unbind();
   m_Vb->Unbind();
   m_Ib->Unbind();
   m_Shader->Unbind();
 }
-
-/*template <class T>
-void Model<T>::Push()
-{
-  m_Layout.Push<float>(3);
-}*/
 
 template <class T>
 Model<T>::Model()
@@ -170,6 +169,9 @@ void Model<T>::Bind()
 {
 	m_Va->Bind();
 	m_Ib->Bind();
+        if(m_Texture != NULL){
+          m_Texture->Bind();
+        }
 	m_Shader->Bind();
 }
 
@@ -189,9 +191,31 @@ void Model<T>::SetShader(const std::string path)
 }
 
 template <class T>
+void Model<T>::SetTexture(const std::string path, const std::string name, unsigned int slot)
+{
+  switch(Texture::ParseFormat(path)){
+    case TEX_DDS:
+      m_Texture = new DDSTexture(path);
+      break;
+    case TEX_OTHER:
+      m_Texture = new OtherTexture(path);
+      break;
+  }
+  InitTexture(name, slot);
+}
+
+template <class T>
 void Model<T>::SetTexture(const std::string path)
 {
-	Texture texture(path);
+  // degueu
+  switch(Texture::ParseFormat(path)){
+    case TEX_DDS:
+      m_Texture = new DDSTexture(path);
+      break;
+    case TEX_OTHER:
+      m_Texture = new OtherTexture(path);
+      break;
+  }
 }
 
 template <class T>
@@ -222,13 +246,15 @@ template <class T>
 void Model<T>::Upload(){
         (*m_Vb).Upload();
 }
-/*void Model<T>::initTexture(const std::string name, unsigned int id)
+
+template <class T>
+void Model<T>::InitTexture(const std::string name, unsigned int id)
 {
-	m_Shader.Bind();
-	m_Texture.Bind(id);
-	m_Shader.setUniform1i(name, id);
-	m_Texture.Unbind();
-	m_Shader.Unbind();
-}*/
+	m_Shader->Bind();
+	m_Texture->Bind(id);
+	m_Shader->SetUniform1i(name, id);
+	m_Texture->Unbind();
+	m_Shader->Unbind();
+}
 
 #endif

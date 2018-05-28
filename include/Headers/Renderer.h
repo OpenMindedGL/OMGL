@@ -5,6 +5,8 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
+class Skybox;
+
 #include <vector>
 
 #include "Camera.h"
@@ -40,6 +42,8 @@ public :
         template <class T>
         void Draw(std::vector<Model<T>> models);
 
+        void Draw(Skybox s);
+
         inline glm::vec3 getCameraPosition() const{ return m_Camera->getPosition(); };
 };
 
@@ -64,6 +68,7 @@ void Renderer::Draw(Model<T> model)
 	model.SetShaderUniformMat4f("u_MVP", mvp);
 	model.SetShaderUniformMat4f("u_M", model.GetModelMatrix());
 	model.SetShaderUniformMat4f("u_V", m_Camera->GetView());
+
 
 	GLCall(glDrawElements(model.GetRendererType(), model.GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
 

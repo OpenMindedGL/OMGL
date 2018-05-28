@@ -1,6 +1,7 @@
 // Allow vec3(1,2,3).xz
 //#define GLM_SWIZZLE
 
+
 //Includes necessaires
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,6 +32,7 @@
 #include "Texture.h"
 #include "Terrain.h"
 #include "Object.h"
+#include "Skybox.h"
 
 
 using namespace glm;
@@ -94,13 +96,10 @@ int main(void){
   Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl",false);
   o.Init(GL_TRIANGLES, "shaders/Terrain.shader");
 
-  //o.Rotation(45, vec3(0.0f, 0.0f, 0.0f));
-  
-  /*o.Rotation(29.8f, vec3(1.0f, 0.0f, 0.0f));
-  o.Rotation(15.0f, vec3(0.0f, 0.0f, 1.0f));*/
-
-  //GLCall(glPolygonMode(GL_FRONT_AND_BACK, GL_LINE));
-
+  Terrain t(glm::vec2(pos.x,pos.z));
+  Cube c("shaders/Cube.shader");
+  c.SetTexture("textures/grass.dds", "u_TextureSampler");
+  Skybox s;
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
@@ -115,6 +114,9 @@ int main(void){
     //renderer.Draw<Vertexun>(t);	
   renderer.Draw<Vertexun>(o);
 
+    // Always draw last
+    renderer.Draw(s);
+
 
     /* Swap frint and back buffers */
     glfwSwapBuffers(window);
@@ -122,7 +124,7 @@ int main(void){
     /* Poll for and process envents */
     glfwPollEvents();
   }
-
+  //glDeleteTextures(1,c.GetTexture()->m_RendererID);
   glfwTerminate();
   return 0;
 }

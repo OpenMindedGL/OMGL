@@ -1,5 +1,6 @@
 #include "Renderer.h"
 
+#include "Skybox.h"
 #include "VertexArray.h"
 #include "IndexBuffer.h"
 #include "Shader.h"
@@ -35,3 +36,33 @@ void Renderer::Draw(const VertexArray& va, const IndexBuffer& ib, Shader& shader
 
 }
 
+void Renderer::Draw(Skybox s)
+{
+	m_Camera->ComputeMatricesFromInputs();
+	m_Camera->SetModel(s.GetModelMatrix());
+	m_Camera->SetView(glm::mat4(glm::mat3(m_Camera->GetView())));
+	m_Camera->ComputeMVP();
+	glm::mat4 mvp = m_Camera->GetMVP();
+
+	s.Bind();
+
+        if(s.GetRendererType() == GL_TRIANGLE_STRIP){
+          GLCall(glEnable(GL_PRIMITIVE_RESTART));
+          GLCall(glPrimitiveRestartIndex(s.GetVertices().size()));
+        }
+        else{
+          GLCall(glDisable(GL_PRIMITIVE_RESTART));
+        }
+
+	s.SetShaderUniformMat4f("u_MVP", mvp);
+	s.SetShaderUniformMat4f("u_M", s.GetModelMatrix());
+	s.SetShaderUniformMat4f("u_V", m_Camera->GetView());
+
+        // draw skybox behind everything
+        glDepthFunc(GL_LEQUAL);
+
+	GLCall(glDrawElements(s.GetRendererType(), s.GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
+        
+        glDepthFunc(GL_LESS);
+	s.Unbind();
+}
