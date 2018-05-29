@@ -104,7 +104,7 @@ int main(void){
     //pos = renderer.getCameraPosition();
     //printf("x:%f y:%f \n",pos.x,pos.z);
     //t.load(vec2(pos.x,pos.z));
-    t.load(vec2((c.GetFoot()).x, (c.GetFoot()).z));
+    //pour le cube t.load(vec2((c.GetFoot()).x, (c.GetFoot()).z));
 
     c.ApplyGravity((t.GetNoise()).compute((c.GetFoot()).x, (c.GetFoot()).z), tps, lastTime, currentTime);
 
