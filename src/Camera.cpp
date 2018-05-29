@@ -7,35 +7,15 @@
 
 
 Camera::Camera(GLFWwindow & window, int w, int h)
-	: m_Window(window), m_HorizontalAngle(glm::pi<float>()), m_VerticalAngle(20.0f),
+	: m_Window(window), m_HorizontalAngle(glm::pi<float>()), m_VerticalAngle(/*20.0f*/45.0f),
           m_InitialFoV(45.0f), m_Speed(3.0f), m_MouseSpeed(0.01f), m_Position(glm::vec3(1, 100, 1)),
-          m_Model(glm::mat4(1.0)), m_View(glm::mat4(0.0)), m_MVP(glm::mat4(1.0)), m_Width(w), m_Height(h),
-          m_DistFromChar(50.0f), m_AngleAroundChar(0.0f)
+          m_Model(glm::mat4(1.0)), m_View(glm::mat4(0.0)), m_MVP(glm::mat4(1.0)), m_Width(w), m_Height(h)
 {
-  GravityObject object (glm::vec3(0.0f,0.0f,0.0f));
-  m_Character = &object;
 }
 
 void Camera::Move(int xpos, int ypos){
-	m_HorizontalAngle += m_MouseSpeed* float(m_Width/ 2 - xpos);
-        m_VerticalAngle += m_MouseSpeed* float(m_Height / 2 - ypos);
-
-/*  if (glfwGetKey(&m_Window, GLFW_KEY_C) == GLFW_PRESS) {
-    if (glfwGetKey(&m_Window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
-      m_DistFromChar -= 0.2f;
-    else 
-      m_DistFromChar += 0.2f;
-  }
-
-    m_VerticalAngle = m_MouseSpeed * *//*float(m_Height/ 2 -*//* ypos;
-    m_AngleAroundChar = m_MouseSpeed **/ /*float(m_Width/ 2 -*/ /*xpos;
-    float HDist = m_DistFromChar * glm::cos(glm::radians(m_VerticalAngle));
-    float VDist = m_DistFromChar * glm::sin(glm::radians(m_VerticalAngle));
-    float Xoffset = HDist * glm::sin(glm::radians(m_AngleAroundChar));
-    float Zoffset = HDist * glm::cos(glm::radians(m_AngleAroundChar));
-    m_Position.x = ((*m_Character).GetFoot()).x + Xoffset; 
-    m_Position.y = ((*m_Character).GetFoot()).y + VDist;
-    m_Position.z = ((*m_Character).GetFoot()).z + Zoffset;*/
+    m_HorizontalAngle += m_MouseSpeed* float(m_Width/ 2 - xpos);
+    m_VerticalAngle += m_MouseSpeed* float(m_Height / 2 - ypos);
 }
 
 void Camera::ComputeMatricesFromInputs()

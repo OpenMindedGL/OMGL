@@ -23,13 +23,18 @@ class NoiseGen {
     float mix_freq;
     float simplex_freq;
 
+    long int * m_PerlinPerm2DTable;  
+    long int * m_PerlinGrad2DTable;  
+
+
   public :
 
     NoiseGen();
 
     float compute(float x, float y);
-    glm::vec4 noised( glm::vec3 x );
-    float hash( glm::vec3 p );
+    glm::vec3 noised( glm::vec2 p, float seed2 );
+    void createPerlinPerm2DTable(unsigned char (&perlinPermTable)[256]);
+    void createPerlinGrad2DTable(unsigned char (&perlinPermTable)[256], unsigned char (&perlinGradTable)[16]);
     inline float compute(glm::vec2 a) { return compute(a.x, a.y); }
 
     inline float    GetLacunarity(){ return lacunarity; };

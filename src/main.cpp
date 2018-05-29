@@ -91,7 +91,6 @@ int main(void){
   Terrain t(vec2(pos.x,pos.z));
   Cube c(vec3(0.0,95.0f,0.0f));
   c.Init(GL_TRIANGLES, "shaders/Cube.shader");
-  renderer.setCameraChar(&c);
 
   double lastTime = glfwGetTime();
   double currentTime;

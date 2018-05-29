@@ -8,8 +8,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
-class GravityObject;
-
 class Camera 
 {
 private: 
@@ -30,10 +28,6 @@ private:
 	glm::mat4 m_Proj; 
 	glm::mat4 m_MVP; 
 
-        float m_DistFromChar;
-        float m_AngleAroundChar;
-        GravityObject * m_Character;
-
 public:
 	Camera(GLFWwindow & window, int w, int h);
 
@@ -52,7 +46,6 @@ public:
 	inline void setPosition(glm::vec3 new_pos) { m_Position = new_pos; }
 	inline void setHorizontalAngle(float new_angle) { m_HorizontalAngle = new_angle; }
 	inline void setVerticalAngle(float new_angle) { m_VerticalAngle = new_angle; }
-	inline void setCharacter(GravityObject * new_char) { m_Character = new_char; }
 	
 	void printCoord();
         void Move(int xpos, int ypos);
