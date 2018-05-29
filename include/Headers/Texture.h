@@ -48,7 +48,7 @@ class DDSTexture : public Texture
 {
 
   protected : 
-    unsigned int Load(const std::string& path, unsigned int target = m_Target);
+    void Load(const std::string& path, unsigned int target = m_Target);
   public :
     DDSTexture(const std::string& path);
 };
@@ -57,7 +57,7 @@ class OtherTexture : public Texture
 {
 
   protected : 
-    unsigned int Load(const std::string& path, unsigned int target = m_Target);
+    void Load(const std::string& path, unsigned int target = m_Target);
   public :
     OtherTexture(const std::string& path);
 };
