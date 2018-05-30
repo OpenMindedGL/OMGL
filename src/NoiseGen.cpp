@@ -1,49 +1,56 @@
+#include <stdio.h>
 #include "NoiseGen.h"
 
 NoiseGen::NoiseGen(){
   zoom = 5.0f;
   nbOctave = 8;
-  lacunarity = 2.0f;
+  lacunarity = 2.00f;
   persistence = 0.5f;
   seed = 69;
-  mix_freq = 0.03f;
-  simplex_freq = 0.03f;
 
-  simplex = FastNoise(seed);
-  mix = FastNoise(seed);
-  mix.SetNoiseType(FastNoise::Perlin); // Set the desired
-                                       // noise type
-  mix.SetFrequency(mix_freq);
-  simplex.SetNoiseType(FastNoise::Cubic); // Set the
-                                       //desired noise type
   for(unsigned int k=0;k < nbOctave;k++){
-    FastNoise temp_noise(seed);
+    FastNoise temp_noise(seed+k);
+    FastNoise temp_noise2(seed+k+nbOctave);
+    FastNoise temp_noise3(seed+k+(2* nbOctave));
     temp_noise.SetNoiseType(FastNoise::Simplex);
+    temp_noise2.SetNoiseType(FastNoise::Simplex);
+    temp_noise3.SetNoiseType(FastNoise::Simplex);
     temp_noise.SetFrequency(pow(lacunarity, k) * 0.01f * (1.0f/zoom) );
+    temp_noise2.SetFrequency(pow(lacunarity, k) * 0.01f * (1.0f/zoom) );
+    temp_noise3.SetFrequency(pow(lacunarity, k) * 0.01f * (1.0f/zoom) );
     simplex_fractal.push_back(temp_noise);
+    simplex_fractal2.push_back(temp_noise2);
+    simplex_fractal3.push_back(temp_noise3);
   }
 }
 
 float NoiseGen::compute(float x, float y){
-  float a,b,c;
-  a = 0;
+  float a = 0;
+  float b = 0;
+  float c = 0;
   int d = 0;
+  //int e = nbOctave;
+  float abs;
+  std::vector<FastNoise>::iterator iter_noise2 = simplex_fractal2.begin();
+  std::vector<FastNoise>::iterator iter_noise3 = simplex_fractal3.begin();
   for(std::vector<FastNoise>::iterator iter_noise = 
   simplex_fractal.begin(); 
-  iter_noise < simplex_fractal.end(); iter_noise++){
-    a += (*iter_noise).GetNoise(x*10,y*10) 
-         * pow(persistence, d); 
+  (iter_noise < simplex_fractal.end())/* && (d < e)*/; iter_noise++){
+    a += (*iter_noise).GetNoise(x*10,y*10) * pow(persistence, d); 
+    b += (*(iter_noise2 + d)).GetNoise(x*10,y*10) * pow(persistence, d); 
+    c += (*(iter_noise3 + d)).GetNoise(x*10,y*10) * pow(persistence, d); 
     d++;
+    /*abs = glm::abs(a*b*c);
+    if (iter_noise == simplex_fractal.begin()){
+      if (abs > 0.8f)
+        e = nbOctave - 4;
+      else if ((abs >= 0.6f) && (abs < 0.8f))
+        e = nbOctave - 3;
+      else if ((abs >= 0.4f) && (abs < 0.6f))
+        e = nbOctave - 2;
+      else if ((abs >= 0.2f) && (abs < 0.4f))
+        e = nbOctave - 1;
+    }*/
   }
-  return a*zoom;
-  /*b = simplex.GetNoise(x*10,y*10)*0.2f;
-  c = ((mix.GetNoise(x*10,y*10)+1)/2.0f);
-  return (a*(3*c*c) + b * (1-c) )*zoom;*/
-  /*FastNoise p(0);
-  p.SetNoiseType(FastNoise::SimplexFractal);
-  p.SetFractalLacunarity(2.0f);
-  p.SetFractalGain(0.5f);
-  p.SetFractalOctaves(5);
-  return p.GetNoise(x*10,y*10)*5.0f;*/
-
+  return a*b*c*zoom;
 }
