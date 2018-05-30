@@ -37,8 +37,8 @@
 using namespace glm;
 
 
-#define WIDTH 1920 
-#define HEIGHT 1080
+#define WIDTH 1024 
+#define HEIGHT 768
 
 int init();
 GLFWwindow* window;
@@ -99,9 +99,9 @@ int main(void){
 
     renderer.Clear();
 
-    pos = renderer.getCameraPosition();
+//    pos = renderer.getCameraPosition();
     //printf("x:%f y:%f \n",pos.x,pos.z);
-    t.load(glm::vec2(pos.x,pos.z));
+//    t.load(glm::vec2(pos.x,pos.z));
 
 
     renderer.Draw<Vertexun>(c);
