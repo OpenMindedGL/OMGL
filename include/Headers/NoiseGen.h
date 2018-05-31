@@ -36,7 +36,6 @@ class NoiseGen {
     float compute_biome5(float x, float y);
     float compute_biome6(float x, float y);
     float compute_biome7(float x, float y);
-    float compute_step(float x, float y);
     inline float compute(glm::vec2 a) { return compute(a.x, a.y); }
 
     inline float    GetLacunarity(){ return lacunarity; };
