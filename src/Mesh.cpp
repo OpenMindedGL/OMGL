@@ -1,21 +1,21 @@
 #include "Vertex.h"
-#include "Model.h"
+#include "Mesh.h"
 
 template <>
-void Model<Vertex>::Push()
+void Mesh<Vertex>::Push()
 {
   m_Layout.Push<float>(3);
 }
 
 template <>
-void Model<Vertexu>::Push()
+void Mesh<Vertexu>::Push()
 {
   m_Layout.Push<float>(3);
   m_Layout.Push<float>(2);
 }
 
 template <>
-void Model<Vertexun>::Push()
+void Mesh<Vertexun>::Push()
 {
   m_Layout.Push<float>(3);
   m_Layout.Push<float>(2);

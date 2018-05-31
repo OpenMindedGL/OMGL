@@ -1,7 +1,6 @@
 // Allow vec3(1,2,3).xz
 //#define GLM_SWIZZLE
 
-
 //Includes necessaires
 #include <stdio.h>
 #include <stdlib.h>
@@ -31,12 +30,9 @@
 #include "VertexBufferLayout.h"
 #include "Texture.h"
 #include "Terrain.h"
-#include "Object.h"
 #include "Skybox.h"
 
-
 using namespace glm;
-
 
 #define WIDTH 1920 
 #define HEIGHT 1080
@@ -85,44 +81,44 @@ int init(){
 }
 
 int main(void){
+
   init();
   Renderer renderer(*window, WIDTH, HEIGHT);
 
   glm::vec3 pos = renderer.getCameraPosition();
-  //Terrain t(glm::vec2(pos.x,pos.z));
-  //Cube c;
-  //c.Init(GL_TRIANGLES, "shaders/Cube.shader");
+  
+//  Terrain t(glm::vec2(pos.x, pos.z));
+
+  Skybox s;
+  
+  /*Cube cube;
+  Object c(&cube, "shaders/Basic.shader");*/
   
   Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl",false);
-  o.Init(GL_TRIANGLES, "shaders/Terrain.shader");
+  o.Init(GL_TRIANGLES, "shaders/Basic.shader");
 
-  Terrain t(glm::vec2(pos.x,pos.z));
-  Cube c("shaders/Cube.shader");
-  c.SetTexture("textures/grass.dds", "u_TextureSampler");
-  Skybox s;
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
     renderer.Clear();
 
     pos = renderer.getCameraPosition();
-    //printf("x:%f y:%f \n",pos.x,pos.z);
-   // t.load(glm::vec2(pos.x,pos.z));
-
-	//renderer.Draw<Vertexun>(c);
+    //printf("x:%f y:%f \n",pos.x,pos.z);    
 	
-    //renderer.Draw<Vertexun>(t);	
-  renderer.Draw<Vertexun>(o);
+	/*t.load(glm::vec2(pos.x,pos.z));	
+    renderer.Draw(t);*/
+	renderer.Draw(o);
 
-    // Always draw last
+
+    // Always draw last	
     renderer.Draw(s);
-
 
     /* Swap frint and back buffers */
     glfwSwapBuffers(window);
 
     /* Poll for and process envents */
     glfwPollEvents();
+
   }
   //glDeleteTextures(1,c.GetTexture()->m_RendererID);
   glfwTerminate();

@@ -3,9 +3,9 @@
 
 #include <string.h>
 
-Skybox::Skybox(std::string shaderPath, std::vector<std::string> faces) : Cube(shaderPath)
+Skybox::Skybox(std::string shaderPath, std::vector<std::string> faces) : Object(new Cube(), shaderPath)
 {
-  m_Texture = new Cubemap(faces);
-  InitTexture("u_SkyboxSampler", 0);
+  this->GetMaterials().at(0)->SetTexture(new Cubemap(faces));
+  this->GetMaterials().at(0)->InitTexture("u_SkyboxSampler", 0);
 }
 

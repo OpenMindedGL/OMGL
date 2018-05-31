@@ -26,12 +26,12 @@ class Texture
     unsigned int LoadDDS(const std::string& path, unsigned int target = m_Target);
     unsigned int LoadOther(const std::string& path, unsigned int target = m_Target);
 
-    Texture(const std::string& path) : m_FilePath(path){}
-    Texture(){}
-    ~Texture();
 
   public: 
   
+    Texture(const std::string& path) : m_FilePath(path){}
+    Texture(){}
+    ~Texture();
 
     void Bind(unsigned int slot = 0) const; 
     void Unbind() const;
@@ -41,14 +41,13 @@ class Texture
 
     static unsigned int ParseFormat(const std::string& path);
 
-
 };
 
 class DDSTexture : public Texture
 {
 
   protected : 
-    unsigned int Load(const std::string& path, unsigned int target = m_Target);
+    void Load(const std::string& path, unsigned int target = m_Target);
   public :
     DDSTexture(const std::string& path);
 };
@@ -57,7 +56,7 @@ class OtherTexture : public Texture
 {
 
   protected : 
-    unsigned int Load(const std::string& path, unsigned int target = m_Target);
+    void Load(const std::string& path, unsigned int target = m_Target);
   public :
     OtherTexture(const std::string& path);
 };

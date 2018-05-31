@@ -2,22 +2,22 @@
 #define SKYBOX_H
 
 #include "Cubemap.h"
+#include "Object.h"
 #include "Cube.h"
 
-class Skybox : public Cube{
+class Skybox : public Object{
 
   public:
     
     Skybox(std::string shaderPath = "shaders/Skybox.shader", std::vector<std::string> faces = {
-        "textures/skybox_right.jpg",
-        "textures/skybox_left.jpg",
-        "textures/skybox_top.jpg",
-        "textures/skybox_bottom.jpg",
-        "textures/skybox_front.jpg",
-        "textures/skybox_back.jpg"
+        "textures/skybox_right.dds",
+        "textures/skybox_left.dds",
+        "textures/skybox_top.dds",
+        "textures/skybox_bottom.dds",
+        "textures/skybox_front.dds",
+        "textures/skybox_back.dds"
         }
     );
 };
-
 
 #endif

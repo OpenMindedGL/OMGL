@@ -16,7 +16,7 @@ DDSTexture::DDSTexture(const std::string& path)
   Load(path);
 }
 
-unsigned int DDSTexture::Load(const std::string& path, unsigned int target){
+void DDSTexture::Load(const std::string& path, unsigned int target){
   GLCall(glGenTextures(1, &m_RendererID));
   Bind(); 
   LoadDDS(path, target);
@@ -27,7 +27,7 @@ unsigned int DDSTexture::Load(const std::string& path, unsigned int target){
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 }
 
-unsigned int OtherTexture::Load(const std::string& path, unsigned int target){
+void  OtherTexture::Load(const std::string& path, unsigned int target){
   GLCall(glGenTextures(1, &m_RendererID));
   Bind(); 
   LoadOther(path,target);
@@ -53,7 +53,6 @@ unsigned int Texture::ParseFormat(const std::string& path){
   }
 
 }
-
 
 unsigned int Texture::LoadOther(const std::string& path, unsigned int target){
   //stbi_set_flip_vertically_on_load(1);

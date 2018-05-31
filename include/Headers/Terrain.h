@@ -5,7 +5,7 @@
 #include <vector>
 #include <glm/glm.hpp>
 #include "Vertex.h"
-#include "Model.h"
+#include "Object.h"
 #include "NoiseGen.h"
 
 #define CHUNK_SIZE 32
@@ -14,7 +14,7 @@
 #define TERRAIN_SZ (CHUNK_PER_SIDE*CHUNK_SIZE)
 
 
-class Terrain : public Model<Vertexun>
+class Terrain : public Object
 {
 
   private : 
@@ -30,8 +30,6 @@ class Terrain : public Model<Vertexun>
     
     // returns offset of chunk "coords" in gpu vertex buffer
     int getOffset(glm::i32vec2 coords);
-    
-    void ComputeNormals(glm::i32vec2 chunk_coords, Vertexun * vertices, unsigned int * indices, unsigned int offset);
     
     glm::i32vec2 Surround(glm::i32vec2 chunk, unsigned int count);
     
