@@ -13,7 +13,7 @@ void Renderer::Clear() const
 void Renderer::Draw(Object object)
 {
 	m_Camera->ComputeMatricesFromInputs();
-	m_Camera->SetModel(object.GetMesh()->GetModelMatrix());
+	m_Camera->SetModel(object.GetModelMatrix());
 	m_Camera->ComputeMVP();
 	glm::mat4 mvp = m_Camera->GetMVP();
 
@@ -29,7 +29,7 @@ void Renderer::Draw(Object object)
 
 	for (int i = 0; i < object.GetMaterials().size(); i++) {
 		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_MVP", mvp);
-		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_M", object.GetMesh()->GetModelMatrix());
+		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_M", object.GetModelMatrix());
 		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
 	}
 
@@ -44,7 +44,7 @@ void Renderer::Draw(std::vector<Object> objects) {
 	m_Camera->printCoord();
 
 	for (int i = 0; i < objects.size(); i++) {
-		m_Camera->SetModel(objects[i].GetMesh()->GetModelMatrix());
+		m_Camera->SetModel(objects[i].GetModelMatrix());
 		m_Camera->ComputeMVP();
 		glm::mat4 mvp = m_Camera->GetMVP();
 		objects[i].Bind();
@@ -59,7 +59,7 @@ void Renderer::Draw(std::vector<Object> objects) {
 void Renderer::Draw(Skybox s)
 {
 	m_Camera->ComputeMatricesFromInputs();
-	m_Camera->SetModel(s.GetMesh()->GetModelMatrix());
+	m_Camera->SetModel(s.GetModelMatrix());
 	m_Camera->SetView(glm::mat4(glm::mat3(m_Camera->GetView())));
 	m_Camera->ComputeMVP();
 	glm::mat4 mvp = m_Camera->GetMVP();
@@ -75,7 +75,7 @@ void Renderer::Draw(Skybox s)
 	}
 
 	s.GetMaterials().at(0)->SetShaderUniformMat4f("u_MVP", mvp);
-	s.GetMaterials().at(0)->SetShaderUniformMat4f("u_M", s.GetMesh()->GetModelMatrix());
+	s.GetMaterials().at(0)->SetShaderUniformMat4f("u_M", s.GetModelMatrix());
 	s.GetMaterials().at(0)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
 
 	// draw skybox behind everything

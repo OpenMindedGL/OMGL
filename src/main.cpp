@@ -97,6 +97,9 @@ int main(void){
   Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl",false);
   o.Init(GL_TRIANGLES, "shaders/Basic.shader");
 
+  o.Scale(vec3(5.0f, 5.0f, 5.0f));
+  o.Rotation(45.0f, vec3(0.0f, 0.0f, 1.0f));
+
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
