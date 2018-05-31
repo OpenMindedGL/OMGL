@@ -36,6 +36,8 @@ Object::Object(std::string pathObj, std::string pathMtl, bool reverse)
 
 void Object::LoadObject(std::string pathObj, std::string pathMtl, bool reverse)
 {
+	if (pathMtl.size() > 0) InitMaterials(pathMtl, m_Materials);
+
 	std::vector<glm::vec3> v;
 	std::vector<glm::vec2> vt;
 	std::vector<glm::vec3> vn;
@@ -248,4 +250,19 @@ void Object::Unbind()
 	for (int i = 0; i < m_Materials.size(); i++) {
 		m_Materials[i]->Unbind();
 	}
+}
+
+void Object::Translate(glm::vec3 position)
+{
+	m_ModelMatrix = glm::translate(m_ModelMatrix, position);
+}
+
+void Object::Rotation(float angle, glm::vec3 axis)
+{
+	m_ModelMatrix = glm::rotate(m_ModelMatrix, angle, axis);
+}
+
+void Object::Scale(glm::vec3 scale)
+{
+	m_ModelMatrix = glm::scale(m_ModelMatrix, scale);
 }

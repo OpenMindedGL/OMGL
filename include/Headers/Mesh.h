@@ -30,9 +30,9 @@ private:
 	VertexBufferLayout m_Layout;
 	IndexBuffer * m_Ib;
 
-	glm::mat4 m_ModelMatrix;
+	/*glm::mat4 m_ModelMatrix;
 	glm::mat4 m_Position;
-	glm::mat4 m_Rotation;
+	glm::mat4 m_Rotation;*/
 
 	void Push();
 
@@ -46,9 +46,9 @@ public:
 	void Bind();
 	void Unbind();
 
-	void Translate(glm::vec3 position);
+	/*void Translate(glm::vec3 position);
 	void Rotation(float angle, glm::vec3 axis);
-	void Scale(glm::vec3 scale);
+	void Scale(glm::vec3 scale);*/
 	void Upload();
 
 	void Init(unsigned int renderType);
@@ -62,7 +62,6 @@ public:
 	inline IndexBuffer & GetIndexBuffer() const { return *m_Ib; }
 	inline VertexBuffer & GetVertexBuffer() const { return *m_Vb; }
 	inline unsigned int GetRendererType() const { return m_RendererType; }
-	inline glm::mat4 GetModelMatrix() const { return m_ModelMatrix; }
 
 	inline std::vector<T> * GetVertices() const { return m_Vertices; }
 	inline std::vector<unsigned int> * GetIndices() const { return m_Indices; }
@@ -130,7 +129,7 @@ Mesh<T>::Mesh()
 template <class T>
 Mesh<T>::Mesh(unsigned int renderType, std::vector<T>& positions, std::vector<unsigned int>& indices, std::string shaderPath)
 	: m_RendererType(renderType), m_Vertices(positions),
-	m_Indices(indices), m_ModelMatrix(glm::mat4(1.0f))
+	m_Indices(indices)//, m_ModelMatrix(glm::mat4(1.0f))
 {
 	Push();
 
@@ -156,24 +155,6 @@ void Mesh<T>::Unbind()
 {
 	m_Va->Unbind();
 	m_Ib->Unbind();
-}
-
-template <class T>
-void Mesh<T>::Translate(glm::vec3 position)
-{
-	m_ModelMatrix = glm::translate(m_ModelMatrix, position);
-}
-
-template <class T>
-void Mesh<T>::Rotation(float angle, glm::vec3 axis)
-{
-	m_ModelMatrix = glm::rotate(m_ModelMatrix, angle, axis);
-}
-
-template <class T>
-void Mesh<T>::Scale(glm::vec3 scale)
-{
-	m_ModelMatrix = glm::scale(m_ModelMatrix, scale);
 }
 
 template <class T>
