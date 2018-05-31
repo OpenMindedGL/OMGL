@@ -10,6 +10,7 @@ public:
 	static unsigned int nbattrib;
 	glm::vec3 pos;
 	Vertex(glm::vec3 p);
+	Vertex(float x, float y, float z);
 	~Vertex();
 };
 

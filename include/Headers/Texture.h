@@ -26,12 +26,12 @@ class Texture
     unsigned int LoadDDS(const std::string& path, unsigned int target = m_Target);
     unsigned int LoadOther(const std::string& path, unsigned int target = m_Target);
 
-    Texture(const std::string& path) : m_FilePath(path){}
-    Texture(){}
-    ~Texture();
 
   public: 
   
+    Texture(const std::string& path) : m_FilePath(path){}
+    Texture(){}
+    ~Texture();
 
     void Bind(unsigned int slot = 0) const; 
     void Unbind() const;
@@ -40,7 +40,6 @@ class Texture
     inline int GetHeight() const { return m_Height; }
 
     static unsigned int ParseFormat(const std::string& path);
-
 
 };
 

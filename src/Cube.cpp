@@ -1,8 +1,9 @@
 #include "Cube.h"
+#include <string>
 
-Cube::Cube(std::string shaderPat){
+Cube::Cube(){
       
-	m_Vertices = {
+	m_Vertices = new std::vector<Vertexun> {
 		Vertexun(glm::vec3(-1.0f,-1.0f,-1.0f), glm::vec2(0.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)),     // 0
 		Vertexun(glm::vec3(-1.0f,1.0f, -1.0f), glm::vec2(0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f)),     // 1
 		Vertexun(glm::vec3(1.0f, -1.0f, -1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)),    // 2
@@ -13,9 +14,7 @@ Cube::Cube(std::string shaderPat){
 		Vertexun(glm::vec3(1.0f, 1.0f,1.0f), glm::vec2(1.0f, 1.0f), glm::vec3(0.0f, 0.0f, 0.0f)),       // 7
 	};
 
-
-
-	m_Indices = {
+	m_Indices = new std::vector<unsigned int>{
 		0, 2,
 		1, 3,
 		5, 7,
@@ -25,6 +24,7 @@ Cube::Cube(std::string shaderPat){
 		2, 6,
 		3, 7,
 	};
-        Init(GL_TRIANGLE_STRIP,shaderPat);
+
+    Init(GL_TRIANGLE_STRIP);
 
 }

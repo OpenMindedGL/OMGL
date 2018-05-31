@@ -2,9 +2,10 @@
 #define SKYBOX_H
 
 #include "Cubemap.h"
+#include "Object.h"
 #include "Cube.h"
 
-class Skybox : public Cube{
+class Skybox : public Object{
 
   public:
     
@@ -18,6 +19,5 @@ class Skybox : public Cube{
         }
     );
 };
-
 
 #endif
