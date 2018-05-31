@@ -94,7 +94,7 @@ int main(void){
   /*Cube cube;
   Object c(&cube, "shaders/Basic.shader");*/
   
-  Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl",false);
+  Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl",false);
   o.Init(GL_TRIANGLES, "shaders/Basic.shader");
 
   o.Scale(vec3(5.0f, 5.0f, 5.0f));
