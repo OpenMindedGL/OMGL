@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_integer.hpp> 
 
 Terrain::Terrain(glm::vec2 center){
-  precision = 3.0f; // Beware of 2
+  precision = 4.0f; // Beware of 2
   initload(center); 
   compute_indices();
   Model<Vertexun>::ComputeNormals();

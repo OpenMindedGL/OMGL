@@ -9,7 +9,7 @@ layout(location = 2) in vec3 normals;
 out vec2 uv;
 out vec3 normal;
 out vec3 lightdir;
-out vec2 pos;
+out vec3 pos;
   
 // Values that stay constant for the whole mesh.
 uniform mat4 u_MVP;
@@ -17,7 +17,7 @@ uniform mat4 u_M;
 uniform mat4 u_V;
   
 void main(){
-  pos = vPos.xz;
+  pos = vPos;
   gl_Position =  u_MVP * vec4(vPos,1);
   uv = uv_coords;
 
@@ -42,7 +42,7 @@ layout(location = 0) out vec4 color;
 in vec2 uv;
 in vec3 normal;
 in vec3 lightdir;
-in vec2 pos;
+in vec3 pos;
 
 //out vec3 color;
 
@@ -55,12 +55,16 @@ void main(){
   */
   //color = vec4(0.0f,mod(pos.y,2.0f),mod(pos.x,2.0f),1.0f);
   vec3 blue = vec3(0.2f,0.6f,0.2f);
-
   vec3 n = normalize( normal );
   vec3 l = normalize( lightdir );
   float cost = clamp( dot( n,l ), 0,1 );
   float ambient = 0.15f;
-  color = vec4(vec3(ambient) + blue * cost,1.0f);
+  if (pos.y == 0.12f){
+    color = vec4(0.0f,0.0f,0.7f,1.0f);
+  }
+  else {
+    color = vec4(vec3(ambient) + blue * cost,1.0f);
+  }
   //color = vec4(0.0f,0.0f,1.0f,1.0f);
  // }
 }
