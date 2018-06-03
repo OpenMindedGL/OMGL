@@ -13,6 +13,7 @@ public :
 	VertexBuffer(const void* data, unsigned int size);
 	~VertexBuffer();
 
+void Upload(unsigned int offset = 0, unsigned int s = size);
         void Upload();
 	void Bind() const;
 	void Unbind() const;

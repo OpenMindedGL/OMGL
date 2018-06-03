@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <stack>
 #include <glm/glm.hpp>
 #include "Mesh.h"
 #include "Object.h"
@@ -41,20 +42,30 @@ class LODLevel : public Mesh<Vertexun>{
 
   private:
 
-    unsigned int m_Level;
+    /* pre-computed */
+    static int** pre2D1D;
     unsigned int m_UnitSize;
     unsigned int m_Size;
+    unsigned int m_HalfSize;
+    glm::i32vec2 m_TorEnd;    
+    /*              */
+
+    unsigned int m_UploadStart;
+    unsigned int m_UploadCount;
+    unsigned int m_Level;
+    glm::i32vec2 m_TorBegin;    // origin in the toroid array
     Terrain * m_Terrain;
-    glm::vec2 m_ClipR;
-    glm::vec2 m_ActiveR;
+    //glm::vec2 m_ClipR;
+    glm::i32vec2 m_ActiveR;
 
   public:
 
-    Update(glm::vec2 center);
-    Load();
+    static void Make2D1D(unsigned int s);
+    void ComputeIndices();
+    void Update(glm::vec2 center);
+    void PutVertex(glm::i32vec2& pos);
     LODLevel(unsigned int l, glm::vec2& center, Terrain* t);
-    void PutVertex(glm::i32vec2& pos, Vertexun v);
-    unsigned int GetIndex(glm::i32vec2& pos);
+    int& GetIndex(glm::i32vec2& p);
 }
 
 

@@ -47,10 +47,8 @@ public:
 	void Bind();
 	void Unbind();
 
-	/*void Translate(glm::vec3 position);
-	void Rotation(float angle, glm::vec3 axis);
-	void Scale(glm::vec3 scale);*/
 	void Upload();
+        void Upload(unsigned int start, unsigned int count);
 
 	void Init(unsigned int renderType);
 
@@ -161,6 +159,11 @@ void Mesh<T>::Unbind()
 template <class T>
 void Mesh<T>::Upload() {
 	(*m_Vb).Upload();
+}
+
+template <class T>
+void Mesh<T>::Upload(unsigned int start, unsigned int count) {
+	(*m_Vb).Upload(start*sizeof(T),count*sizeof(T));
 }
 
 #endif

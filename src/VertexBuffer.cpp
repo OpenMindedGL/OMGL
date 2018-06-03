@@ -12,9 +12,9 @@ VertexBuffer::VertexBuffer(const void * data, unsigned int s)
 	GLCall(glBufferData(GL_ARRAY_BUFFER, s, data, GL_STATIC_DRAW));
 }
 
-void VertexBuffer::Upload(){
+void VertexBuffer::Upload(unsigned int offset, unsigned int s){
         Bind();
-	GLCall(glBufferSubData(GL_ARRAY_BUFFER, 0, size, data));
+	GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, s, data));
 }
 
 
