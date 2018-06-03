@@ -39,6 +39,7 @@ public :
 	void LoadTexture(const std::string path);
 	void InitTexture(const std::string name, unsigned int id);
 	void SetShaderUniformMat4f(const std::string name, glm::mat4 mvp);
+	void SetUniforms();
 	void Init(std::string shaderpath);
 	void Bind();
 	void Unbind();

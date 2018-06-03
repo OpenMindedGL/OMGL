@@ -14,6 +14,8 @@ private:
 	GLFWwindow & m_Window;
 	int m_Width; 
 	int m_Height;
+	bool m_TypeDisplay;
+        bool m_ReleaseCursor;
 
 	float m_HorizontalAngle; 
 	float m_VertivaleAngle;
@@ -43,6 +45,7 @@ public:
 	inline glm::mat4 GetProj() const { return m_Proj; }
 	inline glm::mat4 GetMVP() const { return m_MVP; }
 	inline glm::vec3 getPosition() const { return m_Position; }
+	inline bool getTypeDisplay() const { return m_TypeDisplay; }
 	
 	void printCoord();
 };

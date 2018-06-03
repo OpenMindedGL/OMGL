@@ -46,7 +46,7 @@ int init(){
 
   if(!glfwInit())
     return -1;
-
+  
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -94,11 +94,13 @@ int main(void){
   /*Cube cube;
   Object c(&cube, "shaders/Basic.shader");*/
   
-  Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl",false);
-  o.Init(GL_TRIANGLES, "shaders/Basic.shader");
+  //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", true);
+  Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl", false);
+  o.Init(GL_TRIANGLES, "shaders/Object.shader");
+  o.Scale(0.01,0.01,0.01);
+  //o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
 
-  o.Scale(vec3(5.0f, 5.0f, 5.0f));
-  o.Rotation(45.0f, vec3(0.0f, 0.0f, 1.0f));
+
 
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
@@ -107,12 +109,13 @@ int main(void){
 
     pos = renderer.getCameraPosition();
     //printf("x:%f y:%f \n",pos.x,pos.z);    
-	
+
 	/*t.load(glm::vec2(pos.x,pos.z));	
     renderer.Draw(t);*/
 	renderer.Draw(o);
+	o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));
 
-
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     // Always draw last	
     renderer.Draw(s);
 
