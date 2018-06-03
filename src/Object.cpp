@@ -2,26 +2,32 @@
 
 Object::Object()
 {
+	m_ListMat = new std::map<unsigned int, unsigned int>;
 	m_Mesh = new Mesh<Vertexun>;
 }
 
 Object::Object(Mesh<Vertexun> * m) : m_Mesh(m)
-{}
+{
+	m_ListMat = new std::map<unsigned int, unsigned int>;
+}
 
 Object::Object(Mesh<Vertexun> * m, std::string shaderPath) : m_Mesh(m)
 {
 	//m_Mesh = new Mesh<Vertexun>(&m);
 	m_Materials.push_back(new Material(new Shader(shaderPath)));
+	m_ListMat = new std::map<unsigned int, unsigned int>;
 }
 
 Object::Object(Mesh<Vertexun> * m, Material* mat) : m_Mesh(m)
 {
 	//On verifie si le mat existe déjà dans la liste des mat, on ajoute ou non dans la liste en fonction
+	m_ListMat = new std::map<unsigned int, unsigned int>;
 	if (!hasMaterial(mat)) m_Materials.push_back(mat);
 }
 
 Object::Object(Mesh<Vertexun> * m, std::vector<Material*> mat) : m_Mesh(m)
 {
+	m_ListMat = new std::map<unsigned int, unsigned int>;
 	//On parcourt chaque element dans la liste de mat et on ajoute ceux qui n'existe pas encore
 	for (int i = 0; i < mat.size(); i++) {
 		if (!hasMaterial(mat[i])) m_Materials.push_back(mat[i]);
@@ -30,6 +36,7 @@ Object::Object(Mesh<Vertexun> * m, std::vector<Material*> mat) : m_Mesh(m)
 
 Object::Object(std::string pathObj, std::string pathMtl, bool reverse)
 {
+	m_ListMat = new std::map<unsigned int, unsigned int>;
 	m_Mesh = new Mesh<Vertexun>;
 	this->LoadObject(pathObj, pathMtl, reverse);
 }
@@ -122,12 +129,11 @@ void Object::LoadObject(std::string pathObj, std::string pathMtl, bool reverse)
 		else if (strcmp(lineHeader, "usemtl") == 0) {
 			char nameMat[128];
 			fscanf(file, "%s\n", nameMat);
-			m_ListMat.insert(std::pair<unsigned int, std::string>(m_Mesh->GetVertices()->empty() ? 0 : m_Mesh->GetVertices()->size() - 1, nameMat));
+			unsigned int id = GetMaterialId(nameMat);
+			if(id != -1 )
+				m_ListMat->insert(std::pair<unsigned int, unsigned int>(m_Mesh->GetVertices()->empty() ? 0 : m_Mesh->GetIndices()->size() - 1, id));
 		}
 	}
-
-	if (pathMtl.size() > 0) InitMaterials(pathMtl, m_Materials);
-
 	fclose(file);
 	v.clear();
 	vt.clear();
@@ -229,6 +235,13 @@ bool Object::hasMaterial(Material * mat)
 	return false;
 }
 
+unsigned int Object::GetMaterialId(std::string nameMat) {
+	for (int i = 0; i < m_Materials.size(); i++) {
+		if (m_Materials[i]->GetName() == nameMat) return i;
+	}
+	return -1;
+}
+
 void Object::Init(unsigned int renderType, std::string shaderPath) {
 	m_Mesh->Init(renderType);
 	for (int i = 0; i < m_Materials.size(); i++) {
@@ -252,17 +265,42 @@ void Object::Unbind()
 	}
 }
 
-void Object::Translate(glm::vec3 position)
+void Object::Translate(float x, float y, float z)
 {
-	m_ModelMatrix = glm::translate(m_ModelMatrix, position);
+	m_ModelMatrix = glm::translate(m_ModelMatrix, glm::vec3(x, y , z));
 }
 
-void Object::Rotation(float angle, glm::vec3 axis)
+void Object::Translate(glm::vec3 axis)
+{
+	m_ModelMatrix = glm::translate(m_ModelMatrix, axis);
+}
+
+void Object::RotationRad(float angle, float x, float y, float z)
+{
+	m_ModelMatrix = glm::rotate(m_ModelMatrix, angle, glm::vec3(x, y ,z));
+}
+
+void Object::RotationRad(float angle, glm::vec3 axis)
 {
 	m_ModelMatrix = glm::rotate(m_ModelMatrix, angle, axis);
 }
 
-void Object::Scale(glm::vec3 scale)
+void Object::RotationDeg(float angle, float x, float y, float z)
 {
-	m_ModelMatrix = glm::scale(m_ModelMatrix, scale);
+	m_ModelMatrix = glm::rotate(m_ModelMatrix, angle*(3.141592f / 180.0f), glm::vec3(x, y, z));
+}
+
+void Object::RotationDeg(float angle, glm::vec3 axis)
+{
+	m_ModelMatrix = glm::rotate(m_ModelMatrix, angle*(3.141592f / 180.0f), axis);
+}
+
+void Object::Scale(float x, float y, float z)
+{
+	m_ModelMatrix = glm::scale(m_ModelMatrix, glm::vec3(x, y, z));
+}
+
+void Object::Scale(glm::vec3 axis)
+{
+	m_ModelMatrix = glm::scale(m_ModelMatrix, axis);
 }

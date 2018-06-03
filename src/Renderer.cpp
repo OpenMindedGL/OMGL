@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "Skybox.h"
+#include <map>
 
 Renderer::Renderer(GLFWwindow & window, int w, int h)
 	: m_Camera(new Camera(window, w, h))
@@ -19,6 +20,9 @@ void Renderer::Draw(Object object)
 
 	object.Bind();
 
+	if(m_Camera->getTypeDisplay()) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	else glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+
 	if (object.GetMesh()->GetRendererType() == GL_TRIANGLE_STRIP) {
 		GLCall(glEnable(GL_PRIMITIVE_RESTART));
 		GLCall(glPrimitiveRestartIndex(object.GetMesh()->GetVertices()->size()));
@@ -33,8 +37,27 @@ void Renderer::Draw(Object object)
 		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
 	}
 
-	GLCall(glDrawElements(object.GetMesh()->GetRendererType(), object.GetMesh()->GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
-
+	//If severals mtl
+	if (object.GetListMat()->size() > 1) {
+		std::map<unsigned int, unsigned int>::iterator it = object.GetListMat()->begin();
+		unsigned int tmp = 0;
+		while (true) {
+			//OBEJCT.GETMATERIALS.SETUNIFORM(it->second...)
+			object.GetMaterials().at(it->second)->SetUniforms();
+			++it;
+			GLCall(glDrawElements(
+				object.GetMesh()->GetRendererType(), //type
+				(it == object.GetListMat()->end() ? object.GetMesh()->GetIndexBuffer().GetCount() - tmp: it->first - tmp + 1),//count
+				GL_UNSIGNED_INT,
+				(const void *)(tmp * sizeof(unsigned int)) //offset indice 
+			));
+			if (it == object.GetListMat()->end()) break;
+			tmp = it->first + 1;
+		}
+	}
+	else {
+		GLCall(glDrawElements(object.GetMesh()->GetRendererType(), object.GetMesh()->GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
+	}
 	object.Unbind();
 }
 

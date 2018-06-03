@@ -44,23 +44,11 @@ in vec3 normal;
 in vec3 lightdir;
 in vec2 pos;
 
-//out vec3 color;
-
 void main(){
-/*  if(0.01f  > mod(pos.y,31.0f) || 0.01f  > mod(pos.x,31.0f)){
-    color = vec4(0.0f,1.0f,0.0f,1.0f);
-  }
-  else{
-    color = vec4(0.0f,0.0f,1.0f,1.0f);
-  */
-  //color = vec4(0.0f,mod(pos.y,2.0f),mod(pos.x,2.0f),1.0f);
-  vec3 blue = vec3(0.6f,0.6f,0.6f);
-
+  vec3 grey = vec3(0.6f,0.6f,0.6f);
   vec3 n = normalize( normal );
   vec3 l = normalize( lightdir );
   float cost = clamp( dot( n,l ), 0,1 );
   float ambient = 0.15f;
-  color = vec4(vec3(ambient) + blue * cost,1.0f);
-  //color = vec4(0.0f,0.0f,1.0f,1.0f);
- // }
+  color = vec4(vec3(ambient) + grey * cost,1.0f);
 }

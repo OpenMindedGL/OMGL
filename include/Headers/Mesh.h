@@ -30,10 +30,6 @@ private:
 	VertexBufferLayout m_Layout;
 	IndexBuffer * m_Ib;
 
-	/*glm::mat4 m_ModelMatrix;
-	glm::mat4 m_Position;
-	glm::mat4 m_Rotation;*/
-
 	void Push();
 
 public:
@@ -41,14 +37,9 @@ public:
 	Mesh();
 	Mesh(unsigned int renderType, std::vector<T>& positions, std::vector<unsigned int>& indices, std::string shaderPath);
 
-	//void InitTexture(const std::string name, unsigned int id);
-
 	void Bind();
 	void Unbind();
 
-	/*void Translate(glm::vec3 position);
-	void Rotation(float angle, glm::vec3 axis);
-	void Scale(glm::vec3 scale);*/
 	void Upload();
 
 	void Init(unsigned int renderType);
