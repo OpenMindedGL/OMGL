@@ -4,11 +4,16 @@
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
-#include "Model.h"
+#include "Mesh.h"
+#include "Object.h"
 #include "Vertex.h"
 #include "NoiseGen.h"
+#include "Material.h"
 
-#define NB_LEVELS 32
+#define NB_LEVELS 2
+#define PRECISION 1.0f
+#define SIZE    32
+#define HALFSIZE    SIZE/2
 #define CHUNK_PER_SIDE 5   // KEEP ODD !!!!
 #define RENDER_DISTANCE (CHUNK_PER_SIDE/2)
 #define TERRAIN_SZ (CHUNK_PER_SIDE*CHUNK_SIZE)
@@ -16,34 +21,40 @@
 class Terrain {
 
   private :
+    unsigned int m_NbLevels;
     float m_Precision;
-    unsigned int m_InitSize;
-    LODLevel lods[NB_LEVELS];   // Future Objects
+    unsigned int m_Size;
+    unsigned int m_HalfSize;
+    Object lods[NB_LEVELS];   // Future Objects
+    Material * m_Material;
 
 
   public :
-    Terrain();
+    Terrain(float p = PRECISION, unsigned int s = SIZE, unsigned int n = NB_LEVELS, glm::vec2 spawn);
+    inline unsigned int GetSize(){ return m_Size; }
+    inline float GetPrecision(){ return m_Precision; }
 
 
 }
 
-class LODLevel : public Model<Vertexun>{ // Future Mesh
+class LODLevel : public Mesh<Vertexun>{ 
 
   private:
 
     unsigned int m_Level;
+    unsigned int m_UnitSize;
     unsigned int m_Size;
-
-    // Pre-computed
-    unsigned int m_Halfsize;
-    float m_Precision;
-    
+    Terrain * m_Terrain;
+    glm::vec2 m_ClipR;
+    glm::vec2 m_ActiveR;
 
   public:
 
     Update(glm::vec2 center);
-    LODLevel(unsigned int l,);
-    PutVertex(glm::i32vec2 pos, Vertexun v);
+    Load();
+    LODLevel(unsigned int l, glm::vec2& center, Terrain* t);
+    void PutVertex(glm::i32vec2& pos, Vertexun v);
+    unsigned int GetIndex(glm::i32vec2& pos);
 }
 
 
