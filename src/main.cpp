@@ -95,8 +95,9 @@ int main(void){
   Object c(&cube, "shaders/Basic.shader");*/
   
   //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", true);
-  Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl", false);
+  Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl", false);
   o.Init(GL_TRIANGLES, "shaders/Object.shader");
+  o.Scale(0.01,0.01,0.01);
   //o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
 
 

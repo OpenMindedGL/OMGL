@@ -15,6 +15,7 @@ private:
 	int m_Width; 
 	int m_Height;
 	bool m_TypeDisplay;
+        bool m_ReleaseCursor;
 
 	float m_HorizontalAngle; 
 	float m_VertivaleAngle;
