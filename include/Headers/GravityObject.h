@@ -2,10 +2,10 @@
 #define GravityObject_H
 #pragma once
 
-#include "Model.h"
+#include "Object.h"
 #include "Vertex.h"
 
-class GravityObject : public Model<Vertexun>{
+class GravityObject : public Object {
 
 private : 
         glm::vec3 m_Foot;
