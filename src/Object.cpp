@@ -39,13 +39,21 @@ Object::Object(std::string pathObj, std::string pathMtl, bool reverse)
 {
 	m_ListMat = new std::map<unsigned int, unsigned int>;
 	m_Mesh = new Mesh<Vertexun>;
-	this->LoadObject(pathObj, pathMtl, reverse);
+	LoadMaterials(pathMtl, m_Materials);
+	LoadObject(pathObj, reverse);
 }
 
-void Object::LoadObject(std::string pathObj, std::string pathMtl, bool reverse)
-{
-	if (pathMtl.size() > 0) InitMaterials(pathMtl, m_Materials);
 
+Object::Object(std::string pathObj, bool reverse)
+{
+	m_ListMat = new std::map<unsigned int, unsigned int>;
+	m_Mesh = new Mesh<Vertexun>;
+	LoadObject(pathObj, reverse);
+}
+
+
+void Object::LoadObject(std::string pathObj, bool reverse)
+{
 	std::vector<glm::vec3> v;
 	std::vector<glm::vec2> vt;
 	std::vector<glm::vec3> vn;
@@ -94,17 +102,16 @@ void Object::LoadObject(std::string pathObj, std::string pathMtl, bool reverse)
 					&vertexIndex[1], &uvIndex[1], &normalIndex[1],
 					&vertexIndex[2], &uvIndex[2], &normalIndex[2]);
 				for (int i = 0; i < 3; i++) {
-					r = contains(v[vertexIndex[i] - 1], vt[uvIndex[i] - 1], vn[normalIndex[i] - 1]);
-					if (r == -1) {
-						this->m_Mesh->GetVertices()->push_back(Vertexun(
-							v[vertexIndex[i] - 1], vt[uvIndex[i] - 1], vn[normalIndex[i] - 1]
-						));
-						m_Mesh->GetIndices()->push_back(++it);
-
-					}
-					else {
-						m_Mesh->GetIndices()->push_back(r);
-					}
+					//r = contains(v[vertexIndex[i] - 1], vt[uvIndex[i] - 1], vn[normalIndex[i] - 1]);
+					//if (r == -1) {
+					this->m_Mesh->GetVertices()->push_back(Vertexun(
+					v[vertexIndex[i] - 1], vt[uvIndex[i] - 1], vn[normalIndex[i] - 1]
+					));
+					m_Mesh->GetIndices()->push_back(++it);
+					//}
+					//else {
+						//m_Mesh->GetIndices()->push_back(r);
+					//}
 				}
 			}
 			else {
@@ -114,16 +121,16 @@ void Object::LoadObject(std::string pathObj, std::string pathMtl, bool reverse)
 					&vertexIndex[2], &normalIndex[2]);
 
 				for (int i = 0; i < 3; i++) {
-					r = contains(v[vertexIndex[i] - 1], glm::vec2(1), vn[normalIndex[i] - 1]);
-					if (r == -1) {
-						m_Mesh->GetVertices()->push_back(Vertexun(
-							v[vertexIndex[i] - 1], glm::vec2(1), vn[normalIndex[i] - 1]
-						));
-						m_Mesh->GetIndices()->push_back(++it);
-					}
-					else {
-						m_Mesh->GetIndices()->push_back(r);
-					}
+					//r = contains(v[vertexIndex[i] - 1], glm::vec2(1), vn[normalIndex[i] - 1]);
+					//if (r == -1) {
+					m_Mesh->GetVertices()->push_back(Vertexun(
+						v[vertexIndex[i] - 1], glm::vec2(1), vn[normalIndex[i] - 1]
+					));
+					m_Mesh->GetIndices()->push_back(++it);
+					//}
+					//else {
+						//m_Mesh->GetIndices()->push_back(r);
+					//}
 				}
 			}
 		}
@@ -135,13 +142,16 @@ void Object::LoadObject(std::string pathObj, std::string pathMtl, bool reverse)
 				m_ListMat->insert(std::pair<unsigned int, unsigned int>(m_Mesh->GetVertices()->empty() ? 0 : m_Mesh->GetIndices()->size() - 1, id));
 		}
 	}
+
+	if (vn.size() == 0) m_Mesh->ComputeNormals();
+	
 	fclose(file);
 	v.clear();
 	vt.clear();
 	vn.clear();
 }
 
-void Object::InitMaterials(std::string path, std::vector<Material*>& materials)
+void Object::LoadMaterials(std::string path, std::vector<Material*>& materials)
 {
   FILE * file = fopen(path.c_str(), "r");
   int it = -1;

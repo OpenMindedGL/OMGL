@@ -12,8 +12,9 @@ class Object {
 private : 
 
 	glm::mat4 m_ModelMatrix;
-	glm::mat4 m_Position;
+	/*glm::mat4 m_Translation;
 	glm::mat4 m_Rotation;
+	glm::mat4 m_Scale;*/
 
 protected : 
 
@@ -28,9 +29,10 @@ public :
 	Object(Mesh<Vertexun> * m, std::vector<Material*> mat);
 	Object(Mesh<Vertexun> * m, std::string shaderPath);
 	Object(std::string pathObj, std::string pathMtl, bool reverse);
+	Object(std::string pathObj, bool reverse);
 
-	void LoadObject(std::string pathObj, std::string pathMtl, bool reverse);
-	void InitMaterials(std::string path, std::vector<Material*> & materials);
+	void LoadObject(std::string pathObj, bool reverse);
+	void LoadMaterials(std::string path, std::vector<Material*> & materials);
 	int contains(glm::vec3 v, glm::vec2 vt, glm::vec3 vn);
 	bool hasMaterial(Material* mat);
 	unsigned int GetMaterialId(std::string nameMat);

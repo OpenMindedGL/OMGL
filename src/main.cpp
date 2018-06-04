@@ -99,8 +99,6 @@ int main(void){
   o.Init(GL_TRIANGLES, "shaders/Object.shader");
   //o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
 
-
-
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
