@@ -2,6 +2,7 @@
 #include "Skybox.h"
 #include <map>
 
+
 Renderer::Renderer(GLFWwindow & window, int w, int h)
 	: m_Camera(new Camera(window, w, h))
 {}
@@ -107,4 +108,15 @@ void Renderer::Draw(Skybox s)
 
 	glDepthFunc(GL_LESS);
 	s.Unbind();
+}
+
+
+
+void Renderer::Draw(Terrain& t)
+{
+  Object& l = t.GetLevel(0);
+  for (int i = 0; i < t.GetNbLevel(); i++) {
+    l = t.GetLevel(i);
+    Draw(l);
+  }
 }

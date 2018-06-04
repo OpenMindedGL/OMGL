@@ -46,7 +46,7 @@ int init(){
 
   if(!glfwInit())
     return -1;
-  
+
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -86,14 +86,14 @@ int main(void){
   Renderer renderer(*window, WIDTH, HEIGHT);
 
   glm::vec3 pos = renderer.getCameraPosition();
-  
-//  Terrain t(glm::vec2(pos.x, pos.z));
+
+  Terrain t(glm::vec2(pos.x, pos.z));
 
   Skybox s;
-  
+
   /*Cube cube;
-  Object c(&cube, "shaders/Basic.shader");*/
-  
+    Object c(&cube, "shaders/Basic.shader");*/
+
   //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", true);
   Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl", false);
   o.Init(GL_TRIANGLES, "shaders/Object.shader");
@@ -110,12 +110,12 @@ int main(void){
     pos = renderer.getCameraPosition();
     //printf("x:%f y:%f \n",pos.x,pos.z);    
 
-	/*t.load(glm::vec2(pos.x,pos.z));	
-    renderer.Draw(t);*/
-	renderer.Draw(o);
-	o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));
+    /*t.load(glm::vec2(pos.x,pos.z));	*/
+    renderer.Draw(t);
+    renderer.Draw(o);
+    o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     // Always draw last	
     renderer.Draw(s);
 

@@ -1,4 +1,5 @@
 #include "Texture.h"
+#include "Debug.h"
 
 #include <string.h>
 #include "stb_image_aug.h" 

@@ -1,6 +1,8 @@
 #ifndef Terrain_H
 #define Terrain_H
 
+class LODLevel;
+
 #include <string>
 #include <vector>
 #include <stack>
@@ -31,19 +33,21 @@ class Terrain {
 
 
   public :
-    Terrain(float p = PRECISION, unsigned int s = SIZE, unsigned int n = NB_LEVELS, glm::vec2 spawn);
+    Terrain(glm::vec2 spawn, float p = PRECISION, unsigned int s = SIZE, unsigned int n = NB_LEVELS);
     inline unsigned int GetSize(){ return m_Size; }
     inline float GetPrecision(){ return m_Precision; }
+    inline unsigned int GetNbLevel(){ return m_NbLevels; }
+    inline Object& GetLevel(unsigned int i){ return lods[i]; }
 
 
-}
+};
 
-class LODLevel : public Mesh<Vertexun>{ 
+class LODLevel : public Mesh<Vertexun> { 
 
   private:
 
     /* pre-computed */
-    static int** pre2D1D;
+    static unsigned int** pre2D1D;
     unsigned int m_UnitSize;
     unsigned int m_Size;
     unsigned int m_HalfSize;
@@ -62,11 +66,11 @@ class LODLevel : public Mesh<Vertexun>{
 
     static void Make2D1D(unsigned int s);
     void ComputeIndices();
-    void Update(glm::vec2 center);
+    void Update(glm::i32vec2 center);
     void PutVertex(glm::i32vec2& pos);
     LODLevel(unsigned int l, glm::vec2& center, Terrain* t);
-    int& GetIndex(glm::i32vec2& p);
-}
+    int GetIndex(glm::i32vec2& p);
+};
 
 
 #endif

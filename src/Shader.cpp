@@ -1,5 +1,5 @@
 #include "Shader.h"
-#include "Shader.h"
+#include "Debug.h"
 
 
 Shader::Shader()

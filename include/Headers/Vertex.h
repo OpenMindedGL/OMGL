@@ -11,6 +11,7 @@ public:
 	glm::vec3 pos;
 	Vertex(glm::vec3 p);
 	Vertex(float x, float y, float z);
+	Vertex();
 	~Vertex();
 };
 
@@ -32,6 +33,7 @@ public:
 
 	Vertexun(glm::vec3 p, glm::vec2 u, glm::vec3 n);
 	~Vertexun();
+	Vertexun();
 };
 /*
 class Vertexf {

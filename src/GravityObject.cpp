@@ -1,4 +1,5 @@
 #include "GravityObject.h"
+#include <GLFW/glfw3.h>
 
 GravityObject::GravityObject(glm::vec3 foot) {
   m_Foot = foot;

@@ -2,7 +2,7 @@
 #define Texture_H
 #pragma once
 
-#include "Renderer.h"
+#include <GL/glew.h>
 #include <string>
 
 #define TEX_DDS 1

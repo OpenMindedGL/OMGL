@@ -13,6 +13,8 @@ VertexBuffer::VertexBuffer(const void * data, unsigned int s)
 }
 
 void VertexBuffer::Upload(unsigned int offset, unsigned int s){
+        if(s == 0)
+          s = size;
         Bind();
 	GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, s, data));
 }
