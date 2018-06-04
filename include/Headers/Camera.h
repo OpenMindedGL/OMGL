@@ -20,7 +20,7 @@ private:
 	float m_InitialFoV;
 	float m_Speed;
 	float m_MouseSpeed;
-
+	bool m_DisplayType;
 	glm::vec3 m_Position;
 
 	glm::mat4 m_Model;
@@ -43,6 +43,7 @@ public:
 	inline glm::mat4 GetProj() const { return m_Proj; }
 	inline glm::mat4 GetMVP() const { return m_MVP; }
 	inline glm::vec3 getPosition() const { return m_Position; }
+	inline bool GetTypeDisplay() const { return m_DisplayType; }
 	
 	void printCoord();
 };

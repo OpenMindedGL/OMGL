@@ -1,5 +1,6 @@
 #include "Renderer.h"
 #include "Skybox.h"
+#include <map>
 
 Renderer::Renderer(GLFWwindow & window, int w, int h)
 	: m_Camera(new Camera(window, w, h))
@@ -13,11 +14,14 @@ void Renderer::Clear() const
 void Renderer::Draw(Object object)
 {
 	m_Camera->ComputeMatricesFromInputs();
-	m_Camera->SetModel(object.GetMesh()->GetModelMatrix());
+	m_Camera->SetModel(object.GetModelMatrix());
 	m_Camera->ComputeMVP();
 	glm::mat4 mvp = m_Camera->GetMVP();
 
 	object.Bind();
+
+	if(m_Camera->GetTypeDisplay()) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	else glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	if (object.GetMesh()->GetRendererType() == GL_TRIANGLE_STRIP) {
 		GLCall(glEnable(GL_PRIMITIVE_RESTART));
@@ -29,22 +33,42 @@ void Renderer::Draw(Object object)
 
 	for (int i = 0; i < object.GetMaterials().size(); i++) {
 		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_MVP", mvp);
-		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_M", object.GetMesh()->GetModelMatrix());
+		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_M", object.GetModelMatrix());
 		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
 	}
 
-	GLCall(glDrawElements(object.GetMesh()->GetRendererType(), object.GetMesh()->GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
-
+	//If severals mtl
+	if (object.GetListMat()->size() > 1) {
+		std::map<unsigned int, unsigned int>::iterator it = object.GetListMat()->begin();
+		unsigned int tmp = 0;
+		while (true) {
+			//OBEJCT.GETMATERIALS.SETUNIFORM(it->second...)
+			object.GetMaterials().at(it->second)->SetUniforms();
+			++it;
+			GLCall(glDrawElements(
+				object.GetMesh()->GetRendererType(), //type
+				(it == object.GetListMat()->end() ? object.GetMesh()->GetIndexBuffer().GetCount() - tmp: it->first - tmp + 1),//count
+				GL_UNSIGNED_INT,
+				(const void *)(tmp * sizeof(unsigned int)) //offset indice 
+			));
+			if (it == object.GetListMat()->end()) break;
+			tmp = it->first + 1;
+		}
+	}
+	else {
+		GLCall(glDrawElements(object.GetMesh()->GetRendererType(), object.GetMesh()->GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
+	}
 	object.Unbind();
 }
 
+//Fonction non fonctionnelle
 void Renderer::Draw(std::vector<Object> objects) {
 
 	m_Camera->ComputeMatricesFromInputs();
 	m_Camera->printCoord();
 
 	for (int i = 0; i < objects.size(); i++) {
-		m_Camera->SetModel(objects[i].GetMesh()->GetModelMatrix());
+		m_Camera->SetModel(objects[i].GetModelMatrix());
 		m_Camera->ComputeMVP();
 		glm::mat4 mvp = m_Camera->GetMVP();
 		objects[i].Bind();
@@ -59,7 +83,7 @@ void Renderer::Draw(std::vector<Object> objects) {
 void Renderer::Draw(Skybox s)
 {
 	m_Camera->ComputeMatricesFromInputs();
-	m_Camera->SetModel(s.GetMesh()->GetModelMatrix());
+	m_Camera->SetModel(s.GetModelMatrix());
 	m_Camera->SetView(glm::mat4(glm::mat3(m_Camera->GetView())));
 	m_Camera->ComputeMVP();
 	glm::mat4 mvp = m_Camera->GetMVP();
@@ -75,7 +99,7 @@ void Renderer::Draw(Skybox s)
 	}
 
 	s.GetMaterials().at(0)->SetShaderUniformMat4f("u_MVP", mvp);
-	s.GetMaterials().at(0)->SetShaderUniformMat4f("u_M", s.GetMesh()->GetModelMatrix());
+	s.GetMaterials().at(0)->SetShaderUniformMat4f("u_M", s.GetModelMatrix());
 	s.GetMaterials().at(0)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
 
 	// draw skybox behind everything
