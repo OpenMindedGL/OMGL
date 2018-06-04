@@ -9,13 +9,13 @@
 
 Terrain:: Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
   m_Precision(p),
-  m_Size(s),
   m_HalfSize(s/2),
   m_NbLevels(n)
 {
+  m_Size = s;
   LODLevel::Make2D1D(m_Size);   
   LODLevel* l;
-  Material* m = new Material();
+  Material* m = new Material(new Shader("shaders/Basic.shader"));
   for(unsigned int i=0;i<NB_LEVELS;i++){
     l = new LODLevel(i,spawn,this);
     lods[i] = Object(l,m);
@@ -29,18 +29,21 @@ unsigned int** LODLevel::pre2D1D;
 LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
   m_Level(l),
   m_Terrain(t),
-  m_Size(m_Terrain->GetSize()),
-  m_HalfSize(m_Size/2)
+  m_Size(t->GetSize()),
+  m_HalfSize(m_Size/2),
+  m_DoubleSize(m_Size*2)
 {
   //m_UnitSize = m_Size*std::pow(2,(m_NbLevel-m_Level-1));
   m_ActiveR = static_cast<glm::i32vec2>(center) - glm::i32vec2(2*m_Size);        // just load everything
   m_TorBegin = glm::i32vec2(m_ActiveR.x%m_Size,m_ActiveR.y%m_Size);
   //m_ClipR = center + glm::vec2(m_HalfSize);
-  m_Vertices->resize(m_Size*m_Size-1);
+  m_Vertices->resize(m_Size*m_Size);
+  m_Indices->resize(m_Vertices->size()*2);      // a une vache pres
+
+  ComputeIndices();
+  Init(GL_TRIANGLE_STRIP);
 
   Update(center);
-
-  Init(GL_TRIANGLE_STRIP);
   
   
 
@@ -90,6 +93,8 @@ void LODLevel::Update( glm::i32vec2 center ){
     return; 
 
   // yes
+//  m_Va->Bind();
+  BindVertexBuffer();
 
   m_UploadStart = 0;
   m_UploadCount = 0;
@@ -199,16 +204,24 @@ int LODLevel::GetIndex(glm::i32vec2& p){
   // or declare them globally
   glm::i32vec2 torPos = p - m_ActiveR;
   glm::i32vec2 dir = m_TorBegin + torPos;
-
-  if(dir.x > m_Size)
-    torPos.x -= m_Size; 
-  else if(dir.x < 0)
-    torPos.x += m_Size; 
-
-  if(dir.y > m_Size)
-    torPos.y -= m_Size; 
-  else if(dir.y < 0)
-    torPos.y += m_Size; 
+  if(glm::abs(torPos.x) >= m_DoubleSize){
+    torPos.x %= m_Size;
+  }
+  else{
+    if(dir.x > m_Size)
+      torPos.x -= m_Size; 
+    else if(dir.x < 0)
+      torPos.x += m_Size; 
+  }
+  if(glm::abs(torPos.y) >= m_DoubleSize){
+    torPos.y %= m_Size;
+  }
+  else{
+    if(dir.y > m_Size)
+      torPos.y -= m_Size; 
+    else if(dir.y < 0)
+      torPos.y += m_Size; 
+  }
   
   return pre2D1D[torPos.y][torPos.x];
   
@@ -219,8 +232,12 @@ void LODLevel::PutVertex(glm::i32vec2& pos){
   // index in the VertexBuffer
   unsigned int ind = GetIndex(pos);
 
+  if( m_UploadCount == 0){
+    m_UploadStart = ind;
+    m_UploadCount++;     
+  }
   // is this index immediately following others that need uploading ?
-  if( ind == 0 || m_UploadStart+m_UploadCount == ind-1){
+  else if( m_UploadStart+m_UploadCount == ind){
     // yes, do not upload, maybe next one will follow also
     m_UploadCount++;     
   }
@@ -229,6 +246,7 @@ void LODLevel::PutVertex(glm::i32vec2& pos){
     Upload(m_UploadStart, m_UploadCount);
     // cue this one for later
     m_UploadStart = ind;
+    m_UploadCount = 1;
   }
 
   // put vertex in

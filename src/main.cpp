@@ -98,6 +98,7 @@ int main(void){
   Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl", false);
   o.Init(GL_TRIANGLES, "shaders/Object.shader");
   o.Scale(0.01,0.01,0.01);
+  o.Translate(10,10,10);
   //o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
 
 
@@ -112,7 +113,7 @@ int main(void){
 
     /*t.load(glm::vec2(pos.x,pos.z));	*/
     renderer.Draw(t);
-    renderer.Draw(o);
+    //renderer.Draw(o);
     o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));
 
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

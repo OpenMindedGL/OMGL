@@ -13,7 +13,7 @@ class LODLevel;
 #include "NoiseGen.h"
 #include "Material.h"
 
-#define NB_LEVELS 2
+#define NB_LEVELS 1
 #define PRECISION 1.0f
 #define SIZE    32
 #define HALFSIZE    SIZE/2
@@ -51,6 +51,7 @@ class LODLevel : public Mesh<Vertexun> {
     unsigned int m_UnitSize;
     unsigned int m_Size;
     unsigned int m_HalfSize;
+    unsigned int m_DoubleSize;
     glm::i32vec2 m_TorEnd;    
     /*              */
 
