@@ -19,7 +19,7 @@ void Camera::ComputeMatricesFromInputs()
 	// Compute time difference between current and last frame
 	double currentTime = glfwGetTime();
 
-	float deltaTime = float(currentTime - lastTime) * 5;
+	float deltaTime = float(currentTime - lastTime);
 
 	// Get mouse position
 	double xpos, ypos;
@@ -73,11 +73,14 @@ void Camera::ComputeMatricesFromInputs()
         }
 
         if (glfwGetKey(&m_Window, GLFW_KEY_R) == GLFW_PRESS) {
-			m_DisplayType = true;
+          //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+			m_TypeDisplay = true;
         }
         if (glfwGetKey(&m_Window, GLFW_KEY_E) == GLFW_PRESS) {
-			m_DisplayType = false;
+          //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+			m_TypeDisplay = false;
         }
+
 	float FoV = m_InitialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
 
 	// Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units

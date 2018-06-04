@@ -20,7 +20,7 @@ void Renderer::Draw(Object object)
 
 	object.Bind();
 
-	if(m_Camera->GetTypeDisplay()) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	if(m_Camera->getTypeDisplay()) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	else glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 	if (object.GetMesh()->GetRendererType() == GL_TRIANGLE_STRIP) {

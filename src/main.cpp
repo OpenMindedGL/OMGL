@@ -99,7 +99,6 @@ int main(void){
   o.Init(GL_TRIANGLES, "shaders/Object.shader");
   //o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
 
-
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
@@ -113,7 +112,7 @@ int main(void){
 	renderer.Draw(o);
 	o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));
 
-
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     // Always draw last	
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     renderer.Draw(s);
