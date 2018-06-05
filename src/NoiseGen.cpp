@@ -2,7 +2,7 @@
 #include "NoiseGen.h"
 
 NoiseGen::NoiseGen(){
-  zoom = 5.0f;
+  zoom = 10.0f;
   nbOctave = 8;
   lacunarity = 2.00f;
   persistence = 0.5f;

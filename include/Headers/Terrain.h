@@ -12,8 +12,9 @@ class LODLevel;
 #include "Vertex.h"
 #include "NoiseGen.h"
 #include "Material.h"
+#include "LODLevel.h"
 
-#define NB_LEVELS 8
+#define NB_LEVELS 3
 #define PRECISION 1.0f
 #define SIZE    32
 #define HALFSIZE    SIZE/2
@@ -45,40 +46,6 @@ class Terrain {
 
 };
 
-class LODLevel : public Mesh<Vertexun> { 
-
-  private:
-
-    /* pre-computed */
-    static unsigned int** pre2D1D;
-    int m_UnitSize;
-    int m_Size;
-    int m_HalfSize;
-    int m_DoubleSize;
-    glm::i32vec2 m_TorEnd;    
-    /*              */
-
-    unsigned int m_UploadStart;
-    unsigned int m_UploadCount;
-    unsigned int m_Level;
-    Vertexun* m_MappedBuffer;
-    glm::i32vec2 m_TorBegin;    // origin in the toroid array
-    Terrain * m_Terrain;
-    //glm::vec2 m_ClipR;
-    glm::i32vec2 m_ActiveR;
-    glm::i32vec2 m_NewActiveR;
-    void MapBuffer();
-    void UnmapBuffer();
-
-  public:
-
-    static void Make2D1D(unsigned int s);
-    void ComputeIndices();
-    int Update(glm::i32vec2 center);
-    void PutVertex(glm::i32vec2& pos);
-    LODLevel(unsigned int l, glm::vec2& center, Terrain* t);
-    int GetIndex(glm::i32vec2& p);
-};
 
 
 #endif
