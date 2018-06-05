@@ -42,6 +42,7 @@ public:
 	void Unbind();
 
 	void Upload();
+	void UploadIndexBuffer();
         void Upload(unsigned int start, unsigned int count);
 
 	void Init(unsigned int renderType);
@@ -160,4 +161,8 @@ void Mesh<T>::Upload(unsigned int start, unsigned int count) {
 	(*m_Vb).Upload(start*sizeof(T),count*sizeof(T));
 }
 
+template <class T>
+void Mesh<T>::UploadIndexBuffer() {
+	(*m_Ib).Upload();
+}
 #endif

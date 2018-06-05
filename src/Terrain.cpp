@@ -1,6 +1,8 @@
 #include "Terrain.h"
 #include "Mesh.h"
 #include "Vertex.h"
+#include "Debug.h"
+#include "Log.h"
 #include <vector>
 #include "NoiseGen.h"
 #include <glm/glm.hpp>
@@ -15,10 +17,10 @@ Terrain:: Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
   m_Size = s;
   LODLevel::Make2D1D(m_Size);   
   LODLevel* l;
-  Material* m = new Material(new Shader("shaders/Basic.shader"));
+  Material* m = new Material(new Shader("shaders/Cube.shader"));
   for(unsigned int i=0;i<NB_LEVELS;i++){
-    l = new LODLevel(i,spawn,this);
-    lods[i] = Object(l,m);
+    lods[i] = new LODLevel(i,spawn,this);
+    lods_obj[i] = Object(lods[i],m);
   }
 
 }
@@ -34,18 +36,22 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
   m_DoubleSize(m_Size*2)
 {
   //m_UnitSize = m_Size*std::pow(2,(m_NbLevel-m_Level-1));
-  m_ActiveR = static_cast<glm::i32vec2>(center) - glm::i32vec2(2*m_Size);        // just load everything
-  m_TorBegin = glm::i32vec2(m_ActiveR.x%m_Size,m_ActiveR.y%m_Size);
+  m_ActiveR = (static_cast<glm::i32vec2>(center)/glm::i32vec2(m_Size))*glm::i32vec2(m_Size)+glm::i32vec2(m_Size);        // just load everything
+  m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Size,m_ActiveR.y%(unsigned int)m_Size);
   //m_ClipR = center + glm::vec2(m_HalfSize);
-  m_Vertices->resize(m_Size*m_Size);
-  m_Indices->resize(m_Vertices->size()*2);      // a une vache pres
+  m_Vertices->resize((unsigned int)m_Size*m_Size);
+  //m_Indices->resize(1);
 
+  m_NewActiveR = static_cast<glm::i32vec2>(center) - glm::i32vec2(m_HalfSize);
   ComputeIndices();
-  Init(GL_TRIANGLE_STRIP);
 
   Update(center);
-  
-  
+  Init(GL_TRIANGLE_STRIP);
+  //Upload();
+  //UploadIndexBuffer();
+  //GLCall(Vertexun * a = (Vertexun *) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY)); 
+  //printf("%f \n",(*a).pos);
+  //GLCall(glUnmapBuffer(GL_ARRAY_BUFFER));
 
 }
 
@@ -70,28 +76,32 @@ void LODLevel::Make2D1D(unsigned int s){
 }
 
 void LODLevel::ComputeIndices(){
-    glm::i32vec2 ind;
-    glm::i32vec2 indnext;
-    indnext.y = m_ActiveR.y;
-    glm::i32vec2 end = m_ActiveR + glm::i32vec2(m_Size);
-    for(ind.y=m_ActiveR.y; ind.y<end.y-1; ind.y++){
-      indnext.y++;
-      for(ind.x=m_ActiveR.x; ind.x<end.x; ind.x++){
-        m_Indices->push_back(GetIndex(ind));
-        m_Indices->push_back(GetIndex(indnext));
-      }
-      m_Indices->push_back(m_Vertices->size());
+  m_Indices->clear();
+  glm::i32vec2 ind;
+  glm::i32vec2 indnext;
+  indnext.y = m_NewActiveR.y;
+  glm::i32vec2 end = m_NewActiveR + glm::i32vec2(m_Size);
+  for(ind.y=m_NewActiveR.y; ind.y<end.y-1; ind.y++){
+    indnext.y++;
+    indnext.x=m_NewActiveR.x;
+    for(ind.x=m_NewActiveR.x; ind.x<end.x; ind.x++){
+      m_Indices->push_back(GetIndex(ind));
+      m_Indices->push_back(GetIndex(indnext));
+      indnext.x++;
     }
+    m_Indices->push_back(m_Vertices->size());
+  }
 }
 
-void LODLevel::Update( glm::i32vec2 center ){
-  glm::i32vec2 newActiveR = static_cast<glm::i32vec2>(center) - glm::i32vec2(m_HalfSize);
-  glm::i32vec2 dir = m_ActiveR - newActiveR;
+int LODLevel::Update( glm::i32vec2 center ){
+  m_NewActiveR = static_cast<glm::i32vec2>(center) - glm::i32vec2(m_HalfSize);
+  glm::i32vec2 dir = m_NewActiveR - m_ActiveR;
   
   // do we update anything ?
   if(dir.x == 0 && dir.y == 0)
-    return; 
+    return 0; 
 
+  printf("[INFO] Updating terrain. dir:(%d,%d)\n",dir.x,dir.y);
   // yes
 //  m_Va->Bind();
   BindVertexBuffer();
@@ -99,27 +109,28 @@ void LODLevel::Update( glm::i32vec2 center ){
   m_UploadStart = 0;
   m_UploadCount = 0;
   bool isDiagonal;
+  bool fullReload = false;
 
   // what points need updating ?
   
   // compute area to update
   isDiagonal = false;
-  glm::i32vec2 s;                       // start of area
-  glm::i32vec2 e;                       // end
   glm::i32vec2& o = m_ActiveR;          // old active region
-  glm::i32vec2& n = newActiveR;         // new one
+  glm::i32vec2& n = m_NewActiveR;         // new one
+  glm::i32vec2 s = n;                       // start of area
+  glm::i32vec2 e = n+glm::i32vec2(m_Size);                       // end
   glm::i32vec2 sign = glm::sign(dir);
 
+  printf("old: (%d,%d) new: (%d,%d), tor:(%d,%d)\n",o.x,o.y,n.x,n.y,m_TorBegin.x,m_TorBegin.y);
   // are any currently loaded points still needed ?
-  if (dir.x > m_Size || dir.y > m_Size){
+  if (glm::abs(dir.x) > m_Size || glm::abs(dir.y) > m_Size){
     // no, replace everything
-    s = n;
-    e = n+glm::i32vec2(m_Size);
+    fullReload = true;
   }
   else{
     // yes which ones ?
     if(dir.x != 0 && dir.y != 0)
-      isDiagonal == true;
+      isDiagonal = true;
 
     // ugly but fast
 
@@ -159,70 +170,101 @@ void LODLevel::Update( glm::i32vec2 center ){
 
   }
 
-  glm::i32vec2 p;
-  for(p.y=s.y ; p.y < e.y ; p.y++){
-    for(p.x=s.x ; p.x < e.x ; p.x++){
-      PutVertex(p);
-    }
-  }
-  
-  if(isDiagonal){
-    // Second part of the L area  
-    e = n+glm::i32vec2(m_Size);
-    s.x = 0;
-    s.y = p.y;
-    if(sign == glm::i32vec2(-1,-1)){
-      e.x = o.x;
-    }
-    else if(sign == glm::i32vec2(1,-1)){
-      s.x = o.x;
+  if(fullReload){
+    printf("full Reload !\n");
+    glm::i32vec2 p;
+    unsigned int ind = GetIndex(p);
+    for(p.y=s.y ; p.y < e.y ; p.y++){
+      for(p.x=s.x ; p.x < e.x ; p.x++){
+        ind = GetIndex(p);
+        m_Vertices->at(ind) = {
+          //glm::vec3(pos.x, noise.compute_height(pos.x,pos.y), pos.y),
+          glm::vec3((float) p.x, 0, (float) p.y),
+          glm::vec2(),
+          glm::vec3()
+        };
+      }
     }
 
+  }
+  else{
+    printf("1st square: s:(%d,%d), e(%d,%d)\n",s.x,s.y,e.x,e.y);
     glm::i32vec2 p;
     for(p.y=s.y ; p.y < e.y ; p.y++){
       for(p.x=s.x ; p.x < e.x ; p.x++){
         PutVertex(p);
       }
     }
+
+    if(isDiagonal){
+      // Second part of the L area  
+      e = n+glm::i32vec2(m_Size);
+      s.x = n.x;
+      s.y = p.y;
+      if(sign == glm::i32vec2(-1,-1)){
+
+        e.x = o.x;
+      }
+      else if(sign == glm::i32vec2(1,-1)){
+        s.x = o.x;
+      }
+
+      printf("2nd square: s:(%d,%d), e(%d,%d)\n",s.x,s.y,e.x,e.y);
+      glm::i32vec2 p;
+      for(p.y=s.y ; p.y < e.y ; p.y++){
+        for(p.x=s.x ; p.x < e.x ; p.x++){
+          PutVertex(p);
+        }
+      }
+    }
+
+    // upload last range
+    Upload(m_UploadStart, m_UploadCount);
+
   }
-
-  // upload last range
-  Upload(m_UploadStart, m_UploadCount);
-
-  m_ActiveR = newActiveR;
+  m_ActiveR = m_NewActiveR;
+  m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Size,m_ActiveR.y%(unsigned int)m_Size);
+  return 1;
 }
 
 int LODLevel::GetIndex(glm::i32vec2& p){
   /* with a modulo
    * glm::i32vec2 torPos = pos % m_Size;
+   * x & (m_Size - 1)
    */
 
   /* without one
    * /!\ only works if |p-m_ActiveR| < 2*m_Size */
-
+/*
   // TODO : just pass those, increment them in the calling function
   // or declare them globally
   glm::i32vec2 torPos = p - m_ActiveR;
-  glm::i32vec2 dir = m_TorBegin + torPos;
-  if(glm::abs(torPos.x) >= m_DoubleSize){
+  torPos+=m_TorBegin;
+  //glm::i32vec2 dir = m_TorBegin + torPos;
+  if(torPos.x < (int) -m_Size)
+    torPos.x %= m_Size;
+  if(torPos.x >= (int) m_DoubleSize){
     torPos.x %= m_Size;
   }
   else{
-    if(dir.x > m_Size)
+    if(torPos.x > (int) m_Size)
       torPos.x -= m_Size; 
-    else if(dir.x < 0)
+    else if(torPos.x < 0)
       torPos.x += m_Size; 
   }
-  if(glm::abs(torPos.y) >= m_DoubleSize){
+  if(torPos.y < (int) -m_Size)
+    torPos.y %= m_Size;
+  if(torPos.y >= (int) m_DoubleSize){
     torPos.y %= m_Size;
   }
   else{
-    if(dir.y > m_Size)
+    if(torPos.y > (int) m_Size)
       torPos.y -= m_Size; 
-    else if(dir.y < 0)
+    else if(torPos.y < 0)
       torPos.y += m_Size; 
   }
-  
+  */
+  glm::i32vec2 torPos = glm::i32vec2(p.x%(unsigned int)m_Size,p.y%(unsigned int)m_Size);
   return pre2D1D[torPos.y][torPos.x];
   
 }
@@ -252,7 +294,7 @@ void LODLevel::PutVertex(glm::i32vec2& pos){
   // put vertex in
   m_Vertices->at(ind) = {
       //glm::vec3(pos.x, noise.compute_height(pos.x,pos.y), pos.y),
-      glm::vec3(pos.x, 0, pos.y),
+      glm::vec3((float) pos.x, 0, (float) pos.y),
       glm::vec2(),
       glm::vec3()
   };
@@ -260,4 +302,24 @@ void LODLevel::PutVertex(glm::i32vec2& pos){
 
 }
 
-//glm::vec2 dir = static_cast<glm::i32vec2>(m_ActiveR - newActiveR);
+//glm::vec2 dir = static_cast<glm::i32vec2>(m_ActiveR - m_NewActiveR);
+
+void Terrain::Update(glm::i32vec2& center){
+
+  for(unsigned int i=0;i<NB_LEVELS;i++){
+    if(lods[i]->Update(center)){
+      lods[i]->Upload();
+      lods[i]->ComputeIndices();
+      lods[i]->UploadIndexBuffer();
+      Log::PrintVertices(*(lods[i]->GetVertices()));
+      Log::PrintIndices(*(lods[i]->GetIndices()));
+      Vertexun* b =(Vertexun*) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
+      GLCall(std::vector<Vertexun> a(b,b+(*(lods[i]->GetVertices())).size()) ); 
+      Log::PrintVertices(a);
+      //printf("%f \n",(*a).pos);
+      GLCall(glUnmapBuffer(GL_ARRAY_BUFFER));
+    }
+  }
+
+
+}

@@ -112,6 +112,8 @@ int main(void){
     //printf("x:%f y:%f \n",pos.x,pos.z);    
 
     /*t.load(glm::vec2(pos.x,pos.z));	*/
+    glm::i32vec2 lalala = glm::i32vec2(pos.x,pos.z);
+    t.Update(lalala);
     renderer.Draw(t);
     //renderer.Draw(o);
     o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));

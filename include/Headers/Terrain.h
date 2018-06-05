@@ -15,7 +15,7 @@ class LODLevel;
 
 #define NB_LEVELS 1
 #define PRECISION 1.0f
-#define SIZE    32
+#define SIZE    4
 #define HALFSIZE    SIZE/2
 #define CHUNK_PER_SIDE 5   // KEEP ODD !!!!
 #define RENDER_DISTANCE (CHUNK_PER_SIDE/2)
@@ -26,18 +26,20 @@ class Terrain {
   private :
     unsigned int m_NbLevels;
     float m_Precision;
-    unsigned int m_Size;
-    unsigned int m_HalfSize;
-    Object lods[NB_LEVELS];   // Future Objects
+    int m_Size;
+    int m_HalfSize;
+    Object lods_obj[NB_LEVELS];   // Future Objects
+    LODLevel * lods[NB_LEVELS];
     Material * m_Material;
 
 
   public :
     Terrain(glm::vec2 spawn, float p = PRECISION, unsigned int s = SIZE, unsigned int n = NB_LEVELS);
-    inline unsigned int GetSize(){ return m_Size; }
+    inline int GetSize(){ return m_Size; }
     inline float GetPrecision(){ return m_Precision; }
     inline unsigned int GetNbLevel(){ return m_NbLevels; }
-    inline Object& GetLevel(unsigned int i){ return lods[i]; }
+    inline Object& GetLevel(unsigned int i){ return lods_obj[i]; }
+    void Update(glm::i32vec2& center);
 
 
 };
@@ -49,9 +51,9 @@ class LODLevel : public Mesh<Vertexun> {
     /* pre-computed */
     static unsigned int** pre2D1D;
     unsigned int m_UnitSize;
-    unsigned int m_Size;
-    unsigned int m_HalfSize;
-    unsigned int m_DoubleSize;
+    int m_Size;
+    int m_HalfSize;
+    int m_DoubleSize;
     glm::i32vec2 m_TorEnd;    
     /*              */
 
@@ -62,12 +64,13 @@ class LODLevel : public Mesh<Vertexun> {
     Terrain * m_Terrain;
     //glm::vec2 m_ClipR;
     glm::i32vec2 m_ActiveR;
+    glm::i32vec2 m_NewActiveR;
 
   public:
 
     static void Make2D1D(unsigned int s);
     void ComputeIndices();
-    void Update(glm::i32vec2 center);
+    int Update(glm::i32vec2 center);
     void PutVertex(glm::i32vec2& pos);
     LODLevel(unsigned int l, glm::vec2& center, Terrain* t);
     int GetIndex(glm::i32vec2& p);
