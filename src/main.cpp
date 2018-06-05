@@ -91,8 +91,8 @@ int main(void){
 
   Skybox s;
 
-  /*Cube cube;
-    Object c(&cube, "shaders/Basic.shader");*/
+  Cube cube;
+  Object c(&cube, "shaders/Basic.shader");
 
   //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", true);
   Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl", false);
@@ -115,6 +115,7 @@ int main(void){
     glm::i32vec2 lalala = glm::i32vec2(pos.x,pos.z);
     t.Update(lalala);
     renderer.Draw(t);
+    renderer.Draw(c);
     //renderer.Draw(o);
     o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));
 

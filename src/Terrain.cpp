@@ -9,10 +9,11 @@
 
 
 
-Terrain:: Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
+Terrain::Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
   m_Precision(p),
   m_HalfSize(s/2),
-  m_NbLevels(n)
+  m_NbLevels(n),
+  m_Noise()
 {
   m_Size = s;
   LODLevel::Make2D1D(m_Size);   
@@ -32,11 +33,13 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
   m_Level(l),
   m_Terrain(t),
   m_Size(t->GetSize()),
+  m_UnitSize(glm::pow(2,NB_LEVELS-l)),
+  //m_UnitSize(1),
   m_HalfSize(m_Size/2),
   m_DoubleSize(m_Size*2)
 {
   //m_UnitSize = m_Size*std::pow(2,(m_NbLevel-m_Level-1));
-  m_ActiveR = (static_cast<glm::i32vec2>(center)/glm::i32vec2(m_Size))*glm::i32vec2(m_Size)+glm::i32vec2(m_Size);        // just load everything
+  m_ActiveR = (static_cast<glm::i32vec2>(center)/glm::i32vec2(m_UnitSize)/glm::i32vec2(m_Size))*glm::i32vec2(m_Size)+glm::i32vec2(m_Size);        // just load everything
   m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Size,m_ActiveR.y%(unsigned int)m_Size);
   //m_ClipR = center + glm::vec2(m_HalfSize);
   m_Vertices->resize((unsigned int)m_Size*m_Size);
@@ -45,8 +48,9 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
   m_NewActiveR = static_cast<glm::i32vec2>(center) - glm::i32vec2(m_HalfSize);
   ComputeIndices();
 
-  Update(center);
   Init(GL_TRIANGLE_STRIP);
+  Update(center);
+  Unbind();
   //Upload();
   //UploadIndexBuffer();
   //GLCall(Vertexun * a = (Vertexun *) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY)); 
@@ -94,7 +98,7 @@ void LODLevel::ComputeIndices(){
 }
 
 int LODLevel::Update( glm::i32vec2 center ){
-  m_NewActiveR = static_cast<glm::i32vec2>(center) - glm::i32vec2(m_HalfSize);
+  m_NewActiveR = static_cast<glm::i32vec2>(center)/glm::i32vec2(m_UnitSize) - glm::i32vec2(m_HalfSize);
   glm::i32vec2 dir = m_NewActiveR - m_ActiveR;
   
   // do we update anything ?
@@ -105,6 +109,8 @@ int LODLevel::Update( glm::i32vec2 center ){
   // yes
 //  m_Va->Bind();
   BindVertexBuffer();
+  MapBuffer();
+
 
   m_UploadStart = 0;
   m_UploadCount = 0;
@@ -170,60 +176,41 @@ int LODLevel::Update( glm::i32vec2 center ){
 
   }
 
-  if(fullReload){
-    printf("full Reload !\n");
-    glm::i32vec2 p;
-    unsigned int ind = GetIndex(p);
-    for(p.y=s.y ; p.y < e.y ; p.y++){
-      for(p.x=s.x ; p.x < e.x ; p.x++){
-        ind = GetIndex(p);
-        m_Vertices->at(ind) = {
-          //glm::vec3(pos.x, noise.compute_height(pos.x,pos.y), pos.y),
-          glm::vec3((float) p.x, 0, (float) p.y),
-          glm::vec2(),
-          glm::vec3()
-        };
-      }
+  printf("1st square: s:(%d,%d), e(%d,%d)\n",s.x,s.y,e.x,e.y);
+  glm::i32vec2 p;
+  for(p.y=s.y ; p.y < e.y ; p.y++){
+    for(p.x=s.x ; p.x < e.x ; p.x++){
+      PutVertex(p);
+    }
+  }
+
+  if(isDiagonal){
+    // Second part of the L area  
+    e = n+glm::i32vec2(m_Size);
+    s.x = n.x;
+    s.y = p.y;
+    if(sign == glm::i32vec2(-1,-1)){
+
+      e.x = o.x;
+    }
+    else if(sign == glm::i32vec2(1,-1)){
+      s.x = o.x;
     }
 
-  }
-  else{
-    printf("1st square: s:(%d,%d), e(%d,%d)\n",s.x,s.y,e.x,e.y);
+    printf("2nd square: s:(%d,%d), e(%d,%d)\n",s.x,s.y,e.x,e.y);
     glm::i32vec2 p;
     for(p.y=s.y ; p.y < e.y ; p.y++){
       for(p.x=s.x ; p.x < e.x ; p.x++){
         PutVertex(p);
       }
     }
-
-    if(isDiagonal){
-      // Second part of the L area  
-      e = n+glm::i32vec2(m_Size);
-      s.x = n.x;
-      s.y = p.y;
-      if(sign == glm::i32vec2(-1,-1)){
-
-        e.x = o.x;
-      }
-      else if(sign == glm::i32vec2(1,-1)){
-        s.x = o.x;
-      }
-
-      printf("2nd square: s:(%d,%d), e(%d,%d)\n",s.x,s.y,e.x,e.y);
-      glm::i32vec2 p;
-      for(p.y=s.y ; p.y < e.y ; p.y++){
-        for(p.x=s.x ; p.x < e.x ; p.x++){
-          PutVertex(p);
-        }
-      }
-    }
-
-    // upload last range
-    Upload(m_UploadStart, m_UploadCount);
-
   }
+
   m_ActiveR = m_NewActiveR;
   m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Size,m_ActiveR.y%(unsigned int)m_Size);
+  GLCall(std::vector<Vertexun> a(m_MappedBuffer,m_MappedBuffer+(*m_Vertices).size()) ); 
+  //Log::PrintVertices(a);
+  UnmapBuffer();
   return 1;
 }
 
@@ -273,28 +260,12 @@ void LODLevel::PutVertex(glm::i32vec2& pos){
 
   // index in the VertexBuffer
   unsigned int ind = GetIndex(pos);
-
-  if( m_UploadCount == 0){
-    m_UploadStart = ind;
-    m_UploadCount++;     
-  }
-  // is this index immediately following others that need uploading ?
-  else if( m_UploadStart+m_UploadCount == ind){
-    // yes, do not upload, maybe next one will follow also
-    m_UploadCount++;     
-  }
-  else{
-    // no, upload previous ones
-    Upload(m_UploadStart, m_UploadCount);
-    // cue this one for later
-    m_UploadStart = ind;
-    m_UploadCount = 1;
-  }
-
+  printf("ind:%d (%d, %d)\n", ind, pos.x, pos.y);
+  glm::i32vec2 p =  glm::i32vec2(m_UnitSize*pos.x-m_UnitSize,m_UnitSize*pos.y-m_UnitSize);
   // put vertex in
-  m_Vertices->at(ind) = {
+  m_MappedBuffer[ind] = {
       //glm::vec3(pos.x, noise.compute_height(pos.x,pos.y), pos.y),
-      glm::vec3((float) pos.x, 0, (float) pos.y),
+      glm::vec3( p.x, m_Terrain->m_Noise.compute(p.x,p.y), p.y),
       glm::vec2(),
       glm::vec3()
   };
@@ -308,18 +279,29 @@ void Terrain::Update(glm::i32vec2& center){
 
   for(unsigned int i=0;i<NB_LEVELS;i++){
     if(lods[i]->Update(center)){
-      lods[i]->Upload();
+      //lods[i]->UnmapBuffer();
+//      lods[i]->Upload();
       lods[i]->ComputeIndices();
       lods[i]->UploadIndexBuffer();
-      Log::PrintVertices(*(lods[i]->GetVertices()));
-      Log::PrintIndices(*(lods[i]->GetIndices()));
-      Vertexun* b =(Vertexun*) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
+      //Log::PrintVertices(*(lods[i]->GetVertices()));
+      //Log::PrintIndices(*(lods[i]->GetIndices()));
+      /*Vertexun* b =(Vertexun*) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY);
       GLCall(std::vector<Vertexun> a(b,b+(*(lods[i]->GetVertices())).size()) ); 
       Log::PrintVertices(a);
       //printf("%f \n",(*a).pos);
-      GLCall(glUnmapBuffer(GL_ARRAY_BUFFER));
+      GLCall(glUnmapBuffer(GL_ARRAY_BUFFER));*/
     }
   }
 
 
+}
+
+void LODLevel::UnmapBuffer(){
+  bool a;
+  GLCall(a = glUnmapBuffer(GL_ARRAY_BUFFER));
+  if(!a)
+    printf("[ERROR] UnmapBuffer returned GL_FALSE\n");
+}
+void LODLevel::MapBuffer(){
+  m_MappedBuffer = (Vertexun*) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
 }

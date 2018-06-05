@@ -114,9 +114,8 @@ void Renderer::Draw(Skybox s)
 
 void Renderer::Draw(Terrain& t)
 {
-  Object& l = t.GetLevel(0);
-  for (int i = 0; i < t.GetNbLevel(); i++) {
-    l = t.GetLevel(i);
-    Draw(l);
+  for (unsigned int i = 0; i < t.GetNbLevel(); i++) {
+    //printf("Drawing level %d\n",i);
+    Draw(t.GetLevel(i));
   }
 }

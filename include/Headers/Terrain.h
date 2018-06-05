@@ -13,9 +13,9 @@ class LODLevel;
 #include "NoiseGen.h"
 #include "Material.h"
 
-#define NB_LEVELS 1
+#define NB_LEVELS 8
 #define PRECISION 1.0f
-#define SIZE    4
+#define SIZE    32
 #define HALFSIZE    SIZE/2
 #define CHUNK_PER_SIDE 5   // KEEP ODD !!!!
 #define RENDER_DISTANCE (CHUNK_PER_SIDE/2)
@@ -34,6 +34,7 @@ class Terrain {
 
 
   public :
+    NoiseGen m_Noise;
     Terrain(glm::vec2 spawn, float p = PRECISION, unsigned int s = SIZE, unsigned int n = NB_LEVELS);
     inline int GetSize(){ return m_Size; }
     inline float GetPrecision(){ return m_Precision; }
@@ -50,7 +51,7 @@ class LODLevel : public Mesh<Vertexun> {
 
     /* pre-computed */
     static unsigned int** pre2D1D;
-    unsigned int m_UnitSize;
+    int m_UnitSize;
     int m_Size;
     int m_HalfSize;
     int m_DoubleSize;
@@ -60,11 +61,14 @@ class LODLevel : public Mesh<Vertexun> {
     unsigned int m_UploadStart;
     unsigned int m_UploadCount;
     unsigned int m_Level;
+    Vertexun* m_MappedBuffer;
     glm::i32vec2 m_TorBegin;    // origin in the toroid array
     Terrain * m_Terrain;
     //glm::vec2 m_ClipR;
     glm::i32vec2 m_ActiveR;
     glm::i32vec2 m_NewActiveR;
+    void MapBuffer();
+    void UnmapBuffer();
 
   public:
 
