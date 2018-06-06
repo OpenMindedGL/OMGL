@@ -113,6 +113,7 @@ int main(void){
 
     /*t.load(glm::vec2(pos.x,pos.z));	*/
     glm::i32vec2 lalala = glm::i32vec2(pos.x,pos.z);
+//    glm::i32vec2 lalala = glm::i32vec2(0,0);
     t.Update(lalala);
     renderer.Draw(t);
     renderer.Draw(c);

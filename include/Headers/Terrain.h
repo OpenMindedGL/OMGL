@@ -14,9 +14,9 @@ class LODLevel;
 #include "Material.h"
 #include "LODLevel.h"
 
-#define NB_LEVELS 3
+#define NB_LEVELS 7
 #define PRECISION 1.0f
-#define SIZE    32
+#define SIZE    129   // -1 should be power of two, dividable by 8
 #define HALFSIZE    SIZE/2
 #define CHUNK_PER_SIDE 5   // KEEP ODD !!!!
 #define RENDER_DISTANCE (CHUNK_PER_SIDE/2)

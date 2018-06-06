@@ -23,6 +23,7 @@ class LODLevel : public Mesh<Vertexun> {
     static unsigned int** pre2D1D;
     int m_Size;
     int m_HalfSize;
+    int m_QuarterSize;
     int m_DoubleSize;
     int m_UnitSize;
     glm::i32vec2 m_TorEnd;    
@@ -39,6 +40,7 @@ class LODLevel : public Mesh<Vertexun> {
     void MapBuffer();
     void UnmapBuffer();
     int Load();
+    void IndicesArea(glm::i32vec2& s, glm::i32vec2& e);
 
   public:
 
