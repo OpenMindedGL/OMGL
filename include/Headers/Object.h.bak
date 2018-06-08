@@ -12,16 +12,8 @@ class Object {
 private : 
 
 	glm::mat4 m_ModelMatrix;
-	glm::mat4 m_TranslationMat;
-	glm::mat4 m_RotationMat;
-        glm::mat4 m_ScaleMat;
-        glm::vec3 m_Position;
-        glm::vec3 m_Scale;
-        glm::vec3 m_Rotation;
-
-        void UpdateScaleMatrix();
-        void UpdateTranslationMatrix();
-        void UpdateRotationMatrix();
+	glm::mat4 m_Position;
+	glm::mat4 m_Rotation;
 
 protected : 
 
@@ -49,28 +41,17 @@ public :
 	
 	void Translate(float x, float y, float z);
 	void Translate(glm::vec3 axis);
-	void RotationRad(float x, float y, float z);
-        void RotationRad(glm::vec3 angles);
-	void RotationDeg(float x, float y, float z);
-	void RotationDeg(glm::vec3 angles);
+	void RotationRad(float angle, float x, float y, float z);
+	void RotationRad(float angle, glm::vec3 axis);
+	void RotationDeg(float angle, float x, float y, float z);
+	void RotationDeg(float angle, glm::vec3 axis);
 	void Scale(float x, float y, float z);
 	void Scale(glm::vec3 axis);
-
-
-        void UpdateModelMatrix();
 
 	//getters
 	inline std::vector<Material*> GetMaterials() { return m_Materials; }
 	inline Mesh<Vertexun> * GetMesh() { return m_Mesh; }
-	inline glm::mat4 GetModelMatrix() { UpdateModelMatrix(); return m_ModelMatrix; }  // Computing it each time you need it, could do better
+	inline glm::mat4 GetModelMatrix() const { return m_ModelMatrix; }
 	inline std::map<unsigned int, unsigned int> * GetListMat() { return m_ListMat; }
 
-        inline glm::vec3 GetPosition(){ return m_Position; }
-        inline glm::vec3 GetScale(){ return m_Scale; }
-        inline glm::vec3 GetRotation(){ return m_Rotation; }
-
-        // setters
-        inline void SetPosition(glm::vec3& p){ m_Position = p; UpdateTranslationMatrix();}
-        inline void SetRotation(glm::vec3& r){ m_Rotation = r; UpdateRotationMatrix();}
-        inline void SetScale(glm::vec3& s){ m_Scale = s; UpdateScaleMatrix();}
 };
