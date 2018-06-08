@@ -98,7 +98,10 @@ int main(void){
   Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl", false);
   o.Init(GL_TRIANGLES, "shaders/Object.shader");
   o.Scale(glm::vec3(0.1f));
-  //o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
+
+  // 
+  // o.RotationDeg(90,0,0);
+  // o.Translate(20,0,0);
 
 
 
