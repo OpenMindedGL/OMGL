@@ -28,13 +28,12 @@ class Terrain {
     unsigned int m_NbLevels;
     float m_Precision;
     int m_Size;
-    int m_HalfSize;
-    Object lods_obj[NB_LEVELS];   // Future Objects
     LODLevel * lods[NB_LEVELS];
     Material * m_Material;
 
 
   public :
+    
     NoiseGen m_Noise;
     Terrain(glm::vec2 spawn, float p = PRECISION, unsigned int s = SIZE, unsigned int n = NB_LEVELS);
     inline int GetSize(){ return m_Size; }

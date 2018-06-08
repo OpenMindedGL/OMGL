@@ -7,30 +7,13 @@ unsigned int** LODLevel::pre2D1D;
 LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
   m_Level(l),
   m_Terrain(t),
-  m_Size(t->GetSize()),
   m_UnitSize(glm::pow(2,NB_LEVELS-l)),
-  //m_UnitSize(1),
-  m_HalfSize(m_Size/2),
-  m_QuarterSize(m_Size/4),
-  m_DoubleSize(m_Size*2)
 {
-  //m_UnitSize = m_Size*std::pow(2,(m_NbLevel-m_Level-1));
   m_ActiveR = (static_cast<glm::i32vec2>(center)/glm::i32vec2(m_Size))*glm::i32vec2(m_Size)+glm::i32vec2(m_Size);        // just load everything
-  m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Size,m_ActiveR.y%(unsigned int)m_Size);
-  //m_ClipR = center + glm::vec2(m_HalfSize);
-  m_Vertices->resize((unsigned int)m_Size*m_Size);
-  if(NB_LEVELS-1 == m_Level)
-    m_Indices->resize(2*m_Size*(m_Size-1)+m_Size);
-  else
-    m_Indices->resize(
-        2*(m_Size/4)*(2*m_Size+1)
-        +2*(m_Size/2)*(2*(m_Size/4+1)+1)
-        );
 
+//  m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Size,m_ActiveR.y%(unsigned int)m_Size);
 
-  m_NewActiveR = static_cast<glm::i32vec2>(center)/glm::i32vec2(m_UnitSize) - glm::i32vec2(m_HalfSize);
-
-  Init(GL_TRIANGLE_STRIP);
+  MakeObjects();
   Update(center);
   //Upload();
   //Log::PrintIndices(*m_Indices);
@@ -40,90 +23,84 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
 
 }
 
-void LODLevel::Make2D1D(unsigned int s){
-  // is it already allocated ?
-  if(!pre2D1D){
-    pre2D1D = (unsigned int**) malloc(sizeof(unsigned int*) * s);
-    for(unsigned int i=0; i < s; i++){
-      pre2D1D[i] = (unsigned int*) malloc(sizeof(unsigned int) * s);
-    }
-    if(!pre2D1D){
-      printf("[ERROR] Could not allocate");
-    }
+void MakeObjects(){
+
+  unsigned int nboftiles = 12;
+  if(m_Level == m_Terrain->m_NbLevels-1)
+    nboftiles +=4;               // is finest level
+
+  // Make tile objs
+  for(unsigned int i=0; i < nboftiles; i++){
+    m_Tiles.push_back(Object(&m_Tile, m_Terrain->m_Material));
+    m_Tiles.back().SetScale(glm::vec3(m_UnitSize));
+    m_Objs.push_back(m_Tiles.back());
   }
-  // fill it
-  unsigned int a = 0;
+
+  // Make fill objs
+  // Make trim objs
+  // Make seam objs
+
+}
+
+/*void LODLevel::Make2D1D(unsigned int s){
+  is it already allocated ?
+    if(!pre2D1D){
+      pre2D1D = (unsigned int**) malloc(sizeof(unsigned int*) * s);
+      for(unsigned int i=0; i < s; i++){
+        pre2D1D[i] = (unsigned int*) malloc(sizeof(unsigned int) * s);
+      }
+      if(!pre2D1D){
+        printf("[ERROR] Could not allocate");
+      }
+    }
+  fill it
+    unsigned int a = 0;
   for(unsigned int i=0; i < s; i++){
     for(unsigned int j=0; j < s; j++){
       pre2D1D[i][j] = a++;
     }
   }
-}
-
-void LODLevel::IndicesArea(glm::i32vec2& s, glm::i32vec2& e){
+}*/
+void LODLevel::GridIndices(glm::i32vec2& e, Mesh<Vertexun>& m){
   glm::i32vec2 ind;
-  glm::i32vec2 indnext;
-  ind = s;
-  indnext = s;
-  indnext.y++;
+  ind = glm::i32vec2(0);
+  int yoffset = 0;      // offset of the line
+  int yoffsetn = 0;     // of the next line
   while( ind.y < e.y-1 ){
+    yoffsetn+=e.x;
     while( ind.x < e.x ){
-      m_Indices->push_back(GetIndex(ind));
-      m_Indices->push_back(GetIndex(indnext));
+      m.m_Indices->push_back(yoffset+ind.x);
+      m.m_Indices->push_back(yoffsetn+ind.x);
       ind.x++;
-      indnext.x++;
     }
-    m_Indices->push_back(m_Vertices->size());
+    m.m_Indices->push_back(m.m_Vertices.size());
     ind.y++;
-    indnext.y++;
-    ind.x = s.x;
-    indnext.x = s.x;
+    ind.x = 0;
+    yoffset+=e.x;
   }
 }
 
 void LODLevel::ComputeIndices(){
-  m_Indices->clear();
-  glm::i32vec2 s = m_NewActiveR;
-  glm::i32vec2 e = m_NewActiveR+glm::i32vec2(m_Size);
-  if(NB_LEVELS-1 == m_Level){
-    // finest level, draw all the buffer
-    IndicesArea(s,e);
-  }
-  else{
-    // do not draw over the next level
-    
-    // Bottom strip
-    e.y-=m_HalfSize+m_QuarterSize;
-    IndicesArea(s,e);
-    
-    // Top strip
-    s.y+=m_HalfSize+m_QuarterSize;
-    e.y+=m_HalfSize+m_QuarterSize;
-    IndicesArea(s,e);
-    
-    // Left side
-    s.y-=m_HalfSize;
-    e.y-=m_QuarterSize;
-    e.x-=m_HalfSize+m_QuarterSize;
-    IndicesArea(s,e);
-
-    // Right side
-    s.x+=m_HalfSize+m_QuarterSize;
-    e.x+=m_HalfSize+m_QuarterSize;
-    IndicesArea(s,e);
-  }
 }
 
+// Updates positions of all meshes
 void LODLevel::Update( glm::i32vec2 center ){
   m_NewActiveR = static_cast<glm::i32vec2>(center)/glm::i32vec2(m_UnitSize) - glm::i32vec2(m_HalfSize);
-  if(Load()){
-    ComputeIndices();
-    //Log::PrintIndices(*m_Indices);
-    UploadIndexBuffer();
-    ComputeNormals();
+  glm::i32vec2 dir = m_NewActiveR - m_ActiveR;
+  glm::vec3 dir3 = glm::vec3(dir.x, 0.0f, dir.y);
+
+  // Move all meshes
+  for(unsigned int i = 0 ; i < m_Objs.size() ; i++){
+    m_Objs.at(i).Translate(dir3);
+  }
+
+  // Rotate the trim where it needs to go
+
+  // Update height map ?
+  /*if(Load()){
     Upload();
   }
-  Unbind();
+  Unbind();*/
 }
 
 
@@ -324,12 +301,87 @@ void LODLevel::PutVertex(glm::i32vec2& pos){
 
 //glm::vec2 dir = static_cast<glm::i32vec2>(m_ActiveR - m_NewActiveR);
 
-void LODLevel::UnmapBuffer(){
-  bool a;
-  GLCall(a = glUnmapBuffer(GL_ARRAY_BUFFER));
-  if(!a)
-    printf("[ERROR] UnmapBuffer returned GL_FALSE\n");
+
+void LODLevel::SetOffset( glm::i32vec2& o ){
 }
-void LODLevel::MapBuffer(){
-  m_MappedBuffer = (Vertexun*) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_WRITE);
+
+void LODLevel::SetScale(int s){
+}
+
+void LODLevel::GenMeshes(unsigned int size){
+
+  m_Size  = size;
+  m_TileSize = (size-3)/4;
+
+  GenTile();
+  glm::i32vec2 e = glm::i32vec2(m_TileSize);
+  IndicesGrid(e,m_Tile);
+  m_Tile.Init(GL_TRIANGLE_STRIP);
+
+    /*
+       GenFill();
+       GenTrim();
+       GenSeam();
+       */
+}
+
+void LODLevel::GenTile(){
+
+  glm::i32vec2 p;
+  for(p.y=0 ; p.y < m_TileSize ; p.y++){
+    for(p.x=0 ; p.x < m_TileSize ; p.x++){
+      m_Tile.m_Vertices.push_back(
+          glm::vec3( p.x, 0.0f, p.y),
+          glm::vec2(),
+          glm::vec3()
+      );
+    }
+  }
+
+}
+
+
+void LODLevel::GenFill(){
+  
+  glm::i32vec2 p;
+  for(p.y=0 ; p.y < m_TileSize ; p.y++){
+    for(p.x=0 ; p.x < m_TileSize ; p.x++){
+      m_Fill.m_Vertices.push_back(
+          glm::vec3( p.x, 0.0f, p.y),
+          glm::vec2(),
+          glm::vec3()
+      );
+    }
+  }
+
+}
+
+void LODLevel::GenTrim(){
+  
+  glm::i32vec2 p;
+  for(p.y=0 ; p.y < m_TileSize ; p.y++){
+    for(p.x=0 ; p.x < m_TileSize ; p.x++){
+      m_Trim.m_Vertices.push_back(
+          glm::vec3( p.x, 0.0f, p.y),
+          glm::vec2(),
+          glm::vec3()
+      );
+    }
+  }
+
+}
+
+void LODLevel::GenSeam(){
+  
+  glm::i32vec2 p;
+  for(p.y=0 ; p.y < m_TileSize ; p.y++){
+    for(p.x=0 ; p.x < m_TileSize ; p.x++){
+      m_Seam.m_Vertices.push_back(
+          glm::vec3( p.x, 0.0f, p.y),
+          glm::vec2(),
+          glm::vec3()
+      );
+    }
+  }
+
 }

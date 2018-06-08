@@ -65,6 +65,7 @@ public :
 	inline float GetNi() { return m_Ni; }
 	inline float GetD() { return m_D; }
 	inline Texture* GetTexture() { return m_Texture; }
+	inline Shader* GetShader() { return m_Shader; }
 	inline unsigned int GetId() { return m_Id; }
 
 };

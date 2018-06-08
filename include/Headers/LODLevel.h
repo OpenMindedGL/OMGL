@@ -13,43 +13,63 @@ class Terrain;
 #include "NoiseGen.h"
 #include "Terrain.h"
 
-class LODLevel : public Mesh<Vertexun> { 
+class LODLevel { 
 
   private:
+
+    static Mesh<Vertexun> m_Tile;
+    static Mesh<Vertexun> m_Fill;
+    static Mesh<Vertexun> m_Trim;
+    static Mesh<Vertexun> m_Seam;
+
+    static void GenMeshes(unsigned int size);
+    static void GenTile();
+    static void GenFill();
+    static void GenTrim();
+    static void GenSeam();
+
 
     unsigned int m_Level;
 
     /* pre-computed */
-    static unsigned int** pre2D1D;
-    int m_Size;
-    int m_HalfSize;
-    int m_QuarterSize;
-    int m_DoubleSize;
-    int m_UnitSize;
+    static int m_Size;
+    static int m_TileSize;
+    static int m_HalfSize;
+    static int m_QuarterSize;
+    static int m_DoubleSize;
     glm::i32vec2 m_TorEnd;    
     /*              */
 
-    unsigned int m_UploadStart;
-    unsigned int m_UploadCount;
-    Vertexun* m_MappedBuffer;
+    std::vector<Object&> m_Objs;
+    std::vector<Object> m_TileObjs;
+    Object m_FillObjs[4];
+    Object m_TrimObj;
+    Object m_SeamObj;
+
     glm::i32vec2 m_TorBegin;    // origin in the toroid array
     Terrain * m_Terrain;
-    //glm::vec2 m_ClipR;
+
+    // 
+    int m_UnitSize;
     glm::i32vec2 m_ActiveR;
     glm::i32vec2 m_NewActiveR;
-    void MapBuffer();
-    void UnmapBuffer();
+    
+    void SetOffset( glm::i32vec2& o );
+    void SetScale(int s);
     int Load();
-    void IndicesArea(glm::i32vec2& s, glm::i32vec2& e);
 
   public:
 
-    static void Make2D1D(unsigned int s);
+    void GridIndices(glm::i32vec2& e, Mesh<Vertexun>& m);
     void ComputeIndices();
     void Update(glm::i32vec2 center);
     void PutVertex(glm::i32vec2& pos);
     LODLevel(unsigned int l, glm::vec2& center, Terrain* t);
     int GetIndex(glm::i32vec2& p);
+
+
+    // getter
+    inline Object&
 };
 
 #endif

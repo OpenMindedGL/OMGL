@@ -165,4 +165,7 @@ template <class T>
 void Mesh<T>::UploadIndexBuffer() {
 	(*m_Ib).Upload();
 }
+
+
+
 #endif

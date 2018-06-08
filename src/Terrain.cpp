@@ -11,20 +11,24 @@
 
 Terrain::Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
   m_Precision(p),
-  m_HalfSize(s/2),
   m_NbLevels(n),
   m_Noise()
 {
   m_Size = s;
+
   if((m_Size-1) % 4 != 0){
     printf("[WARNING] trying to make a LODLevel with a size-1 not dividable by 4, bad things gonna happend, you've been warned");
   }
-  LODLevel::Make2D1D(m_Size);   
+  Material* m_Material = new Material(new Shader("shaders/Terrain.shader"), new Texture());
+  m_Material->LoadTexture("textures/rennes.png");
+  m_Material->InitTexture("u_HeightMap", 0);
+
+  // ? ComputeNormals();
+
+  LODLevel::GenMeshes(m_Size);   
   LODLevel* l;
-  Material* m = new Material(new Shader("shaders/Basic.shader"));
   for(unsigned int i=0;i<NB_LEVELS;i++){
     lods[i] = new LODLevel(i,spawn,this);
-    lods_obj[i] = Object(lods[i],m);
   }
 
 }

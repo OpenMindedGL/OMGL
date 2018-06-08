@@ -12,7 +12,7 @@ void Renderer::Clear() const
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
-void Renderer::Draw(Object object)
+void Renderer::Draw(Object& object)
 {
 	m_Camera->ComputeMatricesFromInputs();
 	m_Camera->SetModel(object.GetModelMatrix());
@@ -62,7 +62,7 @@ void Renderer::Draw(Object object)
 	object.Unbind();
 }
 
-void Renderer::Draw(std::vector<Object> objects) {
+void Renderer::Draw(std::vector<Object>& objects) {
 
 	m_Camera->ComputeMatricesFromInputs();
 	m_Camera->printCoord();
@@ -80,7 +80,7 @@ void Renderer::Draw(std::vector<Object> objects) {
 	}
 }
 
-void Renderer::Draw(Skybox s)
+void Renderer::Draw(Skybox& s)
 {
 	m_Camera->ComputeMatricesFromInputs();
 	m_Camera->SetModel(s.GetModelMatrix());
@@ -111,6 +111,22 @@ void Renderer::Draw(Skybox s)
 }
 
 
+
+void Renderer::Draw(LODLevel& l){
+  
+  // Drawing all the parts
+  for (unsigned int i = 0; i < l.GetTiles.size(); i++) {
+    Draw(l.GetTiles.at(i));
+  }
+  return;
+
+  for (unsigned int i = 0; i < 4; i++) {
+    Draw(l.GetFills[i];
+  }
+  Draw(l.GetTrim());
+  Draw(l.GetSeam());
+  
+}
 
 void Renderer::Draw(Terrain& t)
 {

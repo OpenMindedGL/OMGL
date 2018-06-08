@@ -30,6 +30,7 @@ public:
 
 	void Draw(Skybox s);
 	void Draw(Terrain& t);
+        void Draw(LODLevel& l);
 
 	inline glm::vec3 getCameraPosition() const { return m_Camera->getPosition(); };
 };
