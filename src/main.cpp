@@ -91,13 +91,13 @@ int main(void){
 
   Skybox s;
   
-  /*Cube cube;
-  Object c(&cube, "shaders/Basic.shader");*/
+  Cube cube;
+  Object c(&cube, new Material("textures/grass.dds", "shaders/Cube.shader"));
   
   //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", true);
-  Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl", false);
-  o.Init(GL_TRIANGLES, "shaders/Object.shader");
-  o.Scale(glm::vec3(0.1f));
+  //Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl", false);
+  //o.Init(GL_TRIANGLES, "shaders/Object.shader");
+  //o.Scale(glm::vec3(0.1f));
 
   // 
   // o.RotationDeg(90,0,0);
@@ -115,7 +115,8 @@ int main(void){
 
 	/*t.load(glm::vec2(pos.x,pos.z));	
     renderer.Draw(t);*/
-	renderer.Draw(o);
+	renderer.Draw(c);
+	//renderer.Draw(o);
 	//o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);

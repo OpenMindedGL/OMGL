@@ -24,20 +24,19 @@ private :
 	Shader * m_Shader;
 
 public :
-	Material();
 	Material(std::string name);
-	Material(Texture * texture, Shader * shader);
-	Material(Texture * texture);
-	Material(Cubemap * cubemap);
-	Material(Shader * shader);
+	Material(Texture * texture = NULL, Shader * shader = NULL);
+        inline Material(std::string texture, std::string shader) : Material(new Texture(texture), new Shader(shader)) {}
+        inline Material(Shader * shader) : Material(NULL, shader) {}
 
-	void SetShader(const std::string path);
+	inline void SetShader(const std::string path) { SetShader(new Shader(path)); }
+	void SetShader(Shader * shader);
 	void SetTexture(Cubemap * cubemap);
 	void SetTexture(Texture * texture);
 
 	void LoadTexture(const std::string path, const std::string name, unsigned int slot = 0);
 	void LoadTexture(const std::string path);
-	void InitTexture(const std::string name, unsigned int id);
+	void LinkTexture(const std::string& name, unsigned int slot);
 	void SetShaderUniformMat4f(const std::string name, glm::mat4 mvp);
 	void SetUniforms();
 	void Init(std::string shaderpath);

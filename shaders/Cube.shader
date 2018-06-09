@@ -19,7 +19,7 @@ void main()
 #shader fragment
 #version 330 core
 
-uniform sampler2D u_TextureSampler;
+uniform sampler2D u_DefaultSampler;
 
 layout(location = 0) out vec4 color;
 //layout(location = 0) out vec3 color;
@@ -28,7 +28,7 @@ in vec2 uv;
 
 void main()
 {
-  //color = texture(u_TextureSampler, uv).rgb;
-  color = vec4(texture(u_TextureSampler, uv).rgb,1.0f);
-  //color = vec4(vec3((float)u_TextureSampler,1.0f,1.0f),1.0f);
+  //color = texture(u_DefaultSampler, uv).rgb;
+  color = vec4(texture(u_DefaultSampler, uv).rgb,1.0f);
+  //color = vec4(vec3((float)u_DefaultSampler,1.0f,1.0f),1.0f);
 }

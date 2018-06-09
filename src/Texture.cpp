@@ -1,25 +1,31 @@
 #include "Texture.h"
+#include "Shader.h"
 
 #include <string.h>
 #include "stb_image_aug.h" 
 
 
-OtherTexture::OtherTexture(const std::string& path)
-  : Texture(path)
+Texture::Texture(const std::string& path, std::string name, unsigned char slot) :
+  m_FilePath(path),
+  m_Name(name),
+  m_Slot(slot)
 {
-  Load(path);
+  switch (Texture::ParseFormat(path)) {
+    case TEX_DDS:
+      GenDDS();
+      break;
+    case TEX_OTHER:
+      GenOther();
+      break;
+  }
+
 }
 
-DDSTexture::DDSTexture(const std::string& path)
-  : Texture(path)
-{
-  Load(path);
-}
 
-void DDSTexture::Load(const std::string& path, unsigned int target){
+void Texture::GenDDS(){
   GLCall(glGenTextures(1, &m_RendererID));
   Bind(); 
-  LoadDDS(path, target);
+  LoadDDS(m_FilePath);
 
   GLCall(glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 5));
   GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
@@ -27,16 +33,25 @@ void DDSTexture::Load(const std::string& path, unsigned int target){
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 }
 
-void  OtherTexture::Load(const std::string& path, unsigned int target){
+void  Texture::GenOther(){
   GLCall(glGenTextures(1, &m_RendererID));
   Bind(); 
-  LoadOther(path,target);
+  LoadOther(m_FilePath);
 
   GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
   GLCall(glGenerateMipmap(m_Target));
+}
+
+void Texture::LinkToShader(Shader* shader, const std::string& name, unsigned char slot)
+{
+	shader->Bind();
+	Bind(slot);
+	shader->SetUniform1i(name, slot);
+	Unbind();
+	shader->Unbind();
 }
 
 unsigned int Texture::ParseFormat(const std::string& path){
