@@ -46,7 +46,7 @@ int init(){
 
   if(!glfwInit())
     return -1;
-
+  
   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
   glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
@@ -86,20 +86,22 @@ int main(void){
   Renderer renderer(*window, WIDTH, HEIGHT);
 
   glm::vec3 pos = renderer.getCameraPosition();
-
-  Terrain t(glm::vec2(pos.x, pos.z));
+  
+//  Terrain t(glm::vec2(pos.x, pos.z));
 
   Skybox s;
-
+  
   Cube cube;
-  Object c(&cube, "shaders/Basic.shader");
-
+  Object c(&cube, new Material("textures/grass.dds", "shaders/Cube.shader"));
+  
   //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", true);
-  Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl", false);
-  o.Init(GL_TRIANGLES, "shaders/Object.shader");
-  o.Scale(0.01,0.01,0.01);
-  o.Translate(10,10,10);
-  //o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
+  //Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl", false);
+  //o.Init(GL_TRIANGLES, "shaders/Object.shader");
+  //o.Scale(glm::vec3(0.1f));
+
+  // 
+  // o.RotationDeg(90,0,0);
+  // o.Translate(20,0,0);
 
 
 
@@ -111,16 +113,13 @@ int main(void){
     pos = renderer.getCameraPosition();
     //printf("x:%f y:%f \n",pos.x,pos.z);    
 
-    /*t.load(glm::vec2(pos.x,pos.z));	*/
-    glm::i32vec2 lalala = glm::i32vec2(pos.x,pos.z);
-//    glm::i32vec2 lalala = glm::i32vec2(0,0);
-    t.Update(lalala);
-    renderer.Draw(t);
-    renderer.Draw(c);
-    //renderer.Draw(o);
-    o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));
+	/*t.load(glm::vec2(pos.x,pos.z));	
+    renderer.Draw(t);*/
+	renderer.Draw(c);
+	//renderer.Draw(o);
+	//o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));
 
-    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     // Always draw last	
     renderer.Draw(s);
 

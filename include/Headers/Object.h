@@ -62,7 +62,7 @@ public :
 	//getters
 	inline std::vector<Material*> GetMaterials() { return m_Materials; }
 	inline Mesh<Vertexun> * GetMesh() { return m_Mesh; }
-	inline glm::mat4 GetModelMatrix() { UpdateModelMatrix(); return m_ModelMatrix; }  // Computing it each time you need it, could do better
+	inline glm::mat4 GetModelMatrix() { return m_ModelMatrix; }  // Computing it each time you need it, could do better
 	inline std::map<unsigned int, unsigned int> * GetListMat() { return m_ListMat; }
 
         inline glm::vec3 GetPosition(){ return m_Position; }

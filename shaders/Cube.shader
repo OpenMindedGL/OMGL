@@ -8,40 +8,27 @@ uniform mat4 u_MVP;
 uniform mat4 u_V;
 uniform mat4 u_M;
 
-out vec2 pos;
+out vec2 uv;
 
-vec4 p;
 void main()
 {
-  //p = vec4(position.x*2,position.y*2,position.z*2,position.w);
-  p = position;
-	gl_Position = u_MVP * p;
-  pos = vec2(p.x,p.z);
-
+	gl_Position = u_MVP * position;
+  uv = uvcoords;
 }
 
 #shader fragment
 #version 330 core
 
-//uniform sampler2D u_TextureSampler;
+uniform sampler2D u_DefaultSampler;
 
 layout(location = 0) out vec4 color;
 //layout(location = 0) out vec3 color;
 
-in vec2 pos;
+in vec2 uv;
 
 void main()
 {
-  //color = texture(u_TextureSampler, uv).rgb;
-  //color = vec4(texture(u_TextureSampler, uv).rgb,1.0f);
-  //color = vec4(vec3((float)u_TextureSampler,1.0f,1.0f),1.0f);
-  vec2 a = vec2(floor(pos.x), floor(pos.y));
-  if(mod(a.x,2.0) == 0.0 && mod(a.y,2.0) == 0.0)
-    color = vec4(0.0f,0.0f,1.0f,1.0f);
-  else
-    color = vec4(pos.x/4,pos.y/4,0.0f,1.0f);
-    
-/*  if(pos.x < 0.1f)
-    color = vec4(1.0f,0.0f,0.0f,1.0f);
-  else if(pos.x < 1.1f)*/
+  //color = texture(u_DefaultSampler, uv).rgb;
+  color = vec4(texture(u_DefaultSampler, uv).rgb,1.0f);
+  //color = vec4(vec3((float)u_DefaultSampler,1.0f,1.0f),1.0f);
 }

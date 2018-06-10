@@ -246,6 +246,12 @@ unsigned int Object::GetMaterialId(std::string nameMat) {
 }
 
 void Object::Init(unsigned int renderType, std::string shaderPath) {
+  m_Scale = glm::vec3(1.0,1.0,1.0);
+  m_Rotation = glm::vec3(0.0,0.0,0.0);
+  m_Position = glm::vec3(0.0,0.0,0.0);
+  UpdateTranslationMatrix();
+  UpdateRotationMatrix();
+  UpdateScaleMatrix();
   m_Mesh->Init(renderType);
   for (int i = 0; i < m_Materials.size(); i++) {
     m_Materials[i]->Init(shaderPath);
@@ -270,16 +276,19 @@ void Object::Unbind()
 
 void Object::UpdateTranslationMatrix(){
   m_TranslationMat = glm::translate(m_Position);
+  UpdateModelMatrix();
 };
 
 void Object::UpdateRotationMatrix(){
   m_RotationMat = glm::rotate(m_Rotation.x,glm::vec3(1.0f, 0.0f, 0.0f));
   m_RotationMat *= glm::rotate(m_Rotation.y,glm::vec3(0.0f, 1.0f, 0.0f));
   m_RotationMat *= glm::rotate(m_Rotation.z,glm::vec3(0.0f, 0.0f, 1.0f));
+  UpdateModelMatrix();
 }
 
 void Object::UpdateScaleMatrix(){
   m_ScaleMat = glm::scale(m_Scale);
+  UpdateModelMatrix();
 };
 
 void Object::UpdateModelMatrix(){
