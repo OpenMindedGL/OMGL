@@ -16,7 +16,7 @@ class LODLevel;
 
 #define NB_LEVELS 7
 #define PRECISION 1.0f
-#define SIZE    67   // -1 should be power of two, dividable by 8
+#define SIZE    131   // -3 should be power of two, dividable by 8
 #define HALFSIZE    SIZE/2
 #define CHUNK_PER_SIDE 5   // KEEP ODD !!!!
 #define RENDER_DISTANCE (CHUNK_PER_SIDE/2)

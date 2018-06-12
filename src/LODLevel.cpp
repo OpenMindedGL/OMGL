@@ -56,6 +56,9 @@ void LODLevel::ColorDebug(){
   green->Bind();
   green->SetUniforms();
   //red->SetD(1);
+  m_TrimObj->m_Materials.clear();
+  m_TrimObj->m_Materials.push_back(green);
+  return;
   for(unsigned int i=0; i < m_TileObjs.size(); i++){
     m_TileObjs[i]->m_Materials.clear();
     if((i/4)%2 == 0 && i % 2 == 0 || (i/4)%2 != 0 && i % 2 != 0){

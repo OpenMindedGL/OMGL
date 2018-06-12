@@ -7,7 +7,7 @@ layout(location = 1) in vec2 uv_coords;
 layout(location = 2) in vec3 normals;
 
 out vec2 uv;
-//out vec3 normal;
+out vec3 normal;
 out vec3 lightdir;
 out mat4 MV;
 
@@ -23,31 +23,65 @@ uniform sampler2D u_HeightMap;
 uniform sampler2D u_NormalMap;
   
 void main(){
+  //vec4 vPosh = vPos;
   vec4 pos = u_M * vec4(vPos,1.0);
-  uv = (pos.xz+4048)/8096;
-  pos.y = texture(u_HeightMap, uv).r*1000;
+  vec4 posV = u_V * pos;
+  uv = ((pos.xz+(4096/2))/(8192/2));
+  pos.y =texture(u_HeightMap, uv).r*1000;
+  //vec2 a = texture(u_HeightMap, uv).xy;
+  //pos.y = a.x*500;// * 256 + a.y;
+ // gl_Position =  u_MVP * vPos;
   gl_Position =  u_VP * pos;
+  vec3 LightPosition_worldspace = vec3(0.0f,1000.0f,0.0f);
 
-  MV = u_V * u_M;
 
-  vec3 LightPosition_worldspace = vec3(10.0f,100.0f,10.0f);
-  vec3 Position_worldspace = (u_M * vec4(vPos,1)).xyz;
+  vec3 Position_worldspace = pos.xyz;
 
-  vec3 vertexPosition_cameraspace = ( MV * vec4(vPos,1)).xyz;
-  vec3 EyeDirection_cameraspace = vec3(0,0,0) - vertexPosition_cameraspace;
+  vec3 vPos_cameraspace = (pos).xyz;
+  //vec3 EyeDirection_cameraspace = vec3(0,0,0) - vertexPosition_cameraspace;
 
-  vec3 LightPosition_cameraspace = ( u_V * vec4(LightPosition_worldspace,1)).xyz;
-  lightdir = LightPosition_cameraspace + EyeDirection_cameraspace;
+  vec3 lightpos_cameraspace = ( vec4(LightPosition_worldspace,1)).xyz;
+  lightdir = lightpos_cameraspace - vPos_cameraspace.xyz;
 
   //uv = vPos.xz;
+/*
+  // Position of the vertex, in worldspace : M * position
+  Position_worldspace = (u_M * vPos).xyz;
+  
+  // Vector that goes from the vertex to the camera, in camera space.
+  // In camera space, the camera is at the origin (0,0,0).
+  vec3 vertexPosition_cameraspace = ( u_V * u_M * vPos).xyz;
+  EyeDirection_cameraspace = vec3(0,0,0) - vertexPosition_cameraspace;
 
+  // Vector that goes from the vertex to the light, in camera space. M is ommited because it's identity.
+  vec3 LightPosition_cameraspace = ( u_V * vec4(LightPosition_worldspace,1)).xyz;
+  LightDirection_cameraspace = LightPosition_cameraspace + EyeDirection_cameraspace;
+  
+  // UV of the vertex. No special space for this one.
+  UV = vertexUV;
+  
+  // model to camera = ModelView
+  vec3 vertexTangent_cameraspace = MV3x3 * vertexTangent_modelspace;
+  vec3 vertexBitangent_cameraspace = MV3x3 * vertexBitangent_modelspace;
+  vec3 vertexNormal_cameraspace = MV3x3 * vertexNormal_modelspace;
+  
+  mat3 TBN = transpose(mat3(
+    vertexTangent_cameraspace,
+    vertexBitangent_cameraspace,
+    vertexNormal_cameraspace    
+  )); // You can use dot products instead of building this matrix and transposing it. See References for details.
+
+  LightDirection_tangentspace = TBN * LightDirection_cameraspace;
+EyeDirection_tangentspace = TBN * EyeDirection_cameraspace; ) )
+*/
 }
 
 #shader fragment
 #version 330 core
 
 layout(location = 0) out vec4 color;
-in mat4 MV;
+//uniform mat4 u_M;
+//uniform mat4 u_V;
 in vec2 uv;
 //in vec3 normal;
 in vec3 lightdir;
@@ -66,18 +100,27 @@ void main(){
   */
   //color = vec4(0.0f,mod(pos.y,2.0f),mod(pos.x,2.0f),1.0f);
   vec3 blue = vec3(0.2f,0.6f,0.2f);
-
   vec3 norm = texture(u_NormalMap, uv).rgb;
 
-  vec3 normal = ( MV * vec4(norm,0)).xyz; 
+  vec3 normal = ( vec4(norm,0)).xzy; 
 
-  vec3 n = normalize( normal );
+
+  vec3 n = normalize( normal )*2-1;
   vec3 l = normalize( lightdir );
   float cost = clamp( dot( n,l ), 0,1 );
   float ambient = 0.15f;
-  color = vec4(vec3(ambient) + blue * cost,1.0f);
 
-  //color = vec4(uv.x/2,0.0,uv.y,1.0f);
+  if(uv.x > 1.01f || uv.y > 1.01f)
+    color = vec4(1.0,1.0,0.0,1.0f);
+  else if(0.01f > n.y || 0.01f > l.y)
+    color = vec4(1.0,1.0,0.0,1.0f);
+  else
+    color = vec4(uv.x,0.0f,uv.y,1.0f);
+  color = vec4(vec3(ambient) + blue * cost,1.0f);
+    //color = vec4(normal.x,normal.y,normal.z,1.0f);
+  l = clamp(l,0,1);
+  //  color = vec4(l.x,l.y,l.z,1.0f);
+    //color = vec4((l.x+1)/2,(l.y+1)/2,(l.z+1)/2,1.0f);
 
  // color = texture(u_NormalMap, uv/16);
  // }
