@@ -16,7 +16,7 @@ class LODLevel;
 
 #define NB_LEVELS 7
 #define PRECISION 1.0f
-#define SIZE    129   // -1 should be power of two, dividable by 8
+#define SIZE    67   // -1 should be power of two, dividable by 8
 #define HALFSIZE    SIZE/2
 #define CHUNK_PER_SIDE 5   // KEEP ODD !!!!
 #define RENDER_DISTANCE (CHUNK_PER_SIDE/2)
@@ -28,19 +28,24 @@ class Terrain {
     unsigned int m_NbLevels;
     float m_Precision;
     int m_Size;
-    LODLevel * lods[NB_LEVELS];
-    Material * m_Material;
+    LODLevel * m_Lods[NB_LEVELS];
 
 
   public :
     
+    Material * m_Material;
+    Texture * m_NormalMap;
     NoiseGen m_Noise;
     Terrain(glm::vec2 spawn, float p = PRECISION, unsigned int s = SIZE, unsigned int n = NB_LEVELS);
     inline int GetSize(){ return m_Size; }
     inline float GetPrecision(){ return m_Precision; }
     inline unsigned int GetNbLevel(){ return m_NbLevels; }
-    inline Object& GetLevel(unsigned int i){ return lods_obj[i]; }
+    inline LODLevel& GetLevel(unsigned int i){ return *(m_Lods[i]); }
     void Update(glm::i32vec2& center);
+
+    // getters
+    inline unsigned int GetNbLevels(){ return m_NbLevels; }
+    inline Material* GetMaterial(){ return m_Material; }
 
 
 };

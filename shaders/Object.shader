@@ -11,15 +11,20 @@ out vec3 normal;
 out vec3 lightdir;
 out vec2 pos;
 out vec3 eyedir;
+out float col;
   
 // Values that stay constant for the whole mesh.
 uniform mat4 u_MVP;
+uniform mat4 u_VP;
 uniform mat4 u_M;
 uniform mat4 u_V;
   
 void main(){
-  pos = vPos.xz;
-  gl_Position =  u_MVP * vec4(vPos,1);
+  vec4 p = u_M * vec4(vPos,1);
+  pos = (u_V*u_M*vec4(vPos,1)).xz;
+  gl_Position =  u_VP * p;
+  //gl_Position =  u_MVP * vec4(vPos,1);
+
   uv = uv_coords;
 
   vec3 LightPosition_worldspace = vec3(-10.0f,40.0f,-10.0f);
@@ -31,7 +36,10 @@ void main(){
   lightdir = LightPosition_cameraspace + eyedir;
 
   normal = ( u_V * u_M * vec4(normals,0)).xyz; 
-
+  if(fract(p.x) == 0.0f)
+    col = 1.0;
+  else
+    col = 0.0;
 
 }
 
@@ -55,6 +63,7 @@ in vec3 normal;
 in vec3 lightdir;
 in vec2 pos;
 in vec3 eyedir;
+in float col;
 
 void main(){
   vec3 lightColor = vec3(0.8f);
@@ -65,7 +74,8 @@ void main(){
 
   float cost = clamp( dot( n,l ), 0,1 );
   float cosAlpha = clamp( dot( e,r ), 0,1 );
-  color = vec4(u_Ka * u_Kd + vec3(u_D) * u_Kd * lightColor * vec3(u_Ni) * cost + vec3(u_D) * u_Ks * lightColor * vec3(u_Ni) * pow(cosAlpha, 5), 1.0f);
+//  color = vec4(u_Ka * u_Kd + vec3(u_D) * u_Kd * lightColor * vec3(u_Ni) * cost + vec3(u_D) * u_Ks * lightColor * vec3(u_Ni) * pow(cosAlpha, 5), 1.0f);
+  color = vec4(u_Ka,1.0);
 }
 
 /*

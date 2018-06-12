@@ -16,19 +16,20 @@ Terrain::Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
 {
   m_Size = s;
 
-  if((m_Size-1) % 4 != 0){
-    printf("[WARNING] trying to make a LODLevel with a size-1 not dividable by 4, bad things gonna happend, you've been warned");
+  if((m_Size-3) % 4 != 0){
+    printf("[WARNING] trying to make a LODLevel with a size-3 not dividable by 4, bad things gonna happend, you've been warned\n");
   }
-  Material* m_Material = new Material(new Shader("shaders/Terrain.shader"), new Texture());
-  m_Material->LoadTexture("textures/rennes.png");
-  m_Material->InitTexture("u_HeightMap", 0);
+  Shader * sh =new Shader("shaders/Terrain.shader");
+  m_Material = new Material(new Texture("textures/rennes.jpg", "u_HeightMap", 0), sh );
+  m_NormalMap = new Texture("textures/rennesnormal.jpg", "u_NormalMap", 1);
+  m_NormalMap->LinkToShader(sh);
 
   // ? ComputeNormals();
 
   LODLevel::GenMeshes(m_Size);   
   LODLevel* l;
-  for(unsigned int i=0;i<NB_LEVELS;i++){
-    lods[i] = new LODLevel(i,spawn,this);
+  for(unsigned int i=0;i<m_NbLevels;i++){
+    m_Lods[i] = new LODLevel(i,spawn,this);
   }
 
 }
@@ -37,7 +38,7 @@ Terrain::Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
 void Terrain::Update(glm::i32vec2& center){
 
   for(unsigned int i=0;i<NB_LEVELS;i++){
-    lods[i]->Update(center);
+    m_Lods[i]->Update(center);
       //lods[i]->UnmapBuffer();
 //      lods[i]->Upload();
       //lods[i]->ComputeIndices();

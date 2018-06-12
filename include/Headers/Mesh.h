@@ -49,6 +49,7 @@ public:
 
 	void ComputeNormals();
 	inline void BindVertexBuffer() { m_Vb->Bind(); };
+        void GridIndices(glm::i32vec2& e, glm::i32vec2 s=glm::i32vec2(0), unsigned int yoffset = 0);
 
 
 	// GETTERS
@@ -60,7 +61,31 @@ public:
 	inline std::vector<T> * GetVertices() const { return m_Vertices; }
 	inline std::vector<unsigned int> * GetIndices() const { return m_Indices; }
 
+        // SETTERS
+
+        inline void PushVertex(T v){m_Vertices->push_back(v); }
+        inline void PushIndex(unsigned int i){m_Indices->push_back(i); }
+
 };
+
+template <class T>
+void Mesh<T>::GridIndices(glm::i32vec2& e, glm::i32vec2 s, unsigned int yoff){
+  glm::i32vec2 ind = s;
+  int yoffset = yoff;      // offset of the line
+  int yoffsetn = yoffset;     // of the next line
+  while( ind.y < e.y-1 ){
+    yoffsetn+=e.x;
+    while( ind.x < e.x ){
+      m_Indices->push_back(yoffset+ind.x);
+      m_Indices->push_back(yoffsetn+ind.x);
+      ind.x++;
+    }
+    m_Indices->push_back(m_Vertices->size());
+    ind.y++;
+    ind.x = 0;
+    yoffset+=e.x;
+  }
+}
 
 template <class T>
 void Mesh<T>::ComputeNormals() {

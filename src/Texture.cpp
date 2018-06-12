@@ -1,4 +1,5 @@
 #include "Texture.h"
+#include "Debug.h"
 #include "Shader.h"
 
 #include <string.h>

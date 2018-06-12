@@ -6,6 +6,7 @@ Material::Material(std::string name) : m_Name(name), m_Id(++NBINSTANCES)
 
 Material::Material(Texture * texture, Shader * shader) : m_Texture(texture), m_Shader(shader), m_Id(++NBINSTANCES)
 {
+  if(m_Texture && m_Shader)
     m_Texture->LinkToShader(m_Shader);
 }
 

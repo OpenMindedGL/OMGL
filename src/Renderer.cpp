@@ -14,10 +14,9 @@ void Renderer::Clear() const
 
 void Renderer::Draw(Object& object)
 {
-	m_Camera->ComputeMatricesFromInputs();
 	m_Camera->SetModel(object.GetModelMatrix());
 	m_Camera->ComputeMVP();
-	glm::mat4 mvp = m_Camera->GetMVP();
+        glm::mat4 mvp = m_Camera->GetMVP();
 
 	object.Bind();
 
@@ -36,6 +35,9 @@ void Renderer::Draw(Object& object)
 		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_MVP", mvp);
 		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_M", object.GetModelMatrix());
 		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
+        //ugly hack 
+        //TO BE FIXED
+	object.GetMaterials().at(0)->SetShaderUniformMat4f("u_VP", m_Camera->GetProj() * m_Camera->GetView());
 	}
 
 	//If severals mtl
@@ -64,7 +66,6 @@ void Renderer::Draw(Object& object)
 
 void Renderer::Draw(std::vector<Object>& objects) {
 
-	m_Camera->ComputeMatricesFromInputs();
 	m_Camera->printCoord();
 
 	for (int i = 0; i < objects.size(); i++) {
@@ -82,7 +83,6 @@ void Renderer::Draw(std::vector<Object>& objects) {
 
 void Renderer::Draw(Skybox& s)
 {
-	m_Camera->ComputeMatricesFromInputs();
 	m_Camera->SetModel(s.GetModelMatrix());
 	m_Camera->SetView(glm::mat4(glm::mat3(m_Camera->GetView())));
 	m_Camera->ComputeMVP();
@@ -114,24 +114,28 @@ void Renderer::Draw(Skybox& s)
 
 void Renderer::Draw(LODLevel& l){
   
+  glm::vec4 a;
   // Drawing all the parts
-  for (unsigned int i = 0; i < l.GetTiles.size(); i++) {
-    Draw(l.GetTiles.at(i));
+  for (unsigned int i = 0; i < l.GetObjs().size(); i++) {
+    Draw(*l.GetObjs().at(i));
+    /*glm::mat4 mvp = m_Camera->GetMVP();
+    a = mvp*glm::vec4((l.GetObjs().at(i)->GetMesh()->GetVertices()[16],1.0));
+    printf("a0: (%f,%f,%f)\n",a.x,a.y,a.z);
+    a = mvp*glm::vec4((l.GetObjs().at(i)->GetMesh()->GetVertices()[1],1.0));
+    printf("a16: (%f,%f,%f)\n",a.x,a.y,a.z);*/
   }
-  return;
 
-  for (unsigned int i = 0; i < 4; i++) {
-    Draw(l.GetFills[i];
-  }
-  Draw(l.GetTrim());
-  Draw(l.GetSeam());
-  
 }
 
 void Renderer::Draw(Terrain& t)
 {
+  t.m_NormalMap->Bind();
   for (unsigned int i = 0; i < t.GetNbLevel(); i++) {
     //printf("Drawing level %d\n",i);
     Draw(t.GetLevel(i));
   }
+}
+
+void Renderer::UpdateCamera(){
+  m_Camera->ComputeMatricesFromInputs();
 }

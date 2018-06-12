@@ -86,13 +86,19 @@ int main(void){
   Renderer renderer(*window, WIDTH, HEIGHT);
 
   glm::vec3 pos = renderer.getCameraPosition();
+  glm::i32vec2 p;
   
-//  Terrain t(glm::vec2(pos.x, pos.z));
+  Terrain t(glm::vec2(pos.x, pos.z));
 
   Skybox s;
   
   Cube cube;
+  Object c1(&cube, new Material("textures/grass.dds", "shaders/Cube.shader"));
   Object c(&cube, new Material("textures/grass.dds", "shaders/Cube.shader"));
+  c1.Translate(0,0,0);  // thats a f* problem right here
+  //c.Translate(2,-10,0);
+  //c.Scale(1,0.1,1);
+  //c1.Scale(1,0.1,1);
   
   //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", true);
   //Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl", false);
@@ -109,13 +115,17 @@ int main(void){
   {
 
     renderer.Clear();
+    renderer.UpdateCamera();
 
+    
     pos = renderer.getCameraPosition();
+    p = glm::i32vec2(pos.x,pos.z);
     //printf("x:%f y:%f \n",pos.x,pos.z);    
 
-	/*t.load(glm::vec2(pos.x,pos.z));	
-    renderer.Draw(t);*/
-	renderer.Draw(c);
+    renderer.Draw(c);
+    t.Update(p);
+    renderer.Draw(t);
+  //  renderer.Draw(c1);
 	//renderer.Draw(o);
 	//o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));
 
