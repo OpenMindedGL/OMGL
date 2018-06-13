@@ -16,7 +16,7 @@ class LODLevel;
 
 #define NB_LEVELS 7
 #define PRECISION 1.0f
-#define SIZE    131   // -3 should be power of two, dividable by 8
+#define SIZE    67   // -3 should be power of two, dividable by 8
 #define HALFSIZE    SIZE/2
 #define CHUNK_PER_SIDE 5   // KEEP ODD !!!!
 #define RENDER_DISTANCE (CHUNK_PER_SIDE/2)
@@ -28,11 +28,12 @@ class Terrain {
     unsigned int m_NbLevels;
     float m_Precision;
     int m_Size;
-    LODLevel * m_Lods[NB_LEVELS];
+//    LODLevel * m_Lods[NB_LEVELS];
 
 
   public :
     
+    LODLevel * m_Lods[NB_LEVELS];
     Material * m_Material;
     Texture * m_NormalMap;
     NoiseGen m_Noise;

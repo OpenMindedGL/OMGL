@@ -22,13 +22,30 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
   m_Terrain(t),
   m_UnitSize(glm::pow(2,NB_LEVELS-l-1))
 {
-  m_ActiveR = (static_cast<glm::i32vec2>(center)/glm::i32vec2(m_Size))*glm::i32vec2(m_Size)+glm::i32vec2(m_Size);        // just load everything
+  if(center.y > 0){
+    m_ActiveR.y = glm::floor(center.y / m_UnitSize) * m_UnitSize - m_TileSize*2*m_UnitSize;
+  }
+  else{
+    m_ActiveR.y = glm::floor(center.y)-m_HalfSize * m_UnitSize;
+    m_ActiveR.y -= m_NewActiveR.y % m_UnitSize;
+  }
+  if(center.x > 0){
+    m_ActiveR.x = glm::floor(center.x / m_UnitSize) * m_UnitSize - m_TileSize*2*m_UnitSize;
+  }
+  else{
+    m_ActiveR.x = glm::floor(center.x)-m_HalfSize * m_UnitSize;
+    m_ActiveR.x -= m_NewActiveR.x % m_UnitSize;
+  }
+  //m_ActiveR = (static_cast<glm::i32vec2>(center)/glm::i32vec2(m_Size))*glm::i32vec2(m_Size)+glm::i32vec2(m_Size);        // just load everything
+  m_NewActiveR = m_ActiveR;
 
 //  m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Size,m_ActiveR.y%(unsigned int)m_Size);
 
   MakeObjs();
+  PlaceTrim();
   //ColorDebug();
-  Update(center);
+  
+  //Update(center);
   //Upload();
   //Log::PrintIndices(*m_Indices);
   //GLCall(Vertexun * a = (Vertexun *) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY)); 
@@ -55,10 +72,11 @@ void LODLevel::ColorDebug(){
   green->SetKa(glm::vec3(0.0f,1.0f,0.0f));
   green->Bind();
   green->SetUniforms();
+  Material* yellow = new Material(new Shader("shaders/Object.shader") );
+  yellow->SetKa(glm::vec3(1.0f,1.0f,0.0f));
+  yellow->Bind();
+  yellow->SetUniforms();
   //red->SetD(1);
-  m_TrimObj->m_Materials.clear();
-  m_TrimObj->m_Materials.push_back(green);
-  return;
   for(unsigned int i=0; i < m_TileObjs.size(); i++){
     m_TileObjs[i]->m_Materials.clear();
     if((i/4)%2 == 0 && i % 2 == 0 || (i/4)%2 != 0 && i % 2 != 0){
@@ -74,22 +92,35 @@ void LODLevel::ColorDebug(){
   }
   m_TrimObj->m_Materials.clear();
   m_TrimObj->m_Materials.push_back(green);
+  m_SeamObj->m_Materials.clear();
+  m_SeamObj->m_Materials.push_back(yellow);
+  return;
 }
 
 
 
 void LODLevel::PlaceTrim(){
+
   glm::i32vec2 place = glm::i32vec2(
       (m_NewActiveR.x / m_UnitSize) % 2 == 0,
       (m_NewActiveR.y / m_UnitSize) % 2 == 0
         );
+  printf("(lev%d) newActiveR: (%d,%d)\n",m_Level,m_NewActiveR.x,m_NewActiveR.y);
+  if(m_Level > 0){
+    glm::i32vec2 prev = m_Terrain->m_Lods[m_Level-1]->m_NewActiveR;
+    printf("(lev%d) prev newActiveR: (%d,%d)\n",m_Level-1,prev.x,prev.y);
+  }
+  printf("(lev%d) newActiveR/unitSize: (%d,%d)\n",m_Level,m_NewActiveR.x/m_UnitSize,m_NewActiveR.y/m_UnitSize);
+  printf("(lev%d) place: (%d,%d)\n",m_Level,place.x,place.y);
   glm::i32vec2 pos = m_NewActiveR;
   glm::vec3 rot(0);
+  glm::vec3 po(m_NewActiveR.x,0.0f,m_NewActiveR.y);
   unsigned int trimLength = (m_Size-1)*m_UnitSize;
   if(place == glm::i32vec2(1,0)){
     rot.y = 3*M_PI/2;
     pos.x += trimLength;
     pos.y-=m_UnitSize;
+    po.z-=m_UnitSize;
   }
   else if(place == glm::i32vec2(1,1)){
     rot.y = M_PI;
@@ -100,15 +131,22 @@ void LODLevel::PlaceTrim(){
     rot.y = M_PI/2;
     pos.y += trimLength;
     pos.x-=m_UnitSize;
+    po.x-=m_UnitSize;
   }
   else{
     pos.x-=m_UnitSize;
     pos.y-=m_UnitSize;
+    po.x-=m_UnitSize;
+    po.z-=m_UnitSize;
   }
+  /*if(m_NewActiveR.x > 0)
+    pos.x+=m_UnitSize;
+  if(m_NewActiveR.y > 0)
+    pos.y+=m_UnitSize;*/
   glm::vec3 p(pos.x,0.0f,pos.y);
   m_TrimObj->SetPosition(p);
   m_TrimObj->SetRotation(rot);
-
+  m_SeamObj->SetPosition(po);
 }
 
 
@@ -190,6 +228,12 @@ void LODLevel::MakeTrimObj(glm::i32vec2& pos, glm::vec3& rot){
   m_TrimObj->SetRotation(rot);
   m_Objs.push_back(m_TrimObj);
 }
+void LODLevel::MakeSeamObj(){
+  glm::vec3 unitSizeVec = glm::vec3(m_UnitSize);
+  m_SeamObj = new  Object(&m_Seam, m_Terrain->GetMaterial()) ;
+  m_SeamObj->SetScale(unitSizeVec);
+  m_Objs.push_back(m_SeamObj);
+}
 
 void LODLevel::MakeFillObj(glm::i32vec2& pos, glm::vec3& rot){
   glm::vec3 unitSizeVec = glm::vec3(m_UnitSize);
@@ -219,8 +263,7 @@ void LODLevel::MakeObjs(){
   MakeFillObjs();
   glm::vec3 rot = glm::vec3(0);
   MakeTrimObj(m_ActiveR,rot);
-  // Make trim objs
-  // Make seam objs
+  MakeSeamObj();
 
 }
 
@@ -248,11 +291,28 @@ void LODLevel::MakeObjs(){
 /* Updates positions of all meshes
  */
 void LODLevel::Update( glm::i32vec2 center ){
-  m_NewActiveR = ((static_cast<glm::i32vec2>(center)-glm::i32vec2(m_HalfSize)* glm::i32vec2(m_UnitSize))/ glm::i32vec2(m_UnitSize)) * glm::i32vec2(m_UnitSize);
+
+    /* just find where the +/-1 is going */ 
+    if(center.y > 0){
+      m_NewActiveR.y = glm::floor(center.y / m_UnitSize) * m_UnitSize - m_TileSize*2*m_UnitSize;
+    }
+    else{
+      m_NewActiveR.y = glm::floor(center.y)-m_HalfSize * m_UnitSize;
+      m_NewActiveR.y -= m_NewActiveR.y % m_UnitSize;
+    }
+    if(center.x > 0){
+      m_NewActiveR.x = glm::floor(center.x / m_UnitSize) * m_UnitSize - m_TileSize*2*m_UnitSize;
+    }
+    else{
+      m_NewActiveR.x = glm::floor(center.x)-m_HalfSize * m_UnitSize;
+      m_NewActiveR.x -= m_NewActiveR.x % m_UnitSize;
+    }
+    /* you lazy bastard */
+
   glm::i32vec2 dir = m_NewActiveR - m_ActiveR;
   if(dir.x != 0 || dir.y != 0){
+    printf("center: (%d,%d)\n",center.x,center.y);
     glm::vec3 dir3 = glm::vec3(dir.x, 0.0f, dir.y);
-    printf("newActiveR: (%d,%d)\n",m_NewActiveR.x,m_NewActiveR.y);
 
     // Move all meshes
     for(unsigned int i = 0 ; i < m_Objs.size() ; i++){
@@ -507,8 +567,15 @@ void LODLevel::GenMeshes(unsigned int size){
   m_Trim.Init(GL_TRIANGLE_STRIP);
 
 
-  /*     GenSeam();
-  */
+  GenSeam();
+  for(int i=0 ; i < (m_Size-1)*2*3 ;){
+    for(int j=0 ; j < 3 ; j++){
+      m_Seam.PushIndex(i++);
+    }
+    i--;
+  }
+  m_Seam.Init(GL_TRIANGLES);
+
 }
 
 void LODLevel::GenTile(){
@@ -571,16 +638,38 @@ void LODLevel::GenTrim(){
 
 void LODLevel::GenSeam(){
 
-  glm::i32vec2 p;
-  for(p.y=0 ; p.y < m_TileSize ; p.y++){
-    for(p.x=0 ; p.x < m_TileSize ; p.x++){
-      m_Trim.PushVertex( Vertexun(
-            glm::vec3( p.x, 0.0f, p.y),
-            glm::vec2(),
-            glm::vec3()
-            )
-          );
-    }
+  // could be done more concisely
+  // contains the edge of the tile
+  for(int a=0 ; a < m_Size-1 ; a++){
+    m_Seam.PushVertex( Vertexun(
+          glm::vec3( a, 0, 0 ),
+          glm::vec2(1,1),
+          glm::vec3()
+          )
+        );
   }
-
+  for(int a=0 ; a < m_Size-1 ; a++){
+    m_Seam.PushVertex( Vertexun(
+          glm::vec3( m_Size-1, 0, a ),
+          glm::vec2(0,0),
+          glm::vec3()
+          )
+        );
+  }
+  for(int a=m_Size-1 ; a > 0 ; a--){
+    m_Seam.PushVertex( Vertexun(
+          glm::vec3( a, 0, m_Size-1 ),
+          glm::vec2(1,0),
+          glm::vec3()
+          )
+        );
+  }
+  for(int a=m_Size-1 ; a > 0 ; a--){
+    m_Seam.PushVertex( Vertexun(
+          glm::vec3( 0, 0, a ),
+          glm::vec2(0,1),
+          glm::vec3()
+          )
+        );
+  }
 }

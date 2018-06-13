@@ -52,7 +52,7 @@ class LODLevel {
     unsigned int m_Level;
     int m_UnitSize;
     glm::i32vec2 m_ActiveR;
-    glm::i32vec2 m_NewActiveR;
+    //glm::i32vec2 m_NewActiveR;
     
     void MakeObjs();
     void MakeTileObjs();
@@ -60,6 +60,7 @@ class LODLevel {
     void MakeFillObjs();
     void MakeFillObj(glm::i32vec2& pos, glm::vec3& rot);
     void MakeTrimObj(glm::i32vec2& pos, glm::vec3& rot);
+    void MakeSeamObj();
     void PlaceTrim();
     void SetOffset( glm::i32vec2& o );
     void SetScale(int s);
@@ -68,6 +69,7 @@ class LODLevel {
     void ColorDebug();
 
   public:
+    glm::i32vec2 m_NewActiveR;
 
     void GridIndices(glm::i32vec2& e, Mesh<Vertexun>& m);
     static void GenMeshes(unsigned int size);

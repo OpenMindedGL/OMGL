@@ -75,7 +75,8 @@ void main(){
   float cost = clamp( dot( n,l ), 0,1 );
   float cosAlpha = clamp( dot( e,r ), 0,1 );
 //  color = vec4(u_Ka * u_Kd + vec3(u_D) * u_Kd * lightColor * vec3(u_Ni) * cost + vec3(u_D) * u_Ks * lightColor * vec3(u_Ni) * pow(cosAlpha, 5), 1.0f);
-  color = vec4(pos.x/67,u_Ka.z,pos.y/67,1.0);
+  //color = vec4(uv.y,uv.x,0,1.0);
+  color = vec4(u_Ka.x,u_Ka.y,u_Ka.z,1.0);
 }
 
 /*
