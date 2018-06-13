@@ -12,9 +12,14 @@ class Object {
 private : 
 
 	glm::mat4 m_ModelMatrix;
+	std::string m_TextureDirectory = "";
+	
 	/*glm::mat4 m_Translation;
 	glm::mat4 m_Rotation;
 	glm::mat4 m_Scale;*/
+
+	std::string GetFileName(FILE * f);
+	
 
 protected : 
 
@@ -28,15 +33,18 @@ public :
 	Object(Mesh<Vertexun> * m, Material * mat);
 	Object(Mesh<Vertexun> * m, std::vector<Material*> mat);
 	Object(Mesh<Vertexun> * m, std::string shaderPath);
-	Object(std::string pathObj, std::string pathMtl, bool reverse);
-	Object(std::string pathObj, bool reverse);
+	Object(std::string pathObj, std::string pathMtl, bool reverse = false, int renderType = GL_TRIANGLES);
+	Object(std::string pathObj, bool reverse = false);
 
 	void LoadObject(std::string pathObj, bool reverse);
 	void LoadMaterials(std::string path, std::vector<Material*> & materials);
+	void LoadTexturesMap();
+	void LoadTexturesMap(std::string path);
 	int contains(glm::vec3 v, glm::vec2 vt, glm::vec3 vn);
 	bool hasMaterial(Material* mat);
 	unsigned int GetMaterialId(std::string nameMat);
 
+	void CreateShaders(std::string shadersPath, std::string genShaderPath);
 	void Init(unsigned int renderType, std::string shaderPath);
 	void Bind();
 	void Unbind();
@@ -55,5 +63,8 @@ public :
 	inline Mesh<Vertexun> * GetMesh() { return m_Mesh; }
 	inline glm::mat4 GetModelMatrix() const { return m_ModelMatrix; }
 	inline std::map<unsigned int, unsigned int> * GetListMat() { return m_ListMat; }
+	inline std::string GetTextureDirectory() const { return m_TextureDirectory; }
 
+	//setters
+	inline void SetTextureDirectory(std::string path) { m_TextureDirectory = path; }
 };

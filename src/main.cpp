@@ -40,92 +40,98 @@ using namespace glm;
 int init();
 GLFWwindow* window;
 
-int init(){
+int init() {
 
-  srand((unsigned int)time(0));
+	srand((unsigned int)time(0));
 
-  if(!glfwInit())
-    return -1;
-  
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	if (!glfwInit())
+		return -1;
 
-  // Create a wubdower mode window and its OpenGL context 
-  window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World", NULL, NULL);
-  if(!window){
-    glfwTerminate();
-    return -1;
-  }
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-  // Make the window's context current
-  glfwMakeContextCurrent(window);
+	// Create a wubdower mode window and its OpenGL context 
+	window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World", NULL, NULL);
+	if (!window) {
+		glfwTerminate();
+		return -1;
+	}
 
-  glfwSwapInterval(1);
+	// Make the window's context current
+	glfwMakeContextCurrent(window);
 
-  // Needed by some drivers/hardware
-  glewExperimental = GL_TRUE; 
+	glfwSwapInterval(1);
 
-  if (glewInit() != GLEW_OK)
-    return -1;
-  //std::cout << "Error!" << std::endl;
+	// Needed by some drivers/hardware
+	glewExperimental = GL_TRUE;
 
-  std::cout << glGetString(GL_VERSION) << std::endl;
+	if (glewInit() != GLEW_OK)
+		return -1;
+	//std::cout << "Error!" << std::endl;
 
-  GLCall(glEnable(GL_BLEND));
-  GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-  // Enable depth test
-  GLCall(glEnable(GL_DEPTH_TEST));
-  // Accept fragment if it closer to the camera than the former one
-  GLCall(glDepthFunc(GL_LESS));
+	std::cout << glGetString(GL_VERSION) << std::endl;
+
+	GLCall(glEnable(GL_BLEND));
+	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+	// Enable depth test
+	GLCall(glEnable(GL_DEPTH_TEST));
+	// Accept fragment if it closer to the camera than the former one
+	GLCall(glDepthFunc(GL_LESS));
 }
 
-int main(void){
+int main(void) {
 
-  init();
-  Renderer renderer(*window, WIDTH, HEIGHT);
+	init();
+	Renderer renderer(*window, WIDTH, HEIGHT);
 
-  glm::vec3 pos = renderer.getCameraPosition();
-  
-//  Terrain t(glm::vec2(pos.x, pos.z));
+	glm::vec3 pos = renderer.getCameraPosition();
 
-  Skybox s;
-  
-  //Cube cube;
-  //Object c(&cube, "shaders/Basic.shader");
-  
-  //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", true);
-  Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl", false);
-  o.Init(GL_TRIANGLES, "shaders/Object.shader");
-  //o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
+	//  Terrain t(glm::vec2(pos.x, pos.z));
 
-  while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
-  {
+	Skybox s;
 
-    renderer.Clear();
+	Cube cube;
+	Object c(&cube, "shaders/Basic.shader");
 
-    pos = renderer.getCameraPosition();
-    //printf("x:%f y:%f \n",pos.x,pos.z);    
+	//Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", true);
+	Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl", false);
 
-	/*t.load(glm::vec2(pos.x,pos.z));	
-    renderer.Draw(t);*/
-	renderer.Draw(o);
-	o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));
+	o.CreateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
+	//o.LoadTexturesMap("res/objects/dodge/");
 
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    // Always draw last	
-	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    renderer.Draw(s);
+	//o.Init(GL_TRIANGLES, "shaders/Oject.shader");
 
-    /* Swap frint and back buffers */
-    glfwSwapBuffers(window);
+	//o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
 
-    /* Poll for and process envents */
-    glfwPollEvents();
+	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
+	{
 
-  }
-  //glDeleteTextures(1,c.GetTexture()->m_RendererID);
-  glfwTerminate();
-  return 0;
+		renderer.Clear();
+
+		pos = renderer.getCameraPosition();
+		//printf("x:%f y:%f \n",pos.x,pos.z);    
+
+		/*t.load(glm::vec2(pos.x,pos.z));
+		renderer.Draw(t);*/
+
+		renderer.Draw(o);
+		o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));
+
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		// Always draw last	
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		renderer.Draw(s);
+
+		/* Swap frint and back buffers */
+		glfwSwapBuffers(window);
+
+		/* Poll for and process envents */
+		glfwPollEvents();
+
+	}
+	//glDeleteTextures(1,c.GetTexture()->m_RendererID);
+	glfwTerminate();
+	return 0;
 }
 

@@ -16,9 +16,7 @@ void Renderer::Draw(Object object)
 	m_Camera->ComputeMatricesFromInputs();
 	m_Camera->SetModel(object.GetModelMatrix());
 	m_Camera->ComputeMVP();
-	glm::mat4 mvp = m_Camera->GetMVP();
-
-	object.Bind();
+	glm::mat4 mvp = m_Camera->GetMVP();	
 
 	if(m_Camera->getTypeDisplay()) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	else glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -31,54 +29,45 @@ void Renderer::Draw(Object object)
 		GLCall(glDisable(GL_PRIMITIVE_RESTART));
 	}
 
-	for (int i = 0; i < object.GetMaterials().size(); i++) {
-		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_MVP", mvp);
-		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_M", object.GetModelMatrix());
-		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
-	}
-
 	//If severals mtl
 	if (object.GetListMat()->size() > 1) {
+		object.GetMesh()->Bind();
 		std::map<unsigned int, unsigned int>::iterator it = object.GetListMat()->begin();
 		unsigned int tmp = 0;
+		int id;
 		while (true) {
 			//OBEJCT.GETMATERIALS.SETUNIFORM(it->second...)
-			object.GetMaterials().at(it->second)->SetUniforms();
+			id = it->second;
+			object.GetMaterials().at(id)->GetShader()->Bind();
+			object.GetMaterials().at(id)->SetShaderUniformMat4f("u_MVP", mvp);
+			object.GetMaterials().at(id)->SetShaderUniformMat4f("u_M", object.GetModelMatrix());
+			object.GetMaterials().at(id)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
+			object.GetMaterials().at(id)->BindTextures();
 			++it;
 			GLCall(glDrawElements(
 				object.GetMesh()->GetRendererType(), //type
-				(it == object.GetListMat()->end() ? object.GetMesh()->GetIndexBuffer().GetCount() - tmp: it->first - tmp + 1),//count
+				(it == object.GetListMat()->end() ? object.GetMesh()->GetIndexBuffer().GetCount() - tmp : it->first - tmp + 1),//count
 				GL_UNSIGNED_INT,
 				(const void *)(tmp * sizeof(unsigned int)) //offset indice 
 			));
+			object.GetMaterials().at(id)->Unbind();
 			if (it == object.GetListMat()->end()) break;
 			tmp = it->first + 1;
 		}
+		object.GetMesh()->Unbind();
 	}
 	else {
+		object.Bind();
+
+		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_MVP", mvp);
+		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_M", object.GetModelMatrix());
+		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
+
 		GLCall(glDrawElements(object.GetMesh()->GetRendererType(), object.GetMesh()->GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
-	}
-	object.Unbind();
+		object.Unbind();
+	}	
 }
 
-//Fonction non fonctionnelle
-void Renderer::Draw(std::vector<Object> objects) {
-
-	m_Camera->ComputeMatricesFromInputs();
-	m_Camera->printCoord();
-
-	for (int i = 0; i < objects.size(); i++) {
-		m_Camera->SetModel(objects[i].GetModelMatrix());
-		m_Camera->ComputeMVP();
-		glm::mat4 mvp = m_Camera->GetMVP();
-		objects[i].Bind();
-		for (int j = 0; j < objects[i].GetMaterials().size(); j++) {
-			objects[i].GetMaterials().at(j)->SetShaderUniformMat4f("u_MVP", mvp);
-		}
-		GLCall(glDrawElements(objects[i].GetMesh()->GetRendererType(), objects[i].GetMesh()->GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
-		objects[i].Unbind();
-	}
-}
 
 void Renderer::Draw(Skybox s)
 {
@@ -108,4 +97,24 @@ void Renderer::Draw(Skybox s)
 
 	glDepthFunc(GL_LESS);
 	s.Unbind();
+}
+
+
+//Fonction non fonctionnelle
+void Renderer::Draw(std::vector<Object> objects) {
+
+	m_Camera->ComputeMatricesFromInputs();
+	m_Camera->printCoord();
+
+	for (int i = 0; i < objects.size(); i++) {
+		m_Camera->SetModel(objects[i].GetModelMatrix());
+		m_Camera->ComputeMVP();
+		glm::mat4 mvp = m_Camera->GetMVP();
+		objects[i].Bind();
+		for (int j = 0; j < objects[i].GetMaterials().size(); j++) {
+			objects[i].GetMaterials().at(j)->SetShaderUniformMat4f("u_MVP", mvp);
+		}
+		GLCall(glDrawElements(objects[i].GetMesh()->GetRendererType(), objects[i].GetMesh()->GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
+		objects[i].Unbind();
+	}
 }

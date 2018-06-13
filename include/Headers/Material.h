@@ -3,6 +3,9 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Cubemap.h"
+#include "ShaderGen.h"
+
+#define BASICSHADER "shaders/Basic.shader"
 
 class Material {
 
@@ -10,19 +13,31 @@ private :
 	
 	static unsigned int NBINSTANCES;
 
-	unsigned int m_Id;
 	std::string m_Name;
+
+	unsigned int m_Id;
+	unsigned int m_illum;
+
 	float m_Ns;
 	float m_Ni;
 	float m_D;
+
 	glm::vec3 m_Ka;
 	glm::vec3 m_Kd;
 	glm::vec3 m_Ks; 
-	glm::vec3 m_Ke; 
-	unsigned int m_illum;
-	Texture * m_Texture;
+	glm::vec3 m_Ke;
+
 	Shader * m_Shader;
 
+	Texture * m_Texture;
+	Texture * m_MapKd;
+	Texture * m_MapKs;
+	Texture * m_MapKa;
+	Texture * m_MapNs;
+	Texture * m_MapD;
+
+	std::vector<bool> m_DynamicUniforms = { false, false, false, false };
+	
 public :
 	Material();
 	Material(std::string name);
@@ -31,6 +46,7 @@ public :
 	Material(Cubemap * cubemap);
 	Material(Shader * shader);
 
+	void CreateShader(std::string shadersPath, std::string genShaderPath);
 	void SetShader(const std::string path);
 	void SetTexture(Cubemap * cubemap);
 	void SetTexture(Texture * texture);
@@ -39,8 +55,9 @@ public :
 	void LoadTexture(const std::string path);
 	void InitTexture(const std::string name, unsigned int id);
 	void SetShaderUniformMat4f(const std::string name, glm::mat4 mvp);
-	void SetUniforms();
 	void Init(std::string shaderpath);
+	void Init();
+	void BindTextures();
 	void Bind();
 	void Unbind();
 
@@ -54,6 +71,12 @@ public :
 	inline void SetNi(float ni) { m_Ni = ni; }
 	inline void SetD(float d) { m_D = d; }
 	inline void SetIllum(unsigned int illum) { m_illum = illum; }
+	inline void SetTexture(std::string path) { m_Texture = new Texture(path); }
+	inline void SetMapKd(std::string path) { m_MapKd = new Texture(path); }
+	inline void SetMapKs(std::string path) { m_MapKs = new Texture(path); }
+	inline void SetMapKa(std::string path) { m_MapKa = new Texture(path); }
+	inline void SetMapNs(std::string path) { m_MapNs = new Texture(path); }
+	inline void SetMapD(std::string path) { m_MapD = new Texture(path); }
 
 	//Getters
 	inline std::string GetName() { return m_Name; }
@@ -64,7 +87,14 @@ public :
 	inline glm::vec3 GetKe() { return m_Ke; }
 	inline float GetNi() { return m_Ni; }
 	inline float GetD() { return m_D; }
-	inline Texture* GetTexture() { return m_Texture; }
 	inline unsigned int GetId() { return m_Id; }
+	inline Texture* GetTexture() { return m_Texture; }
+	inline Texture* GetMapKd() { return m_MapKd; }
+	inline Texture* GetMapKs() { return m_MapKs; }
+	inline Texture* GetMapKa() { return m_MapKa; }
+	inline Texture* GetMapNs() { return m_MapNs; }
+	inline Texture* GetMapD() { return m_MapD; }
+	inline std::vector<bool> & GetDynamicsUniforms() { return m_DynamicUniforms; }
+	inline Shader* GetShader() { return m_Shader; }
 
 };

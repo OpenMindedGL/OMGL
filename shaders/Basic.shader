@@ -30,9 +30,7 @@ void main(){
   vec3 LightPosition_cameraspace = ( u_V * vec4(LightPosition_worldspace,1)).xyz;
   lightdir = LightPosition_cameraspace + EyeDirection_cameraspace;
 
-  normal = ( u_V * u_M * vec4(normals,0)).xyz; 
-
-
+  normal = ( u_V * u_M * vec4(normals,0)).xyz;
 }
 
 #shader fragment

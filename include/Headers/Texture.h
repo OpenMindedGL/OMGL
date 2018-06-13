@@ -37,7 +37,8 @@ class Texture
     void Unbind() const;
 
     inline int GetWidth() const { return m_Width; }
-    inline int GetHeight() const { return m_Height; }
+	inline int GetHeight() const { return m_Height; }
+	inline std::string GetfilePath() const { return m_FilePath; }
 
     static unsigned int ParseFormat(const std::string& path);
 
