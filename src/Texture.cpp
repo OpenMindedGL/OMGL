@@ -5,7 +5,6 @@
 #include <string.h>
 #include "stb_image_aug.h" 
 
-
 Texture::Texture(const std::string& path, std::string name, unsigned char slot) :
   m_FilePath(path),
   m_Name(name),
@@ -20,6 +19,27 @@ Texture::Texture(const std::string& path, std::string name, unsigned char slot) 
       break;
   }
 
+}
+
+Texture::Texture(unsigned char* buffer, unsigned int width, unsigned int height) : m_LocalBuffer(buffer), m_Width(width), m_Name(DEFAULT_SAMPLER_NAME), m_Slot(0) {
+  GLCall(glGenTextures(1, &m_RendererID));
+  Bind();
+  if(height == 0){
+    m_Height = m_Width;
+  }
+  else {
+    m_Height = height;
+    printf("[INFO] Going with a rectangle texture, hey I'm not judging");
+  }
+  /*else if( height ){
+    printf("[INFO] Going with a non power of two texture, you're a grown man");
+  }*/
+
+  GLCall(glTexImage2D(m_Target, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
+  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));;
+  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));;
+  GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
+  GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 }
 
 

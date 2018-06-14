@@ -52,5 +52,7 @@ float NoiseGen::compute(float x, float y){
         e = nbOctave - 1;
     }*/
   }
-  return a*b*c*zoom;
+  
+  return a*b*c*zoom;  //WAS THIS ORIGINALY
+  //return a*b*c;
 }

@@ -13,6 +13,7 @@ class LODLevel;
 #include "NoiseGen.h"
 #include "Material.h"
 #include "LODLevel.h"
+#include "HeightMap.h"
 
 #define NB_LEVELS 7
 #define PRECISION 1.0f
@@ -28,6 +29,7 @@ class Terrain {
     unsigned int m_NbLevels;
     float m_Precision;
     int m_Size;
+    HeightMap* m_HeightMap;
 //    LODLevel * m_Lods[NB_LEVELS];
 
 

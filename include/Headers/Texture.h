@@ -4,6 +4,7 @@
 
 #include "Shader.h"
 #include <string>
+#include <vector>
 
 #define TEX_DDS 1
 #define TEX_OTHER 2
@@ -36,6 +37,7 @@ class Texture
     inline Texture(const std::string& path) : Texture(path, DEFAULT_SAMPLER_NAME, 0) {}
     inline Texture(const std::string& path, std::string name) : Texture(path, name, 0) {}
     inline Texture() : m_Name(DEFAULT_SAMPLER_NAME), m_Slot(0) {}
+    Texture(unsigned char * buffer, unsigned int width, unsigned int height = 0);
     ~Texture();
 
     void Bind(unsigned int slot) const; 

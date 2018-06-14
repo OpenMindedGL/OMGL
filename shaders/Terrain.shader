@@ -19,16 +19,41 @@ uniform mat4 u_MVP;
 uniform mat4 u_VP;
 uniform mat4 u_M;
 uniform mat4 u_V;
-uniform sampler2D u_HeightMap;
+//uniform sampler2D u_HeightMap;
+uniform sampler2D u_DefaultSampler;
 uniform sampler2D u_NormalMap;
+
+vec3 FindNormal(sampler2D tex, vec2 uv, float u)
+{
+  //u is one uint size, ie 1.0/texture size
+  vec2 offsets[4];
+  offsets[0] = uv + vec2(-u, 0);
+  offsets[1] = uv + vec2(u, 0);
+  offsets[2] = uv + vec2(0, -u);
+  offsets[3] = uv + vec2(0, u);
+
+  float hts[4];
+  for(int i = 0; i < 4; i++)
+  {
+    hts[i] = dot( texture(u_DefaultSampler, offsets[i]), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*2000-1000;
+  }
+
+  vec2 _step = vec2(1.0, 0.0);
+
+  vec3 va = normalize( vec3(_step.xy, hts[1]-hts[0]) );
+  vec3 vb = normalize( vec3(_step.yx, hts[3]-hts[2]) );
+
+  return cross(va,vb).rbg; //you may not need to swizzle the normal
+
+}
   
 void main(){
   //vec4 vPosh = vPos;
   vec4 pos = u_M * vec4(vPos,1.0);
   vec4 posV = u_V * pos;
   uv = ((pos.xz+(4096/2))/(8192/2));
-  pos.y =texture(u_HeightMap, uv).r*1000;
-  //vec2 a = texture(u_HeightMap, uv).xy;
+  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*2000-1000;
+  //vec2 a = texture(u_DefaultSampler, uv).xy;
   //pos.y = a.x*500;// * 256 + a.y;
  // gl_Position =  u_MVP * vPos;
   gl_Position =  u_VP * pos;
@@ -42,6 +67,8 @@ void main(){
 
   vec3 lightpos_cameraspace = ( vec4(LightPosition_worldspace,1)).xyz;
   lightdir = lightpos_cameraspace - vPos_cameraspace.xyz;
+  
+  normal = FindNormal(u_DefaultSampler,uv, 1.0f/4096);
 
   //uv = vPos.xz;
 /*
@@ -83,12 +110,12 @@ layout(location = 0) out vec4 color;
 //uniform mat4 u_M;
 //uniform mat4 u_V;
 in vec2 uv;
-//in vec3 normal;
+in vec3 normal;
 in vec3 lightdir;
 in vec2 pos;
 in float d1;
 
-uniform sampler2D u_NormalMap;
+//uniform sampler2D u_NormalMap;
 //out vec3 color;
 
 void main(){
@@ -100,9 +127,9 @@ void main(){
   */
   //color = vec4(0.0f,mod(pos.y,2.0f),mod(pos.x,2.0f),1.0f);
   vec3 blue = vec3(0.2f,0.6f,0.2f);
-  vec3 norm = texture(u_NormalMap, uv).rgb;
+  //vec3 norm = texture(u_NormalMap, uv).rgb;
 
-  vec3 normal = ( vec4(norm,0)).xzy; 
+  //vec3 normal = ( vec4(norm,0)).xzy; 
 
 
   vec3 n = normalize( normal )*2-1;
