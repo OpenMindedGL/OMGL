@@ -52,7 +52,7 @@ void HeightMap::Gen() {
   
   for(unsigned int i=0;i<m_Width;i++){
     for(unsigned int j=0;j<m_Width;j++){
-      m_HeightsD.push_back((m_Noise->compute(j/2,i/2)+100)/200);///100);
+      m_HeightsD.push_back((m_Noise->compute((float)j/64,(float)i/64)+25)/50);///100);
     }
   }
 

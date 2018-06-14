@@ -35,7 +35,7 @@ vec3 FindNormal(sampler2D tex, vec2 uv, float u)
   float hts[4];
   for(int i = 0; i < 4; i++)
   {
-    hts[i] = dot( texture(u_DefaultSampler, offsets[i]), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*2000-1000;
+    hts[i] = dot( texture(u_DefaultSampler, offsets[i]), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
   }
 
   vec2 _step = vec2(1.0, 0.0);
@@ -51,24 +51,24 @@ void main(){
   //vec4 vPosh = vPos;
   vec4 pos = u_M * vec4(vPos,1.0);
   vec4 posV = u_V * pos;
-  uv = ((pos.xz+(4096/2))/(8192/2));
-  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*2000-1000;
+  uv = ((pos.xz+(4096))/(8192));
+  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
   //vec2 a = texture(u_DefaultSampler, uv).xy;
   //pos.y = a.x*500;// * 256 + a.y;
  // gl_Position =  u_MVP * vPos;
   gl_Position =  u_VP * pos;
-  vec3 LightPosition_worldspace = vec3(0.0f,1000.0f,0.0f);
+  vec3 LightPosition_worldspace = vec3(0.0f,10000.0f,0.0f);
 
 
   vec3 Position_worldspace = pos.xyz;
 
-  vec3 vPos_cameraspace = (pos).xyz;
+  vec3 vPos_cameraspace = (u_V * pos).xyz;
   //vec3 EyeDirection_cameraspace = vec3(0,0,0) - vertexPosition_cameraspace;
 
-  vec3 lightpos_cameraspace = ( vec4(LightPosition_worldspace,1)).xyz;
+  vec3 lightpos_cameraspace = ( u_V * vec4(LightPosition_worldspace,1)).xyz;
   lightdir = lightpos_cameraspace - vPos_cameraspace.xyz;
   
-  normal = FindNormal(u_DefaultSampler,uv, 1.0f/4096);
+  normal = FindNormal(u_DefaultSampler,uv, 1.0f/8192);
 
   //uv = vPos.xz;
 /*
@@ -126,26 +126,27 @@ void main(){
     color = vec4(0.0f,0.0f,1.0f,1.0f);
   */
   //color = vec4(0.0f,mod(pos.y,2.0f),mod(pos.x,2.0f),1.0f);
-  vec3 blue = vec3(0.2f,0.6f,0.2f);
+  vec3 blue = vec3(0.2f,0.5f,0.2f);
   //vec3 norm = texture(u_NormalMap, uv).rgb;
 
   //vec3 normal = ( vec4(norm,0)).xzy; 
 
 
-  vec3 n = normalize( normal )*2-1;
+  vec3 n = normalize( normal );
   vec3 l = normalize( lightdir );
   float cost = clamp( dot( n,l ), 0,1 );
-  float ambient = 0.15f;
+  float ambient = 0.25f;
 
-  if(uv.x > 1.01f || uv.y > 1.01f)
+  /*if(uv.x > 1.01f || uv.y > 1.01f)
     color = vec4(1.0,1.0,0.0,1.0f);
   else if(0.01f > n.y || 0.01f > l.y)
     color = vec4(1.0,1.0,0.0,1.0f);
   else
     color = vec4(uv.x,0.0f,uv.y,1.0f);
-  color = vec4(vec3(ambient) + blue * cost,1.0f);
+*/  
+color = vec4(vec3(ambient) + blue * cost,1.0f);
     //color = vec4(normal.x,normal.y,normal.z,1.0f);
-  l = clamp(l,0,1);
+  //l = clamp(l,0,1);
   //  color = vec4(l.x,l.y,l.z,1.0f);
     //color = vec4((l.x+1)/2,(l.y+1)/2,(l.z+1)/2,1.0f);
 
