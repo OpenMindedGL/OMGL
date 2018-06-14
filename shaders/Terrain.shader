@@ -51,7 +51,7 @@ void main(){
   //vec4 vPosh = vPos;
   vec4 pos = u_M * vec4(vPos,1.0);
   vec4 posV = u_V * pos;
-  uv = ((pos.xz+(4096))/(8192));
+  uv = ((pos.xz+(4096/2))/(8192/2));
   pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
   //vec2 a = texture(u_DefaultSampler, uv).xy;
   //pos.y = a.x*500;// * 256 + a.y;
@@ -68,7 +68,7 @@ void main(){
   vec3 lightpos_cameraspace = ( u_V * vec4(LightPosition_worldspace,1)).xyz;
   lightdir = lightpos_cameraspace - vPos_cameraspace.xyz;
   
-  normal = FindNormal(u_DefaultSampler,uv, 1.0f/8192);
+  normal = FindNormal(u_DefaultSampler,uv, 1.0f/8192/2);
 
   //uv = vPos.xz;
 /*
