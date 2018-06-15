@@ -3,12 +3,14 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include <string.h>
 
 #include "Texture.h"
 #include "NoiseGen.h"
 
 
 #define HEIGHTMAP_SAMPLER_NAME    "u_HeightMap"
+#define JPG_QUALITY    100
 
 class HeightMap
 {
@@ -27,12 +29,15 @@ private:
 
 public:
 
-  inline HeightMap( Texture* t ) : m_Texture(t) {}
+  inline HeightMap( Texture* t ) : m_Texture(t) {} 
+  inline HeightMap( std::string s ); 
   HeightMap( NoiseGen* n, unsigned int width );
   HeightMap(float* buffer, unsigned int width);
+  Texture* MakeNormalMap();
   void Encode();
   void Decode();
   void Gen();
+  void Load(std::string filepath);
   float DecodeFloatRGBA( glm::vec4 rgba );
   glm::vec4 EncodeFloatRGBA( float v );
   inline Texture* GetTexture() { return m_Texture; }

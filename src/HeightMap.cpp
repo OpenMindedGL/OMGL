@@ -1,4 +1,7 @@
+
 #include "HeightMap.h"
+
+
 
 HeightMap::HeightMap(NoiseGen* n, unsigned int width) : 
   m_Noise(n),
@@ -9,6 +12,7 @@ HeightMap::HeightMap(NoiseGen* n, unsigned int width) :
   ////should be done like that
   //m_Texture = new Texture((unsigned char *) &(m_HeightsE[0]),HEIGHTMAP_SAMPLER_NAME,0);
   m_Texture = new Texture((unsigned char *) &(m_HeightsE[0]),width);
+  m_Texture->SavePng("textures/heightmap.png");
 }
 
 glm::vec4 HeightMap::packing0 = glm::vec4(1.0, 255.0, 65025.0, 16581375.0);
@@ -55,6 +59,28 @@ void HeightMap::Gen() {
       m_HeightsD.push_back((m_Noise->compute((float)j/64,(float)i/64)+25)/50);///100);
     }
   }
+}
 
+
+Texture* HeightMap::MakeNormalMap(){
+  //u is one uint size, ie 1.0/texture size
+  /*vec2 offsets[4];
+  offsets[0] = uv + vec2(-u, 0);
+  offsets[1] = uv + vec2(u, 0);
+  offsets[2] = uv + vec2(0, -u);
+  offsets[3] = uv + vec2(0, u);
+
+  float hts[4];
+  for(int i = 0; i < 4; i++)
+  {
+    hts[i] = dot( texture(u_DefaultSampler, offsets[i]), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
+  }
+
+  vec2 _step = vec2(1.0, 0.0);
+
+  vec3 va = normalize( vec3(_step.xy, hts[1]-hts[0]) );
+  vec3 vb = normalize( vec3(_step.yx, hts[3]-hts[2]) );
+
+  return cross(va,vb).rbg; //you may not need to swizzle the normal*/
 }
 

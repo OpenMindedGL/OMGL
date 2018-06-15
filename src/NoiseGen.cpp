@@ -6,7 +6,7 @@ NoiseGen::NoiseGen(){
   nbOctave = 8;
   lacunarity = 2.00f;
   persistence = 0.5f;
-  seed = 69;
+  seed = 6969;
 
   for(unsigned int k=0;k < nbOctave;k++){
     FastNoise temp_noise(seed+k);

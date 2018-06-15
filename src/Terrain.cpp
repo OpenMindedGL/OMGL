@@ -20,7 +20,8 @@ Terrain::Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
     printf("[WARNING] trying to make a LODLevel with a size-3 not dividable by 4, bad things gonna happend, you've been warned\n");
   }
   Shader * sh =new Shader("shaders/Terrain.shader");
-  m_HeightMap = new HeightMap(&m_Noise,4096);
+  //m_HeightMap = new HeightMap(&m_Noise,8192);
+  m_HeightMap = new HeightMap(new Texture("textures/heightmap.png", "u_DefaultSampler", 0, false));
   glm::vec3 normals[4096];
   //m_Material = new Material(new Texture("textures/wellington.jpg", "u_HeightMap", 0), sh );
   m_Material = new Material(m_HeightMap->GetTexture(), sh );

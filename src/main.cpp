@@ -90,11 +90,19 @@ int main(void){
   
   Terrain t(glm::vec2(pos.x, pos.z));
 
+  /*Skybox s("shaders/Skybox.shader", {
+        "textures/grass.dds",
+        "textures/grass.dds",
+        "textures/grass.dds",
+        "textures/grass.dds",
+        "textures/grass.dds",
+        "textures/grass.dds"
+        });*/
   Skybox s;
   
   Cube cube;
+  Object c(&cube, new Material("textures/skybox_left.dds", "shaders/Cube.shader"));
   Object c1(&cube, new Material("textures/grass.dds", "shaders/Cube.shader"));
-  Object c(&cube, new Material("textures/grass.dds", "shaders/Cube.shader"));
   c1.Translate(0,0,0);  // thats a f* problem right here
   //c.Translate(2,-10,0);
   //c.Scale(1,0.1,1);

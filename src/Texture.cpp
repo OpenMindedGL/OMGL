@@ -3,19 +3,22 @@
 #include "Shader.h"
 
 #include <string.h>
-#include "stb_image_aug.h" 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h" 
 
-Texture::Texture(const std::string& path, std::string name, unsigned char slot) :
+Texture::Texture(const std::string& path, std::string name, unsigned char slot, bool genMipMaps) :
   m_FilePath(path),
   m_Name(name),
   m_Slot(slot)
 {
   switch (Texture::ParseFormat(path)) {
     case TEX_DDS:
-      GenDDS();
+      GenDDS(genMipMaps);
       break;
     case TEX_OTHER:
-      GenOther();
+      GenOther(genMipMaps);
       break;
   }
 
@@ -43,10 +46,10 @@ Texture::Texture(unsigned char* buffer, unsigned int width, unsigned int height)
 }
 
 
-void Texture::GenDDS(){
+void Texture::GenDDS(bool genMipMaps){
   GLCall(glGenTextures(1, &m_RendererID));
   Bind(); 
-  LoadDDS(m_FilePath);
+  LoadDDS(m_FilePath, genMipMaps);
 
   GLCall(glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 5));
   GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
@@ -54,16 +57,21 @@ void Texture::GenDDS(){
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 }
 
-void  Texture::GenOther(){
+void  Texture::GenOther(bool genMipMaps){
   GLCall(glGenTextures(1, &m_RendererID));
   Bind(); 
   LoadOther(m_FilePath);
 
-  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
-  GLCall(glTexParameteri(m_Target, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-  GLCall(glGenerateMipmap(m_Target));
+  GLCall(glTexParameteri(m_Target, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+  if(genMipMaps){
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+    GLCall(glGenerateMipmap(m_Target));
+  }
+  else{
+  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));;
+  }
 }
 
 void Texture::LinkToShader(Shader* shader, const std::string& name, unsigned char slot)
@@ -131,7 +139,7 @@ void Texture::Unbind() const
 #define FOURCC_DXT3 0x33545844 // Equivalent to "DXT3" in ASCII
 #define FOURCC_DXT5 0x35545844 // Equivalent to "DXT5" in ASCII
 
-unsigned int Texture::LoadDDS(const std::string& path, unsigned int target){
+unsigned int Texture::LoadDDS(const std::string& path, unsigned int target, bool genMipMaps){
 
   const char * imagepath = path.c_str();
   unsigned char header[124];
@@ -163,6 +171,9 @@ unsigned int Texture::LoadDDS(const std::string& path, unsigned int target){
   unsigned int mipMapCount = *(unsigned int*)&(header[24]);
   unsigned int fourCC      = *(unsigned int*)&(header[80]);
 
+  if(!genMipMaps){
+    mipMapCount = 1;
+  }
 
   unsigned char * buffer;
   unsigned int bufsize;
@@ -225,5 +236,9 @@ unsigned int Texture::LoadDDS(const std::string& path, unsigned int target){
 }
 
 
+
+void Texture::SavePng(std::string filepath){
+  stbi_write_png(filepath.c_str(), m_Width, m_Width, 4, (const void *) m_LocalBuffer, m_Width*4);
+}
 
 

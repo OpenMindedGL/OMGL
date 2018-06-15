@@ -23,17 +23,17 @@ class Texture
     std::string m_Name;
     unsigned char m_Slot;
 
-    unsigned int LoadDDS(const std::string& path, unsigned int target);
+    unsigned int LoadDDS(const std::string& path, unsigned int target, bool genMipMaps = true);
     unsigned int LoadOther(const std::string& path, unsigned int target);
     inline unsigned int LoadDDS(const std::string& path) { LoadDDS(path, GL_TEXTURE_2D); }
     inline unsigned int LoadOther(const std::string& path) { LoadOther(path, GL_TEXTURE_2D); }
-    void GenDDS();
-    void GenOther();
+    void GenDDS(bool genMipMaps);
+    void GenOther(bool genMipMaps);
 
   public: 
 
   
-    Texture(const std::string& path, std::string name, unsigned char slot);
+    Texture(const std::string& path, std::string name, unsigned char slot, bool genMipMaps = true);
     inline Texture(const std::string& path) : Texture(path, DEFAULT_SAMPLER_NAME, 0) {}
     inline Texture(const std::string& path, std::string name) : Texture(path, name, 0) {}
     inline Texture() : m_Name(DEFAULT_SAMPLER_NAME), m_Slot(0) {}
@@ -50,6 +50,8 @@ class Texture
 
     inline int GetWidth() const { return m_Width; }
     inline int GetHeight() const { return m_Height; }
+
+    void SavePng(std::string filepath);
 
     static unsigned int ParseFormat(const std::string& path);
 

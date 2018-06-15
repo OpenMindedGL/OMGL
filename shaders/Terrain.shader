@@ -51,24 +51,24 @@ void main(){
   //vec4 vPosh = vPos;
   vec4 pos = u_M * vec4(vPos,1.0);
   vec4 posV = u_V * pos;
-  uv = ((pos.xz+(4096/2))/(8192/2));
+  uv = ((pos.xz+(4096))/(8192));
   pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
   //vec2 a = texture(u_DefaultSampler, uv).xy;
   //pos.y = a.x*500;// * 256 + a.y;
  // gl_Position =  u_MVP * vPos;
   gl_Position =  u_VP * pos;
-  vec3 LightPosition_worldspace = vec3(0.0f,10000.0f,0.0f);
+  vec3 LightPosition_worldspace = vec3(100.0f,500.0f,.0f);
 
 
   vec3 Position_worldspace = pos.xyz;
 
-  vec3 vPos_cameraspace = (u_V * pos).xyz;
+  vec3 vPos_cameraspace = (pos).xyz;
   //vec3 EyeDirection_cameraspace = vec3(0,0,0) - vertexPosition_cameraspace;
 
-  vec3 lightpos_cameraspace = ( u_V * vec4(LightPosition_worldspace,1)).xyz;
+  vec3 lightpos_cameraspace = ( vec4(LightPosition_worldspace,1)).xyz;
   lightdir = lightpos_cameraspace - vPos_cameraspace.xyz;
   
-  normal = FindNormal(u_DefaultSampler,uv, 1.0f/8192/2);
+ // normal = FindNormal(u_DefaultSampler,uv, 1.0f/8192/2);
 
   //uv = vPos.xz;
 /*
@@ -110,32 +110,49 @@ layout(location = 0) out vec4 color;
 //uniform mat4 u_M;
 //uniform mat4 u_V;
 in vec2 uv;
-in vec3 normal;
+//in vec3 normal;
 in vec3 lightdir;
 in vec2 pos;
 in float d1;
 
 //uniform sampler2D u_NormalMap;
+uniform sampler2D u_DefaultSampler;
 //out vec3 color;
 
+vec4 getnormals(sampler2D s, vec2 uv){
+  const vec2 size = vec2(2,0.0);
+  const ivec3 off = ivec3(-1,0,1);
+
+  
+  float s11 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
+  float s01 = dot( textureOffset(s, uv, off.xy), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
+  float s21 = dot( textureOffset(s, uv, off.zy), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
+  float s10 = dot( textureOffset(s, uv, off.yx), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
+  float s12 = dot( textureOffset(s, uv, off.yz), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
+  vec3 va = normalize(vec3(size.xy,s21-s01));
+  vec3 vb = normalize(vec3(size.yx,s12-s10));
+  return vec4( cross(va,vb), s11 ); 
+}
+
 void main(){
-/*  if(0.01f  > mod(pos.y,31.0f) || 0.01f  > mod(pos.x,31.0f)){
-    color = vec4(0.0f,1.0f,0.0f,1.0f);
-  }
-  else{
-    color = vec4(0.0f,0.0f,1.0f,1.0f);
-  */
+  /*  if(0.01f  > mod(pos.y,31.0f) || 0.01f  > mod(pos.x,31.0f)){
+      color = vec4(0.0f,1.0f,0.0f,1.0f);
+      }
+      else{
+      color = vec4(0.0f,0.0f,1.0f,1.0f);
+   */
   //color = vec4(0.0f,mod(pos.y,2.0f),mod(pos.x,2.0f),1.0f);
-  vec3 blue = vec3(0.2f,0.5f,0.2f);
+  vec3 blue = vec3(0.1f,0.3f,0.1f);
   //vec3 norm = texture(u_NormalMap, uv).rgb;
 
   //vec3 normal = ( vec4(norm,0)).xzy; 
+  vec3 normal = getnormals(u_DefaultSampler, uv).xzy;
 
 
   vec3 n = normalize( normal );
   vec3 l = normalize( lightdir );
   float cost = clamp( dot( n,l ), 0,1 );
-  float ambient = 0.25f;
+  float ambient = 0.15f;
 
   /*if(uv.x > 1.01f || uv.y > 1.01f)
     color = vec4(1.0,1.0,0.0,1.0f);
