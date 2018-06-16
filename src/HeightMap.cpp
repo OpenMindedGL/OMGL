@@ -3,13 +3,15 @@
 
 
 
-HeightMap::HeightMap(NoiseGen* n, unsigned int width) : 
+HeightMap::HeightMap(NoiseGen* n, unsigned int width, glm::vec2 step,glm::i32vec2 base ) : 
   m_Noise(n),
-  m_Width(width)  
+  m_Width(width),
+  m_Base(base),
+  m_Step(step)
 {
-  Gen();
+  Gen(base,step);
   Encode();
-  ////should be done like that
+  ////should be done like that (giving name and slot)
   //m_Texture = new Texture((unsigned char *) &(m_HeightsE[0]),HEIGHTMAP_SAMPLER_NAME,0);
   m_Texture = new Texture((unsigned char *) &(m_HeightsE[0]),width);
   m_Texture->SavePng("textures/heightmap.png");
@@ -23,7 +25,7 @@ glm::vec4 HeightMap::EncodeFloatRGBA( float v ) {
   glm::vec4 enc = glm::vec4(1.0, 255.0, 65025.0, 16581375.0) * v;
   enc = glm::fract(enc);
   enc -= glm::vec4(enc.y, enc.z, enc.w, enc.w) * glm::vec4(1.0/255.0,1.0/255.0,1.0/255.0,0.0);
-  return enc*glm::vec4(256);
+  return enc*glm::vec4(256); // probably 255
 }
 float HeightMap::DecodeFloatRGBA( glm::vec4 rgba ) {
   return glm::dot( rgba, packing2);
@@ -52,11 +54,12 @@ void HeightMap::Decode(){
   }
 }
 
-void HeightMap::Gen() {
+void HeightMap::Gen(glm::i32vec2& base, glm::vec2& step) {
   
-  for(unsigned int i=0;i<m_Width;i++){
-    for(unsigned int j=0;j<m_Width;j++){
-      m_HeightsD.push_back((m_Noise->compute((float)j/64,(float)i/64)+25)/50);///100);
+  glm::i32vec2 e = base + glm::i32vec2(m_Width);
+  for(int i=base.y;i<e.y;i++){
+    for(int j=base.x;j<e.x;j++){
+      m_HeightsD.push_back((m_Noise->compute((float)j*step.x,(float)i*step.y)+16)/32); // + maxnoise) /maxnoise*2; (mapping to (0,1))
     }
   }
 }

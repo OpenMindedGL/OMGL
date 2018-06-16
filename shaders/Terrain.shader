@@ -35,7 +35,7 @@ vec3 FindNormal(sampler2D tex, vec2 uv, float u)
   float hts[4];
   for(int i = 0; i < 4; i++)
   {
-    hts[i] = dot( texture(u_DefaultSampler, offsets[i]), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
+    hts[i] = dot( texture(u_DefaultSampler, offsets[i]), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
   }
 
   vec2 _step = vec2(1.0, 0.0);
@@ -51,8 +51,10 @@ void main(){
   //vec4 vPosh = vPos;
   vec4 pos = u_M * vec4(vPos,1.0);
   vec4 posV = u_V * pos;
-  uv = ((pos.xz+(4096))/(8192));
-  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
+  float texsize = textureSize(u_DefaultSampler, 0).x;
+  uv = ((pos.xz+(texsize/2))/(texsize));
+  //uv = (pos.xz+1024)/(2048);
+  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
   //vec2 a = texture(u_DefaultSampler, uv).xy;
   //pos.y = a.x*500;// * 256 + a.y;
  // gl_Position =  u_MVP * vPos;
@@ -124,11 +126,11 @@ vec4 getnormals(sampler2D s, vec2 uv){
   const ivec3 off = ivec3(-1,0,1);
 
   
-  float s11 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
-  float s01 = dot( textureOffset(s, uv, off.xy), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
-  float s21 = dot( textureOffset(s, uv, off.zy), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
-  float s10 = dot( textureOffset(s, uv, off.yx), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
-  float s12 = dot( textureOffset(s, uv, off.yz), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*4000-2000;
+  float s11 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+  float s01 = dot( textureOffset(s, uv, off.xy), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+  float s21 = dot( textureOffset(s, uv, off.zy), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+  float s10 = dot( textureOffset(s, uv, off.yx), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+  float s12 = dot( textureOffset(s, uv, off.yz), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
   vec3 va = normalize(vec3(size.xy,s21-s01));
   vec3 vb = normalize(vec3(size.yx,s12-s10));
   return vec4( cross(va,vb), s11 ); 

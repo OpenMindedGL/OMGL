@@ -96,6 +96,14 @@ void Camera::ComputeMatricesFromInputs()
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     m_TypeDisplay = false;
   }
+  if (glfwGetKey(&m_Window, GLFW_KEY_O) == GLFW_PRESS) {
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    m_Speed=5;
+  }
+  if (glfwGetKey(&m_Window, GLFW_KEY_P) == GLFW_PRESS) {
+    //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    m_Speed=500;
+  }
 
   float FoV = m_InitialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
 

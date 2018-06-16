@@ -14,12 +14,26 @@
 
 class HeightMap
 {
+
 private: 
+
+protected:
   Texture* m_Texture;
   NoiseGen* m_Noise;
-  std::vector<float> m_HeightsD;
-  std::vector<glm::u8vec4> m_HeightsE;
+  std::vector<float> m_HeightsD;        // Decoded heights
+  // TODO : remove (not worth keeping in memory)
+  std::vector<glm::u8vec4> m_HeightsE;  // Encoded heights 
   unsigned int m_Width;
+  glm::i32vec2 m_Base;  // bottom left in world coords
+  glm::i32vec2 m_Step;  // bottom left in world coords
+
+  void Encode();
+  void Decode();
+  void Gen(glm::i32vec2& base, glm::vec2& step);
+
+  /* packing functions */
+  float DecodeFloatRGBA( glm::vec4 rgba );
+  glm::vec4 EncodeFloatRGBA( float v );
 
   /* pre-computed */
   static glm::vec4 packing0; 
@@ -29,19 +43,13 @@ private:
 
 public:
 
-  inline HeightMap( Texture* t ) : m_Texture(t) {} 
-  inline HeightMap( std::string s ); 
-  HeightMap( NoiseGen* n, unsigned int width );
-  HeightMap(float* buffer, unsigned int width);
-  Texture* MakeNormalMap();
-  void Encode();
-  void Decode();
-  void Gen();
-  void Load(std::string filepath);
-  float DecodeFloatRGBA( glm::vec4 rgba );
-  glm::vec4 EncodeFloatRGBA( float v );
-  inline Texture* GetTexture() { return m_Texture; }
+  inline HeightMap( Texture* t, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0)) : m_Texture(t), m_Width(t->GetWidth()), m_Step(step), m_Base(base) {} 
 
+  HeightMap( NoiseGen* n, unsigned int width, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0));
+
+  Texture* MakeNormalMap();
+  //void Load(std::string filepath);
+  inline Texture* GetTexture() { return m_Texture; }
 
 
 
