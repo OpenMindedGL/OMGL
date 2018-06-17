@@ -3,18 +3,14 @@
 
 
 
-HeightMap::HeightMap(NoiseGen* n, unsigned int width, glm::vec2 step,glm::i32vec2 base ) : 
-  m_Noise(n),
-  m_Width(width),
-  m_Base(base),
-  m_Step(step)
+HeightMap::HeightMap(NoiseGen* n, unsigned int width, glm::vec2 step,glm::i32vec2 base ) : NoiseTexture(n,width, step, base)
 {
   Gen(base,step);
-  Encode();
+//  Encode();
   ////should be done like that (giving name and slot)
   //m_Texture = new Texture((unsigned char *) &(m_HeightsE[0]),HEIGHTMAP_SAMPLER_NAME,0);
-  m_Texture = new Texture((unsigned char *) &(m_HeightsE[0]),width);
-  m_Texture->SavePng("textures/heightmap.png");
+  Make(&(m_Texels[0].x));
+  //SavePng("textures/heightmap.png");
 }
 
 glm::vec4 HeightMap::packing0 = glm::vec4(1.0, 255.0, 65025.0, 16581375.0);
@@ -32,9 +28,9 @@ float HeightMap::DecodeFloatRGBA( glm::vec4 rgba ) {
 }
 
 void HeightMap::Encode(){
-  m_HeightsE.clear();
+  m_Texels.clear();
   for(unsigned int i=0;i<m_HeightsD.size();i++){
-    m_HeightsE.push_back(
+    m_Texels.push_back(
         static_cast<glm::u8vec4>(
           EncodeFloatRGBA( m_HeightsD[i] )
           )
@@ -44,11 +40,11 @@ void HeightMap::Encode(){
 
 void HeightMap::Decode(){
   m_HeightsD.clear();
-  for(unsigned int i=0;i<m_HeightsE.size();i++){
+  for(unsigned int i=0;i<m_Texels.size();i++){
     m_HeightsD.push_back(
         DecodeFloatRGBA(
         static_cast<glm::vec4>(
-          m_HeightsE[i])
+          m_Texels[i])
           )
         );
   }
@@ -59,7 +55,14 @@ void HeightMap::Gen(glm::i32vec2& base, glm::vec2& step) {
   glm::i32vec2 e = base + glm::i32vec2(m_Width);
   for(int i=base.y;i<e.y;i++){
     for(int j=base.x;j<e.x;j++){
-      m_HeightsD.push_back((m_Noise->compute((float)j*step.x,(float)i*step.y)+16)/32); // + maxnoise) /maxnoise*2; (mapping to (0,1))
+      m_HeightsD.push_back(
+          (m_Noise->compute((float)j*step.x,(float)i*step.y)+16)/32 // + maxnoise) /maxnoise*2; (mapping to (0,1))
+          );
+      m_Texels.push_back(
+          static_cast<glm::u8vec4>(
+            EncodeFloatRGBA( m_HeightsD.back() )
+            )
+          );
     }
   }
 }
@@ -87,3 +90,7 @@ Texture* HeightMap::MakeNormalMap(){
   return cross(va,vb).rbg; //you may not need to swizzle the normal*/
 }
 
+// to be put in NoiseTexture eventually
+float HeightMap::GetHeight(glm::i32vec2 p){
+  return (m_Noise->compute((float)p.x*m_Step.x,(float)p.y*m_Step.y)+16)/32; // + maxnoise) /maxnoise*2; (mapping to (0,1))
+}

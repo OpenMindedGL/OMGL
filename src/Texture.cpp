@@ -15,25 +15,31 @@ Texture::Texture(const std::string& path, std::string name, unsigned char slot, 
 {
   switch (Texture::ParseFormat(path)) {
     case TEX_DDS:
-      GenDDS(genMipMaps);
+      MakeDDS(genMipMaps);
       break;
     case TEX_OTHER:
-      GenOther(genMipMaps);
+      MakeOther(genMipMaps);
       break;
   }
 
 }
 
-Texture::Texture(unsigned char* buffer, unsigned int width, unsigned int height) : m_LocalBuffer(buffer), m_Width(width), m_Name(DEFAULT_SAMPLER_NAME), m_Slot(0) {
+Texture::Texture(unsigned int width, unsigned int height) : 
+m_Width(width),
+m_Name(DEFAULT_SAMPLER_NAME),
+m_Slot(0)
+{
+  if (height == 0)
+    m_Height = width;
+  else
+    m_Height = height;
+  
+}
+
+void Texture::Make(unsigned char* buffer) {
+  m_LocalBuffer = buffer;
   GLCall(glGenTextures(1, &m_RendererID));
   Bind();
-  if(height == 0){
-    m_Height = m_Width;
-  }
-  else {
-    m_Height = height;
-    printf("[INFO] Going with a rectangle texture, hey I'm not judging");
-  }
   /*else if( height ){
     printf("[INFO] Going with a non power of two texture, you're a grown man");
   }*/
@@ -43,10 +49,19 @@ Texture::Texture(unsigned char* buffer, unsigned int width, unsigned int height)
   GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));;
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
+  Unbind();
+
+  if(m_Height != m_Width){
+    printf("[INFO] Going with a rectangle texture, hey I'm not judging\n");
+  }
+}
+
+Texture::Texture(unsigned char* buffer) {//: m_LocalBuffer(buffer), m_Width(width), m_Name(DEFAULT_SAMPLER_NAME), m_Slot(0) {
+  Make(buffer);
 }
 
 
-void Texture::GenDDS(bool genMipMaps){
+void Texture::MakeDDS(bool genMipMaps){
   GLCall(glGenTextures(1, &m_RendererID));
   Bind(); 
   LoadDDS(m_FilePath, genMipMaps);
@@ -57,7 +72,7 @@ void Texture::GenDDS(bool genMipMaps){
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
 }
 
-void  Texture::GenOther(bool genMipMaps){
+void  Texture::MakeOther(bool genMipMaps){
   GLCall(glGenTextures(1, &m_RendererID));
   Bind(); 
   LoadOther(m_FilePath);

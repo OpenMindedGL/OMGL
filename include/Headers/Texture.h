@@ -16,7 +16,7 @@ class Texture
   protected :
     std::string m_FilePath;
     unsigned int m_RendererID;
-    unsigned char* m_LocalBuffer;
+    unsigned char* m_LocalBuffer;  // Encoded heights 
     int m_Width, m_Height, m_BPP;
     unsigned int m_Format;
     unsigned int m_Target = GL_TEXTURE_2D;
@@ -27,8 +27,9 @@ class Texture
     unsigned int LoadOther(const std::string& path, unsigned int target);
     inline unsigned int LoadDDS(const std::string& path) { LoadDDS(path, GL_TEXTURE_2D); }
     inline unsigned int LoadOther(const std::string& path) { LoadOther(path, GL_TEXTURE_2D); }
-    void GenDDS(bool genMipMaps);
-    void GenOther(bool genMipMaps);
+    void MakeDDS(bool genMipMaps);
+    void MakeOther(bool genMipMaps);
+    void Make(unsigned char * buffer);
 
   public: 
 
@@ -37,7 +38,8 @@ class Texture
     inline Texture(const std::string& path) : Texture(path, DEFAULT_SAMPLER_NAME, 0) {}
     inline Texture(const std::string& path, std::string name) : Texture(path, name, 0) {}
     inline Texture() : m_Name(DEFAULT_SAMPLER_NAME), m_Slot(0) {}
-    Texture(unsigned char * buffer, unsigned int width, unsigned int height = 0);
+    Texture(unsigned char * buffer);
+    Texture(unsigned int width, unsigned int height = 0);
     ~Texture();
 
     void Bind(unsigned int slot) const; 

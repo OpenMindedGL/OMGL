@@ -6,25 +6,26 @@
 #include <string.h>
 
 #include "HeightMap.h"
+#include "DynamicTexture.h"
+#include "NoiseGen.h"
 
 
-#define JPG_QUALITY    100
 
-class DynamicHeightMap : public HeightMap
+class DynamicHeightMap : public HeightMap, public DynamicTexture
 {
+
 private: 
 
-  int GetIndex(glm::i32vec2& p);
+protected:
+
+
 public:
 
-  void Upload(glm::i32vec2 offset, glm::i32vec2 size, const void* data);
-  unsigned int Update(glm::i32vec2 dir);
+  DynamicHeightMap( std::string path, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0)) : NoiseTexture(), DynamicTexture(), HeightMap(path, step, base) {} 
 
-  void UpdateSub(glm::i32vec2& s, glm::i32vec2& e);
-
-  void UpdateTexel(glm::i32vec2& p, glm::i32vec2& s,std::vector<float>& buffer);
+  DynamicHeightMap( NoiseGen* n, unsigned int width, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0)) : NoiseTexture(n,width,step,base), DynamicTexture(), HeightMap(n,width,step,base){ m_TorBegin = glm::i32vec2(0); }
 
 
-
+  virtual void UpdateTexel(glm::i32vec2& p, glm::i32vec2& s, glm::i32vec2& t, std::vector<glm::u8vec4>& buffer);
 };
 #endif

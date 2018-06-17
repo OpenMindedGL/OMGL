@@ -1,6 +1,7 @@
 #include "Terrain.h"
 #include "Mesh.h"
 #include "Vertex.h"
+#include "HeightMap.h"
 #include "Debug.h"
 #include "Log.h"
 #include <vector>
@@ -20,11 +21,14 @@ Terrain::Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
     printf("[WARNING] trying to make a LODLevel with a size-3 not dividable by 4, bad things gonna happend, you've been warned\n");
   }
   Shader * sh =new Shader("shaders/Terrain.shader");
-  int size = 8192;
-  //m_HeightMap = new HeightMap(&m_Noise,size, glm::vec2(1.0f/64), glm::i32vec2(-size/2));
-  m_HeightMap = new HeightMap(new Texture("textures/heightmap.png", "u_DefaultSampler", 0, false));
+  int size = 32;
+  //m_HeightMap = new HeightMap(&m_Noise,size, glm::vec2(1.0f/*/64*/), glm::i32vec2(-size/2));
+  //m_HeightMap = new HeightMap("textures/heightmap.png");
   //m_Material = new Material(new Texture("textures/wellington.jpg", "u_HeightMap", 0), sh );
-  m_Material = new Material(m_HeightMap->GetTexture(), sh );
+  //m_HeightMap->SavePng("textures/heightmap_test.png");
+  m_HeightMap = new DynamicHeightMap(&m_Noise,size, glm::vec2(1.0f/*/64*/), glm::i32vec2(-size/2));
+
+  m_Material = new Material((Texture *)m_HeightMap, sh );
   m_NormalMap = new Texture("textures/wellingtonnormal.jpg", "u_NormalMap", 1);
   m_NormalMap->LinkToShader(sh);
 

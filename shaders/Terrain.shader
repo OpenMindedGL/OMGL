@@ -54,7 +54,7 @@ void main(){
   float texsize = textureSize(u_DefaultSampler, 0).x;
   uv = ((pos.xz+(texsize/2))/(texsize));
   //uv = (pos.xz+1024)/(2048);
-  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8-4;//*8000-4000;
   //vec2 a = texture(u_DefaultSampler, uv).xy;
   //pos.y = a.x*500;// * 256 + a.y;
  // gl_Position =  u_MVP * vPos;

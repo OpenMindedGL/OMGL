@@ -45,7 +45,7 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
   PlaceTrim();
   //ColorDebug();
   
-  //Update(center);
+  //Updatecenter);
   //Upload();
   //Log::PrintIndices(*m_Indices);
   //GLCall(Vertexun * a = (Vertexun *) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY)); 
@@ -314,6 +314,11 @@ void LODLevel::Update( glm::i32vec2 center ){
     printf("center: (%d,%d)\n",center.x,center.y);
     glm::vec3 dir3 = glm::vec3(dir.x, 0.0f, dir.y);
 
+    /* should be in terrain */
+    if(m_Level == NB_LEVELS-1)
+      m_Terrain->m_HeightMap->Update(dir);
+    /* -------------------- */
+
     // Move all meshes
     for(unsigned int i = 0 ; i < m_Objs.size() ; i++){
       m_Objs.at(i)->Translate(dir3);
@@ -322,7 +327,7 @@ void LODLevel::Update( glm::i32vec2 center ){
     PlaceTrim();
 
     m_ActiveR = m_NewActiveR;
-    // Update height map ?
+    //  height map ?
     /*if(Load()){
       Upload();
       }

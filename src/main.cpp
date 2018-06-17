@@ -131,7 +131,7 @@ int main(void){
     //printf("x:%f y:%f \n",pos.x,pos.z);    
 
     renderer.Draw(c);
-    //t.Update(p);
+    t.Update(p);
     renderer.Draw(t);
   //  renderer.Draw(c1);
 	//renderer.Draw(o);

@@ -13,11 +13,11 @@ class LODLevel;
 #include "NoiseGen.h"
 #include "Material.h"
 #include "LODLevel.h"
-#include "HeightMap.h"
+#include "DynamicHeightMap.h"
 
-#define NB_LEVELS 7
+#define NB_LEVELS 2
 #define PRECISION 1.0f
-#define SIZE    131   // -3 should be power of two, dividable by 8
+#define SIZE    19   // -3 should be power of two, dividable by 8
 #define HALFSIZE    SIZE/2
 #define CHUNK_PER_SIDE 5   // KEEP ODD !!!!
 #define RENDER_DISTANCE (CHUNK_PER_SIDE/2)
@@ -29,12 +29,14 @@ class Terrain {
     unsigned int m_NbLevels;
     float m_Precision;
     int m_Size;
-    HeightMap* m_HeightMap;
+    //    public for debugging purposes
+//    DynamicHeightMap* m_HeightMap;
 //    LODLevel * m_Lods[NB_LEVELS];
 
 
   public :
     
+    DynamicHeightMap* m_HeightMap;
     LODLevel * m_Lods[NB_LEVELS];
     Material * m_Material;
     Texture * m_NormalMap;
