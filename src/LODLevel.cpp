@@ -42,6 +42,7 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
 //  m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Size,m_ActiveR.y%(unsigned int)m_Size);
 
   MakeObjs();
+
   PlaceTrim();
   //ColorDebug();
   
@@ -144,9 +145,12 @@ void LODLevel::PlaceTrim(){
   if(m_NewActiveR.y > 0)
     pos.y+=m_UnitSize;*/
   glm::vec3 p(pos.x,0.0f,pos.y);
-  m_TrimObj->SetPosition(p);
-  m_TrimObj->SetRotation(rot);
-  m_SeamObj->SetPosition(po);
+  // so nasty
+  if(m_Level != 0){
+    m_TrimObj->SetPosition(p);
+    m_TrimObj->SetRotation(rot);
+    m_SeamObj->SetPosition(po);
+  }
 }
 
 
@@ -261,9 +265,12 @@ void LODLevel::MakeObjs(){
 
   MakeTileObjs();
   MakeFillObjs();
-  glm::vec3 rot = glm::vec3(0);
-  MakeTrimObj(m_ActiveR,rot);
-  MakeSeamObj();
+  if(m_Level != 0){
+    // the last level doesnt need a trim nor a seam, it won't overlap nor badly transition to anything
+    glm::vec3 rot = glm::vec3(0);
+    MakeTrimObj(m_ActiveR,rot);
+    MakeSeamObj();
+  }
 
 }
 

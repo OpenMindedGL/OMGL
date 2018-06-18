@@ -15,9 +15,9 @@ class LODLevel;
 #include "LODLevel.h"
 #include "DynamicHeightMap.h"
 
-#define NB_LEVELS 2
+#define NB_LEVELS 1
 #define PRECISION 1.0f
-#define SIZE    19   // -3 should be power of two, dividable by 8
+#define SIZE    11   // -3 should be power of two, dividable by 8
 #define HALFSIZE    SIZE/2
 #define CHUNK_PER_SIDE 5   // KEEP ODD !!!!
 #define RENDER_DISTANCE (CHUNK_PER_SIDE/2)
@@ -39,6 +39,7 @@ class Terrain {
     DynamicHeightMap* m_HeightMap;
     LODLevel * m_Lods[NB_LEVELS];
     Material * m_Material;
+    Shader * m_Shader;
     Texture * m_NormalMap;
     NoiseGen m_Noise;
     Terrain(glm::vec2 spawn, float p = PRECISION, unsigned int s = SIZE, unsigned int n = NB_LEVELS);

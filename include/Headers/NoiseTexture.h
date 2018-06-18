@@ -13,11 +13,12 @@ class NoiseTexture : public Texture
   protected :
 
     NoiseGen* m_Noise;
-    glm::i32vec2 m_Base;  // bottom left in world coords
+//    glm::i32vec2 m_Base;  // bottom left in world coords
     glm::i32vec2 m_Step;  // bottom left in world coords
     std::vector<glm::u8vec4> m_Texels;  
 
   public: 
+    glm::i32vec2 m_Base;  // bottom left in world coords
     virtual void Gen(glm::i32vec2& base, glm::vec2& step){}
 
   

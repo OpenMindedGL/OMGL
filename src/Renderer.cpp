@@ -130,6 +130,9 @@ void Renderer::Draw(LODLevel& l){
 void Renderer::Draw(Terrain& t)
 {
   t.m_NormalMap->Bind();
+  t.m_Shader->Bind();
+  t.m_Shader->SetUniform2i("base",t.m_HeightMap->m_Base);
+  t.m_Shader->SetUniform2i("torBase",t.m_HeightMap->m_TorBase);
   for (unsigned int i = 0; i < t.GetNbLevel(); i++) {
     //printf("Drawing level %d\n",i);
     Draw(t.GetLevel(i));

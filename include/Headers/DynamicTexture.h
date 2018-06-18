@@ -13,10 +13,12 @@ class DynamicTexture : virtual public NoiseTexture
 private: 
 
   int GetIndex(glm::i32vec2& p);
-  glm::i32vec2 GetTorPos(glm::i32vec2& p);
+//  glm::i32vec2 GetTorPos(glm::i32vec2& p);
   //glm::i32vec2 m_TorBegin;
 public:
+  glm::i32vec2 GetTorPos(glm::i32vec2& p);
   glm::i32vec2 m_TorBegin;
+  glm::i32vec2 m_TorBase;
 
   DynamicTexture() : m_TorBegin(glm::i32vec2(0)){}
 

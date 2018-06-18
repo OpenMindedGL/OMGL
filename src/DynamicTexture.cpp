@@ -148,62 +148,43 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
   }
 
   m_Base = n;
-  glm::i32vec2 a = m_TorBegin + dir;
-  m_TorBegin = GetTorPos(a);
+  glm::i32vec2 a = m_Base - m_TorBegin;
+  m_TorBase = GetTorPos(a);
+  printf("base: (%d,%d), torBase: (%d,%d)\n",m_Base.x,m_Base.y,m_TorBase.x,m_TorBase.y);
   //m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Width,m_ActiveR.y%(unsigned int)m_Width);
   //return 1;
+  glm::i32vec2 g = glm::i32vec2(m_Width);
+  glm::i32vec2 f = glm::i32vec2(0);
+  Upload(f, g, &m_Texels[0]);
 }
 
 void DynamicTexture::UpdateSub(glm::i32vec2& s, glm::i32vec2& e){
   glm::i32vec2 size = glm::abs(e - s) ;//+ glm::i32vec2(1);  // size of the rectangle
-  glm::i32vec2 dir = s-m_Base;
-  glm::i32vec2 a = m_TorBegin + dir;
-  glm::i32vec2 torOffset = GetTorPos(a);        // bottom left of the rectangle in toroidal indices
+  glm::i32vec2 d = s-m_TorBegin;
+  glm::i32vec2 ts = GetTorPos(d);        // bottom left of the rectangle in toroidal indices
   glm::i32vec2 p;
   std::vector<glm::u8vec4> toUpdateE;
-  bool around[2] = false;
+  //bool around[2] = false;
   glm::i32vec2 b = size;
   glm::i32vec2 c = s;
-  if(offset.x + b.x > m_Width){
+  /*if(offset.x + b.x > m_Width){
     b.x = m_Width - offset.x;
     around[0] = true;
   }
   if(offset.y + size.y > m_Width){
     b.y = m_Width - offset.y;
     around[1] = true;
-  }
+  }*/
   toUpdateE.clear();
+  toUpdateE.resize(size.y*size.x+size.x);
   for(p.y=0 ; p.y < b.y ; p.y++){
     for(p.x=0 ; p.x < b.x ; p.x++){
-      UpdateTexel(p, c, torOffset, toUpdateE);
+      UpdateTexel(p, s, ts, toUpdateE);
     }
   }
-  Upload(torOffset, b, &toUpdateE[0]);
-
-  if(around[0]){
-    b.x = offset;
-    c.x = 0;
-    toUpdateE.clear();
-    for(p.y=0 ; p.y < b.y ; p.y++){
-      for(p.x=0 ; p.x < b.x ; p.x++){
-        UpdateTexel(p, c, torOffset, toUpdateE);
-      }
-    }
-    Upload(torOffset, b, &toUpdateE[0]);
-  
-  }
-  if(around[0]){
-    b = offset;
-    c.x = 0;
-    toUpdateE.clear();
-    for(p.y=0 ; p.y < b.y ; p.y++){
-      for(p.x=0 ; p.x < b.x ; p.x++){
-        UpdateTexel(p, c, torOffset, toUpdateE);
-      }
-    }
-    Upload(torOffset, b, &toUpdateE[0]);
-  
-  }
+  /*glm::i32vec2 g = glm::i32vec2(m_Width);
+  glm::i32vec2 f = glm::i32vec2(0);
+  Upload(f, g, &m_Texels[0]);*/
 }
 
 void DynamicTexture::UpdateTexel(glm::i32vec2& p, glm::i32vec2& s, glm::i32vec2& t,std::vector<glm::u8vec4>& buffer){

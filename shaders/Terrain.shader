@@ -22,6 +22,8 @@ uniform mat4 u_V;
 //uniform sampler2D u_HeightMap;
 uniform sampler2D u_DefaultSampler;
 uniform sampler2D u_NormalMap;
+uniform ivec2 base;
+uniform ivec2 torBase;
 
 vec3 FindNormal(sampler2D tex, vec2 uv, float u)
 {
@@ -52,9 +54,11 @@ void main(){
   vec4 pos = u_M * vec4(vPos,1.0);
   vec4 posV = u_V * pos;
   float texsize = textureSize(u_DefaultSampler, 0).x;
-  uv = ((pos.xz+(texsize/2))/(texsize));
+  ivec2 wPos = ivec2(pos.x,pos.z);
+  ivec2 tPos = ivec2(mod((torBase + (wPos - base)),texsize)); 
+  uv = (vec2(tPos)/(texsize));
   //uv = (pos.xz+1024)/(2048);
-  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8-4;//*8000-4000;
+  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*64-32;//*8000-4000;
   //vec2 a = texture(u_DefaultSampler, uv).xy;
   //pos.y = a.x*500;// * 256 + a.y;
  // gl_Position =  u_MVP * vPos;

@@ -118,12 +118,19 @@ int main(void){
   // o.Translate(20,0,0);
 
 
+  bool update = true;
 
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
     renderer.Clear();
     renderer.UpdateCamera();
+    if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
+      update = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
+      update = false;
+    }
 
     
     pos = renderer.getCameraPosition();
@@ -131,7 +138,8 @@ int main(void){
     //printf("x:%f y:%f \n",pos.x,pos.z);    
 
     renderer.Draw(c);
-    t.Update(p);
+    if(update)
+      t.Update(p);
     renderer.Draw(t);
   //  renderer.Draw(c1);
 	//renderer.Draw(o);
