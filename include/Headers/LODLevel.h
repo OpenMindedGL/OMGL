@@ -12,6 +12,7 @@ class Terrain;
 #include "Vertex.h"
 #include "NoiseGen.h"
 #include "Terrain.h"
+#include "DynamicHeightMap.h"
 
 class LODLevel { 
 
@@ -70,6 +71,7 @@ class LODLevel {
 
   public:
     glm::i32vec2 m_NewActiveR;
+    DynamicHeightMap* m_HeightMap;
 
     void GridIndices(glm::i32vec2& e, Mesh<Vertexun>& m);
     static void GenMeshes(unsigned int size);

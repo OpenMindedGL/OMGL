@@ -24,10 +24,13 @@ void DynamicTexture::Upload(glm::i32vec2 offset, glm::i32vec2 size, const void *
 unsigned int DynamicTexture::Update(glm::i32vec2 dir){
 
   // do we update anything ?
-  if(dir.x == 0 && dir.y == 0)
+  //if(dir.x == 0 && dir.y == 0)
+  glm::i32vec2 d = dir;//(dir / glm::i32vec2(2))*glm::i32vec2(2);
+  
+  if(d.x == 0 && d.y == 0)
     return 0; 
 
-  printf("[INFO] Updating terrain. dir:(%d,%d)\n",dir.x,dir.y);
+  printf("[INFO] Updating HeightMap. d:(%d,%d)\n",d.x,d.y);
 
   bool isDiagonal;
   bool fullReload = false;
@@ -37,20 +40,20 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
   // compute area to update
   isDiagonal = false;
   glm::i32vec2& o = m_Base;          // old active region
-  glm::i32vec2 n = m_Base+dir;         // new one
+  glm::i32vec2 n = m_Base+d;         // new one
   glm::i32vec2 s = n;                       // start of area
   glm::i32vec2 e = n+glm::i32vec2(m_Width);                       // end
-  glm::i32vec2 sign = glm::sign(dir);
+  glm::i32vec2 sign = glm::sign(d);
 
   //printf("old: (%d,%d) new: (%d,%d), tor:(%d,%d)\n",o.x,o.y,n.x,n.y,m_TorBegin.x,m_TorBegin.y);
   // are any currently loaded points still needed ?
-  if (glm::abs(dir.x) > m_Width || glm::abs(dir.y) > m_Width){
+  if (glm::abs(d.x) > m_Width || glm::abs(d.y) > m_Width){
     // no, replace everything
     fullReload = true;
   }
   else{
     // yes which ones ?
-    if(dir.x != 0 && dir.y != 0)
+    if(d.x != 0 && d.y != 0)
       isDiagonal = true;
 
     // ugly but fast
@@ -151,6 +154,7 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
   glm::i32vec2 a = m_Base - m_TorBegin;
   m_TorBase = GetTorPos(a);
   printf("base: (%d,%d), torBase: (%d,%d)\n",m_Base.x,m_Base.y,m_TorBase.x,m_TorBase.y);
+  printf("torBegin: (%d,%d)\n",m_TorBegin.x,m_TorBegin.y);
   //m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Width,m_ActiveR.y%(unsigned int)m_Width);
   //return 1;
   glm::i32vec2 g = glm::i32vec2(m_Width);

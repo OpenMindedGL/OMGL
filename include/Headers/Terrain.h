@@ -17,7 +17,7 @@ class LODLevel;
 
 #define NB_LEVELS 1
 #define PRECISION 1.0f
-#define SIZE    11   // -3 should be power of two, dividable by 8
+#define SIZE    131   // -3 should be power of two, dividable by 8
 #define HALFSIZE    SIZE/2
 #define CHUNK_PER_SIDE 5   // KEEP ODD !!!!
 #define RENDER_DISTANCE (CHUNK_PER_SIDE/2)
@@ -29,12 +29,14 @@ class Terrain {
     unsigned int m_NbLevels;
     float m_Precision;
     int m_Size;
+//    glm::i32vec2 m_Center;
     //    public for debugging purposes
 //    DynamicHeightMap* m_HeightMap;
 //    LODLevel * m_Lods[NB_LEVELS];
 
 
   public :
+    glm::i32vec2 m_Center;
     
     DynamicHeightMap* m_HeightMap;
     LODLevel * m_Lods[NB_LEVELS];

@@ -32,7 +32,7 @@ in vec2 uv;
 void main()
 {
   //color = vec4(pos.x,pos.y,0.0,1.0);
-  //color = texture(u_DefaultSampler, uv).rgb;
-  color = vec4(texture(u_DefaultSampler, uv).rgb,1.0f);
+  color = texture(u_DefaultSampler, uv);
+  //color = vec4(texture(u_DefaultSampler, uv).rgb,1.0f);
   //color = vec4(vec3((float)u_DefaultSampler,1.0f,1.0f),1.0f);
 }

@@ -13,7 +13,8 @@
 Terrain::Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
   m_Precision(p),
   m_NbLevels(n),
-  m_Noise()
+  m_Noise(),
+  m_Center(static_cast<glm::i32vec2>(spawn))
 {
   m_Size = s;
 
@@ -21,12 +22,12 @@ Terrain::Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
     printf("[WARNING] trying to make a LODLevel with a size-3 not dividable by 4, bad things gonna happend, you've been warned\n");
   }
   m_Shader =new Shader("shaders/Terrain.shader");
-  int size = s;
+  int size = s+2;
   //m_HeightMap = new HeightMap(&m_Noise,size, glm::vec2(1.0f/*/64*/), glm::i32vec2(-size/2));
   //m_HeightMap = new HeightMap("textures/heightmap.png");
   //m_Material = new Material(new Texture("textures/wellington.jpg", "u_HeightMap", 0), sh );
   //m_HeightMap->SavePng("textures/heightmap_test.png");
-  m_HeightMap = new DynamicHeightMap(&m_Noise,size, glm::vec2(1.0f/*/64*/), glm::i32vec2(-size/2));
+  m_HeightMap = new DynamicHeightMap(&m_Noise,size, glm::vec2(1.0f/*/64*/), m_Center - glm::i32vec2(size/2));
 
   m_Material = new Material((Texture *)m_HeightMap, m_Shader );
   m_NormalMap = new Texture("textures/wellingtonnormal.jpg", "u_NormalMap", 1);
@@ -45,8 +46,27 @@ Terrain::Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
 
 void Terrain::Update(glm::i32vec2& center){
 
+  /* this is quite ugly stuff */
+  glm::i32vec2 dir = center - m_Center;
+  m_Center = center;
+  /*glm::i32vec2 d = glm::i32vec2(0);//( dir / glm::i32vec2(2) ) * glm::i32vec2(2);
+  int a = 1;
+  if(dir.x > 0)
+    a = 0;
+  if(glm::abs(center.x) % 2 == a && dir.x != 0)
+    d.x = dir.x;
+  a = 1;
+  if(dir.y > 0)
+    a = 0;
+  if(glm::abs(center.y) % 2 == a && dir.y != 0)
+    d.y = dir.y;*/
+  //m_HeightMap->Update(d);
+  //m_Center+=d;
+  /* -------------------- */
+
   for(unsigned int i=0;i<NB_LEVELS;i++){
     m_Lods[i]->Update(center);
+
     
       //lods[i]->UnmapBuffer();
 //      lods[i]->Upload();

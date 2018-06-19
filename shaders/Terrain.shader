@@ -58,7 +58,8 @@ void main(){
   ivec2 tPos = ivec2(mod((torBase + (wPos - base)),texsize)); 
   uv = (vec2(tPos)/(texsize));
   //uv = (pos.xz+1024)/(2048);
-  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*64-32;//*8000-4000;
+  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) ) *64-32;//*8000-4000;
+//*64-32;//*8000-4000;
   //vec2 a = texture(u_DefaultSampler, uv).xy;
   //pos.y = a.x*500;// * 256 + a.y;
  // gl_Position =  u_MVP * vPos;
@@ -170,7 +171,7 @@ void main(){
 color = vec4(vec3(ambient) + blue * cost,1.0f);
     //color = vec4(normal.x,normal.y,normal.z,1.0f);
   //l = clamp(l,0,1);
-  //  color = vec4(l.x,l.y,l.z,1.0f);
+    //color = vec4(uv.x,uv.y,0.0f,1.0f);
     //color = vec4((l.x+1)/2,(l.y+1)/2,(l.z+1)/2,1.0f);
 
  // color = texture(u_NormalMap, uv/16);

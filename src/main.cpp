@@ -101,17 +101,20 @@ int main(void){
   Skybox s;
   
   Cube cube;
-  Object c(&cube, new Material("textures/skybox_left.dds", "shaders/Cube.shader"));
-  Object c1(&cube, new Material("textures/grass.dds", "shaders/Cube.shader"));
-  c1.Translate(0,0,0);  // thats a f* problem right here
+  Object c(&cube, new Material((Texture*)t.m_HeightMap, new Shader("shaders/Cube.shader")));
+  //Object c(&cube, new Material(new Texture("textures/grass.dds"), new Shader("shaders/Cube.shader")));
+  //Object c(&cube, new Material("textures/grass.dds", "shaders/Object.shader"));
+  //c.Translate(0,0,0);  // thats a f* problem right here
   //c.Translate(2,-10,0);
-  //c.Scale(1,0.1,1);
+  //c.Init();
+  c.Scale(1.0f,1.0f,1.0f);
   //c1.Scale(1,0.1,1);
   
   //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", true);
   //Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl", false);
   //o.Init(GL_TRIANGLES, "shaders/Object.shader");
-  //o.Scale(glm::vec3(0.1f));
+  glm::vec3 a(20.0f,1.0f,20.0f);
+  c.SetScale(a);
 
   // 
   // o.RotationDeg(90,0,0);
@@ -119,6 +122,7 @@ int main(void){
 
 
   bool update = true;
+  glm::vec2 pp(0);
 
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
@@ -131,10 +135,24 @@ int main(void){
     if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
       update = false;
     }
+    if(update){
+      if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS) {
+        pp.x+=0.2f;
+      }
+      if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS) {
+        pp.x-=0.2f;
+      }
+      if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS) {
+        pp.y-=0.2f;
+      }
+      if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS) {
+        pp.y+=0.2f;
+      }
+    }
 
     
     pos = renderer.getCameraPosition();
-    p = glm::i32vec2(pos.x,pos.z);
+    p = glm::i32vec2(pp.x,pp.y);
     //printf("x:%f y:%f \n",pos.x,pos.z);    
 
     renderer.Draw(c);

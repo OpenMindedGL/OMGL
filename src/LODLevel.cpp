@@ -20,7 +20,8 @@ int LODLevel::m_DoubleSize;
 LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
   m_Level(l),
   m_Terrain(t),
-  m_UnitSize(glm::pow(2,NB_LEVELS-l-1))
+  m_UnitSize(glm::pow(2,NB_LEVELS-l-1)),
+  m_HeightMap(t->m_HeightMap)
 {
   if(center.y > 0){
     m_ActiveR.y = glm::floor(center.y / m_UnitSize) * m_UnitSize - m_TileSize*2*m_UnitSize;
@@ -56,24 +57,24 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
 }
 
 void LODLevel::ColorDebug(){
-  Material* blue = new Material(new Shader("shaders/Object.shader") );
+  Material* blue = new Material(m_HeightMap, new Shader("shaders/Object.shader") );
   blue->SetKa(glm::vec3(0.0f,0.0f,0.6f));
   blue->Bind();
   blue->SetUniforms();
-  Material* lightblue = new Material(new Shader("shaders/Object.shader") );
+  Material* lightblue = new Material(m_HeightMap, new Shader("shaders/Object.shader") );
   lightblue->SetKa(glm::vec3(0.0f,0.0f,0.3f));
   lightblue->Bind();
   lightblue->SetUniforms();
   //lightblue->SetD(1);
-  Material* red = new Material(new Shader("shaders/Object.shader") );
+  Material* red = new Material(m_HeightMap, new Shader("shaders/Object.shader") );
   red->SetKa(glm::vec3(1.0f,0.0f,0.0f));
   red->Bind();
   red->SetUniforms();
-  Material* green = new Material(new Shader("shaders/Object.shader") );
+  Material* green = new Material(m_HeightMap, new Shader("shaders/Object.shader") );
   green->SetKa(glm::vec3(0.0f,1.0f,0.0f));
   green->Bind();
   green->SetUniforms();
-  Material* yellow = new Material(new Shader("shaders/Object.shader") );
+  Material* yellow = new Material(m_HeightMap, new Shader("shaders/Object.shader") );
   yellow->SetKa(glm::vec3(1.0f,1.0f,0.0f));
   yellow->Bind();
   yellow->SetUniforms();
@@ -146,11 +147,11 @@ void LODLevel::PlaceTrim(){
     pos.y+=m_UnitSize;*/
   glm::vec3 p(pos.x,0.0f,pos.y);
   // so nasty
-  if(m_Level != 0){
+  //if(m_Level != 0){
     m_TrimObj->SetPosition(p);
     m_TrimObj->SetRotation(rot);
     m_SeamObj->SetPosition(po);
-  }
+  //}
 }
 
 
@@ -265,12 +266,12 @@ void LODLevel::MakeObjs(){
 
   MakeTileObjs();
   MakeFillObjs();
-  if(m_Level != 0){
+  //if(m_Level != 0){
     // the last level doesnt need a trim nor a seam, it won't overlap nor badly transition to anything
     glm::vec3 rot = glm::vec3(0);
     MakeTrimObj(m_ActiveR,rot);
     MakeSeamObj();
-  }
+  //}
 
 }
 
@@ -318,13 +319,32 @@ void LODLevel::Update( glm::i32vec2 center ){
 
   glm::i32vec2 dir = m_NewActiveR - m_ActiveR;
   if(dir.x != 0 || dir.y != 0){
-    printf("center: (%d,%d)\n",center.x,center.y);
+    printf("[INFO] Updating LOD center: (%d,%d)\n",center.x,center.y);
+    printf("terrain center: (%d,%d)\n",m_Terrain->m_Center.x,m_Terrain->m_Center.y);
     glm::vec3 dir3 = glm::vec3(dir.x, 0.0f, dir.y);
 
-    /* should be in terrain */
-    if(m_Level == NB_LEVELS-1)
-      m_Terrain->m_HeightMap->Update(dir);
-    /* -------------------- */
+    glm::i32vec2 d = glm::i32vec2(0);
+    /*
+    int a = 1;
+    if(m_NewActiveR.x > 0 && dir.x > 0)
+      a = 0;
+    if(glm::abs(m_NewActiveR.x) % 2 == a && dir.x != 0)
+      d.x += glm::sign(dir.x);
+
+    a = 1;
+    if(m_NewActiveR.y > 0 && dir.y > 0)
+      a = 0;
+    if(glm::abs(m_NewActiveR.y) % 2 == a && dir.y != 0)
+      d.y += glm::sign(dir.y);
+
+    if(glm::abs(d.x) > 1 || glm::abs(d.y) > 1)
+    */  
+    int q = 2;
+    if(m_NewActiveR.x - m_HeightMap->m_Base.x < q || m_HeightMap->m_Base.x+m_HeightMap->GetWidth() - (m_NewActiveR.x + m_Size) < q )
+      d.x = dir.x;
+    if(m_NewActiveR.y - m_HeightMap->m_Base.y < q || m_HeightMap->m_Base.y+m_HeightMap->GetWidth() - (m_NewActiveR.y + m_Size) < q )
+      d.y = dir.y;
+    m_HeightMap->Update(d);
 
     // Move all meshes
     for(unsigned int i = 0 ; i < m_Objs.size() ; i++){

@@ -12,17 +12,29 @@ out vec3 lightdir;
 out vec2 pos;
 out vec3 eyedir;
 out float col;
+out vec4 coloor;
   
 // Values that stay constant for the whole mesh.
 uniform mat4 u_MVP;
 uniform mat4 u_VP;
 uniform mat4 u_M;
 uniform mat4 u_V;
+uniform sampler2D u_DefaultSampler;
+uniform ivec2 base;
+uniform ivec2 torBase;
   
 void main(){
   vec4 p = u_M * vec4(vPos,1);
   pos = (u_M*vec4(vPos,1)).xz;
   gl_Position =  u_VP * p;
+  vec4 pos = u_M * vec4(vPos,1.0);
+  vec4 posV = u_V * pos;
+  float texsize = textureSize(u_DefaultSampler, 0).x;
+  ivec2 wPos = ivec2(pos.x,pos.z);
+  ivec2 tPos = ivec2(mod((torBase + (wPos - base)),texsize)); 
+  uv = (vec2(tPos)/(texsize));
+  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*64-32;//*8000-4000;
+  gl_Position =  u_VP * pos;
   //gl_Position =  u_MVP * vec4(vPos,1);
 
   uv = uv_coords;
