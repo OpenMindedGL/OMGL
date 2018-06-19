@@ -19,12 +19,14 @@ class LODLevel {
   private:
 
     static Mesh<Vertexun> m_Tile;
-    static Mesh<Vertexun> m_Fill;
-    static Mesh<Vertexun> m_Trim;
+    static Mesh<Vertexun> m_Fill[4];
+    static Mesh<Vertexun> m_Trim;//[4];
     static Mesh<Vertexun> m_Seam;
+    static Mesh<Vertexun> m_Cross;
 
     static void GenTile();
     static void GenFill();
+    static void GenCross();
     static void GenTrim();
     static void GenSeam();
 
@@ -43,8 +45,10 @@ class LODLevel {
     std::vector<Object*> m_Objs;
     std::vector<Object*> m_TileObjs;
     std::vector<Object*> m_FillObjs;
+    //std::vector<Object*> m_TrimObj;
     Object* m_TrimObj;
     Object* m_SeamObj;
+    Object* m_CrossObj;
 
     glm::i32vec2 m_TorBegin;    // origin in the toroid array
     Terrain * m_Terrain;
@@ -55,11 +59,15 @@ class LODLevel {
     glm::i32vec2 m_ActiveR;
     //glm::i32vec2 m_NewActiveR;
     
+    // Should really put it in Mesh, or make a Grid class
+    static void Grid(glm::i32vec2 s, glm::i32vec2 e, Mesh<Vertexun>* m);
+
     void MakeObjs();
     void MakeTileObjs();
     void MakeTileObj(glm::i32vec2& pos);
     void MakeFillObjs();
-    void MakeFillObj(glm::i32vec2& pos, glm::vec3& rot);
+    void MakeFillObj(glm::i32vec2& pos, Mesh<Vertexun>* m);
+    void MakeCrossObj();
     void MakeTrimObj(glm::i32vec2& pos, glm::vec3& rot);
     void MakeSeamObj();
     void PlaceTrim();

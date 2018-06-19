@@ -155,7 +155,7 @@ int main(void){
     p = glm::i32vec2(pp.x,pp.y);
     //printf("x:%f y:%f \n",pos.x,pos.z);    
 
-    renderer.Draw(c);
+    //renderer.Draw(c);
     if(update)
       t.Update(p);
     renderer.Draw(t);

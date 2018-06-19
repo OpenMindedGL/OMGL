@@ -4,8 +4,9 @@
 unsigned int** LODLevel::pre2D1D;
 
 Mesh<Vertexun> LODLevel::m_Tile;
-Mesh<Vertexun> LODLevel::m_Fill;
+Mesh<Vertexun> LODLevel::m_Fill[4];
 Mesh<Vertexun> LODLevel::m_Trim;
+Mesh<Vertexun> LODLevel::m_Cross;
 Mesh<Vertexun> LODLevel::m_Seam;
 int LODLevel::m_Size;
 int LODLevel::m_TileSize;
@@ -45,7 +46,7 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
   MakeObjs();
 
   PlaceTrim();
-  //ColorDebug();
+  ColorDebug();
   
   //Updatecenter);
   //Upload();
@@ -79,6 +80,7 @@ void LODLevel::ColorDebug(){
   yellow->Bind();
   yellow->SetUniforms();
   //red->SetD(1);
+  bool isFinestLevel = m_Level == m_Terrain->GetNbLevel()-1;
   for(unsigned int i=0; i < m_TileObjs.size(); i++){
     m_TileObjs[i]->m_Materials.clear();
     if((i/4)%2 == 0 && i % 2 == 0 || (i/4)%2 != 0 && i % 2 != 0){
@@ -96,6 +98,10 @@ void LODLevel::ColorDebug(){
   m_TrimObj->m_Materials.push_back(green);
   m_SeamObj->m_Materials.clear();
   m_SeamObj->m_Materials.push_back(yellow);
+  if(isFinestLevel){
+    m_CrossObj->m_Materials.clear();
+    m_CrossObj->m_Materials.push_back(red);
+  }
   return;
 }
 
@@ -184,46 +190,41 @@ void LODLevel::MakeTileObjs(){
 void LODLevel::MakeFillObjs(){
 
   bool isFinestLevel = m_Level == m_Terrain->GetNbLevel()-1;
-  glm::i32vec2 pos = m_ActiveR+glm::i32vec2(m_HalfSize*m_UnitSize);
-  glm::vec3 rot = glm::vec3(0);
-  if(isFinestLevel){
-    pos.y--;
-    for(unsigned int j=0; j < 4; j++){
-      if( j == 1 )
-        pos.x--;
-      else if( j == 2 )
-        pos.y++;
-      else if( j == 3 )
-        pos.x++;
-      MakeFillObj(pos,rot);
-      rot.y += M_PI/2;
-    }
-  }
+  glm::i32vec2 center = m_ActiveR+glm::i32vec2(m_HalfSize*m_UnitSize);
   unsigned int offset = m_TileSize * m_UnitSize;
-  rot = glm::vec3(0);
-  pos.x+=offset;
-  pos.y-=m_UnitSize;
+  glm::i32vec2 pos ;
   for(unsigned int j=0; j < 4; j++){
-    if( j == 1 ){
-      pos.x-=offset;
-      pos.y-=offset;
+    pos = center;
+    if( j == 0 ){
+      pos.x+=offset;
+      pos.y-=m_UnitSize;
+    }
+    else if( j == 1 ){
+      pos.y+=offset;
       pos.x-=m_UnitSize;
     }
     else if( j == 2 ){
       pos.x-=offset;
-      pos.y+=offset;
-      pos.y+=m_UnitSize;
+      pos.y-=m_UnitSize;
     }
     else if( j == 3 ){
-      pos.x+=offset;
-      pos.y+=offset;
-      pos.x+=m_UnitSize;
+      pos.y-=offset;
+      pos.x-=m_UnitSize;
     }
-    MakeFillObj(pos,rot);
-    rot.y += M_PI/2;
-  }
+    MakeFillObj(pos, &m_Fill[j]);
+  } 
 
 }
+
+void LODLevel::MakeCrossObj(){
+  glm::i32vec2 pos = m_ActiveR+glm::i32vec2(m_HalfSize);
+  glm::vec3 p = glm::vec3(pos.x,0,pos.y-1);
+  m_CrossObj = new  Object(&m_Cross, m_Terrain->GetMaterial()) ;
+  m_CrossObj->SetPosition(p);
+  m_Objs.push_back(m_CrossObj);
+}
+
+
 void LODLevel::MakeTrimObj(glm::i32vec2& pos, glm::vec3& rot){
   glm::vec3 unitSizeVec = glm::vec3(m_UnitSize);
   glm::vec3 p = glm::vec3(pos.x,0,pos.y);
@@ -240,13 +241,12 @@ void LODLevel::MakeSeamObj(){
   m_Objs.push_back(m_SeamObj);
 }
 
-void LODLevel::MakeFillObj(glm::i32vec2& pos, glm::vec3& rot){
+void LODLevel::MakeFillObj(glm::i32vec2& pos, Mesh<Vertexun>* m){
   glm::vec3 unitSizeVec = glm::vec3(m_UnitSize);
   glm::vec3 p = glm::vec3(pos.x,0,pos.y);
-  m_FillObjs.push_back(new  Object(&m_Fill, m_Terrain->GetMaterial()) );
+  m_FillObjs.push_back(new  Object(m, m_Terrain->GetMaterial()) );
   m_FillObjs.back()->SetPosition(p);
   m_FillObjs.back()->SetScale(unitSizeVec);
-  m_FillObjs.back()->SetRotation(rot);
   m_Objs.push_back(m_FillObjs.back());
 }
 
@@ -263,9 +263,13 @@ void LODLevel::MakeTileObj(glm::i32vec2& pos){
 void LODLevel::MakeObjs(){
 
 
+  bool isFinestLevel = m_Level == m_Terrain->GetNbLevel()-1;
 
   MakeTileObjs();
-  MakeFillObjs();
+  if(!isFinestLevel)
+    MakeFillObjs();
+  else
+    MakeCrossObj();
   //if(m_Level != 0){
     // the last level doesnt need a trim nor a seam, it won't overlap nor badly transition to anything
     glm::vec3 rot = glm::vec3(0);
@@ -339,10 +343,10 @@ void LODLevel::Update( glm::i32vec2 center ){
 
     if(glm::abs(d.x) > 1 || glm::abs(d.y) > 1)
     */  
-    int q = 2;
-    if(m_NewActiveR.x - m_HeightMap->m_Base.x < q || m_HeightMap->m_Base.x+m_HeightMap->GetWidth() - (m_NewActiveR.x + m_Size) < q )
+    int q = 2*m_UnitSize;
+    if(m_NewActiveR.x - m_HeightMap->m_Base.x < q || m_HeightMap->m_Base.x+m_HeightMap->GetWidth() - (m_NewActiveR.x + m_Size*m_UnitSize) < q )
       d.x = dir.x;
-    if(m_NewActiveR.y - m_HeightMap->m_Base.y < q || m_HeightMap->m_Base.y+m_HeightMap->GetWidth() - (m_NewActiveR.y + m_Size) < q )
+    if(m_NewActiveR.y - m_HeightMap->m_Base.y < q || m_HeightMap->m_Base.y+m_HeightMap->GetWidth() - (m_NewActiveR.y + m_Size*m_UnitSize) < q )
       d.y = dir.y;
     m_HeightMap->Update(d);
 
@@ -403,9 +407,6 @@ void LODLevel::GenMeshes(unsigned int size){
 
 
   GenFill();
-  e = glm::i32vec2(m_TileSize+1,2);
-  m_Fill.GridIndices(e);
-  m_Fill.Init(GL_TRIANGLE_STRIP);
 
 
   GenTrim();
@@ -430,14 +431,14 @@ void LODLevel::GenMeshes(unsigned int size){
   }
   m_Seam.Init(GL_TRIANGLES);
 
+  GenCross();
 }
 
-void LODLevel::GenTile(){
-
+void LODLevel::Grid(glm::i32vec2 s, glm::i32vec2 e, Mesh<Vertexun>* m){
   glm::i32vec2 p;
-  for(p.y=0 ; p.y < m_TileSize+1 ; p.y++){
-    for(p.x=0 ; p.x < m_TileSize+1 ; p.x++){
-      m_Tile.PushVertex( Vertexun(
+  for(p.y=s.y ; p.y < e.y ; p.y++){
+    for(p.x=s.x ; p.x < e.x ; p.x++){
+      m->PushVertex( Vertexun(
             glm::vec3( p.x, 0.0f, p.y),
             glm::vec2(),
             glm::vec3(0.0f,1.0f,0.0f)
@@ -445,21 +446,51 @@ void LODLevel::GenTile(){
           );
     }
   }
+}
+
+void LODLevel::GenTile(){
+
+  Grid(glm::i32vec2(0), glm::i32vec2(m_TileSize+1), &m_Tile);
 
 }
 
 void LODLevel::GenFill(){
 
-  glm::i32vec2 p;
-  for(p.y=0 ; p.y < 2 ; p.y++){
-    for(p.x=0 ; p.x < m_TileSize+1 ; p.x++){
-      m_Fill.PushVertex( Vertexun(
-            glm::vec3( p.x, 0.0f, p.y),
-            glm::vec2(),
-            glm::vec3(0.0f,1.0f,0.0f)
-            )
-          );
-    }
+  int i = 0;
+  glm::i32vec2 s;
+  glm::i32vec2 e;
+  m_Fill[i] = {};
+  s = glm::i32vec2(0);
+  e = glm::i32vec2(m_TileSize+1,2);
+  Grid(s, e, &m_Fill[i]);
+  m_Fill[i].GridIndices(e);
+  i++;
+
+  m_Fill[i] = {};
+  s = glm::i32vec2(0);
+  e = glm::i32vec2(2,m_TileSize+1);
+  Grid(s, e, &m_Fill[i]);
+  m_Fill[i].GridIndices(e);
+  i++;
+  
+  m_Fill[i] = {};
+  s = glm::i32vec2(-(m_TileSize+1),0);
+  e = glm::i32vec2(0,2);
+  Grid(s, e, &m_Fill[i]);
+  e = glm::i32vec2(m_TileSize+1,2);
+  m_Fill[i].GridIndices(e);
+  i++;
+  
+  m_Fill[i] = {};
+  s = glm::i32vec2(0,-(m_TileSize+1));
+  e = glm::i32vec2(2,0);
+  Grid(s, e, &m_Fill[i]);
+  e = glm::i32vec2(2,m_TileSize+1);
+  m_Fill[i].GridIndices(e);
+  i++;
+  
+  for(i=0 ; i < 4 ; i++){
+    m_Fill[i].Init(GL_TRIANGLE_STRIP);
   }
 
 }
@@ -487,6 +518,39 @@ void LODLevel::GenTrim(){
           );
     }
   }
+
+}
+
+void LODLevel::GenCross(){
+  m_Cross = {};
+  glm::i32vec2 s[3];
+  glm::i32vec2 e[3];
+  s[0] = glm::i32vec2(-(m_HalfSize),0);
+  e[0] = glm::i32vec2(m_HalfSize,2);
+  Grid(s[0], e[0], &m_Cross);
+  
+  s[1] = glm::i32vec2(-1,-(m_HalfSize)+1);
+  e[1] = glm::i32vec2(1,1);
+  unsigned int a = m_Cross.GetVertices()->size()+1;
+  Grid(s[1], e[1], &m_Cross);
+
+  s[2] = glm::i32vec2(-1,0);
+  e[2] = glm::i32vec2(1,m_HalfSize+1);
+  unsigned int b = m_Cross.GetVertices()->size()+1;
+  Grid(s[2], e[2], &m_Cross);
+
+
+  e[0] = glm::i32vec2(m_Size-1,2);
+  m_Cross.GridIndices(e[0]);
+
+  e[1] = glm::i32vec2(2,1);
+  m_Cross.GridIndices(e[1],s[1],a);
+
+
+  e[2] = glm::i32vec2(2,m_HalfSize+1);
+  m_Cross.GridIndices(e[2],s[2],b);
+
+  m_Cross.Init(GL_TRIANGLE_STRIP);
 
 }
 
