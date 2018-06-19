@@ -24,8 +24,8 @@ uniform ivec2 base;
 uniform ivec2 torBase;
   
 void main(){
-  vec4 p = u_M * vec4(vPos,1);
-  pos = (u_M*vec4(vPos,1)).xz;
+  vec4 p = round(u_M * vec4(vPos,1));
+  pos = p.xz;
   gl_Position =  u_VP * p;
   vec4 pos = u_M * vec4(vPos,1.0);
   vec4 posV = u_V * pos;

@@ -46,7 +46,7 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
   MakeObjs();
 
   PlaceTrim();
-  ColorDebug();
+  //ColorDebug();
   
   //Updatecenter);
   //Upload();

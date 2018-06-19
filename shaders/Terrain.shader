@@ -51,7 +51,7 @@ vec3 FindNormal(sampler2D tex, vec2 uv, float u)
   
 void main(){
   //vec4 vPosh = vPos;
-  vec4 pos = u_M * vec4(vPos,1.0);
+  vec4 pos = round(u_M * vec4(vPos,1.0));
   vec4 posV = u_V * pos;
   float texsize = textureSize(u_DefaultSampler, 0).x;
   ivec2 wPos = ivec2(pos.x,pos.z);
