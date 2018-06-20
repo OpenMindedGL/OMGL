@@ -50,7 +50,6 @@ class LODLevel {
     Object* m_SeamObj;
     Object* m_CrossObj;
 
-    glm::i32vec2 m_TorBegin;    // origin in the toroid array
     Terrain * m_Terrain;
     Material * m_Material;
     DynamicHeightMap* m_HeightMap;
@@ -80,6 +79,7 @@ class LODLevel {
     void ColorDebug();
 
   public:
+    glm::i32vec2 m_TorBegin;    // origin in the toroid array
     glm::i32vec2 m_NewActiveR;
 
     void GridIndices(glm::i32vec2& e, Mesh<Vertexun>& m);

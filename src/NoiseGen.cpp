@@ -53,7 +53,8 @@ float NoiseGen::compute(float x, float y){
     }*/
   }
   
-  //return a*b*c*zoom;  //WAS THIS ORIGINALY
-  return glm::sin(x/2)*2+glm::sin(x);
+  return a*b*c*zoom;  //WAS THIS ORIGINALY
+  //return y/20;
+  //return glm::sin(x/30)*10;
   //return a*b*c;
 }
