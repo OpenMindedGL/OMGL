@@ -25,7 +25,7 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
 
   // do we update anything ?
   //if(dir.x == 0 && dir.y == 0)
-  glm::i32vec2 d = dir;//(dir / glm::i32vec2(2))*glm::i32vec2(2);
+  glm::i32vec2 d = dir;///glm::i32vec2(m_TexelSize);//(dir / glm::i32vec2(2))*glm::i32vec2(2);
   
   if(d.x == 0 && d.y == 0)
     return 0; 
@@ -39,15 +39,16 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
 
   // compute area to update
   isDiagonal = false;
+  int worldWidth = m_Width * m_TexelSize;
   glm::i32vec2& o = m_Base;          // old active region
   glm::i32vec2 n = m_Base+d;         // new one
   glm::i32vec2 s = n;                       // start of area
-  glm::i32vec2 e = n+glm::i32vec2(m_Width);                       // end
+  glm::i32vec2 e = n+glm::i32vec2(worldWidth);                       // end
   glm::i32vec2 sign = glm::sign(d);
 
   //printf("old: (%d,%d) new: (%d,%d), tor:(%d,%d)\n",o.x,o.y,n.x,n.y,m_TorBegin.x,m_TorBegin.y);
   // are any currently loaded points still needed ?
-  if (glm::abs(d.x) > m_Width || glm::abs(d.y) > m_Width){
+  if (glm::abs(d.x) > worldWidth || glm::abs(d.y) > worldWidth){
     // no, replace everything
     fullReload = true;
   }
@@ -59,21 +60,21 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
     // ugly but fast
 
     if(sign == glm::i32vec2(1,0)){
-      s.x = o.x + m_Width;
+      s.x = o.x + worldWidth;
     }
 
     else if(sign == glm::i32vec2(1,1)){
-      s.x = o.x + m_Width;
+      s.x = o.x + worldWidth;
       e.y = o.y;
     }
 
     else if(sign == glm::i32vec2(0,1)){
-      s.y = o.y + m_Width;
+      s.y = o.y + worldWidth;
     }
 
     else if(sign == glm::i32vec2(-1,1)){
       e.x = o.x;
-      e.y = o.y + m_Width;
+      e.y = o.y + worldWidth;
     }
 
     else if(sign == glm::i32vec2(-1,0)){
@@ -91,7 +92,7 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
 
     else if(sign == glm::i32vec2(1,-1)){
       e.y = o.y;
-      e.x = o.x + m_Width;
+      e.x = o.x + worldWidth;
     }
 
   }
@@ -106,18 +107,18 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
     e = o;
     s = n;
     if(sign == glm::i32vec2(1,1)){
-      s += glm::i32vec2(m_Width);
-      e += glm::i32vec2(m_Width);
+      s += glm::i32vec2(worldWidth);
+      e += glm::i32vec2(worldWidth);
     }
 
     else if(sign == glm::i32vec2(1,-1)){
-      s.x = o.x + m_Width;
-      e.x += m_Width;
+      s.x = o.x + worldWidth;
+      e.x += worldWidth;
     }
 
     else if(sign == glm::i32vec2(-1,1)){
-      s.y = o.y + m_Width;
-      e.y = n.y + m_Width;
+      s.y = o.y + worldWidth;
+      e.y = n.y + worldWidth;
     }
     printf("square: s:(%d,%d), e(%d,%d)\n",s.x,s.y,e.x,e.y);
     UpdateSub(s,e);
@@ -126,24 +127,24 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
     e = o;
     s = n;
     if(sign == glm::i32vec2(1,1)){
-      s.y = o.y + m_Width;
-      e.x += m_Width;
-      e.y = n.y + m_Width;
+      s.y = o.y + worldWidth;
+      e.x += worldWidth;
+      e.y = n.y + worldWidth;
     }
 
     else if(sign == glm::i32vec2(1,-1)){
-      s.x = o.x + m_Width;
-      e = n + glm::i32vec2(m_Width);
+      s.x = o.x + worldWidth;
+      e = n + glm::i32vec2(worldWidth);
     }
 
     else if(sign == glm::i32vec2(-1,1)){
-      s.y = o.y + m_Width;
-      e = n + glm::i32vec2(m_Width);
+      s.y = o.y + worldWidth;
+      e = n + glm::i32vec2(worldWidth);
     }
 
     else if(sign == glm::i32vec2(-1,-1)){
       s.y = o.y;
-      e.y = n.y + m_Width;
+      e.y = n.y + worldWidth;
     }
     printf("2nd rectangle: s:(%d,%d), e(%d,%d)\n",s.x,s.y,e.x,e.y);
     UpdateSub(s,e);
@@ -151,8 +152,8 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
   }
 
   m_Base = n;
-  glm::i32vec2 a = m_Base - m_TorBegin;
-  m_TorBase = GetTorPos(a);
+  glm::i32vec2 a = (m_Base - m_TorBegin)/glm::i32vec2(m_TexelSize);
+  m_TorBase = GetTorPos(a)*glm::i32vec2(m_TexelSize);
   printf("base: (%d,%d), torBase: (%d,%d)\n",m_Base.x,m_Base.y,m_TorBase.x,m_TorBase.y);
   printf("torBegin: (%d,%d)\n",m_TorBegin.x,m_TorBegin.y);
   //m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Width,m_ActiveR.y%(unsigned int)m_Width);
@@ -170,7 +171,7 @@ void DynamicTexture::UpdateSub(glm::i32vec2& s, glm::i32vec2& e){
   std::vector<glm::u8vec4> toUpdateE;
   //bool around[2] = false;
   glm::i32vec2 b = size;
-  glm::i32vec2 c = s;
+//  glm::i32vec2 c = s;
   /*if(offset.x + b.x > m_Width){
     b.x = m_Width - offset.x;
     around[0] = true;
@@ -181,8 +182,9 @@ void DynamicTexture::UpdateSub(glm::i32vec2& s, glm::i32vec2& e){
   }*/
   toUpdateE.clear();
   toUpdateE.resize(size.y*size.x+size.x);
-  for(p.y=0 ; p.y < b.y ; p.y++){
-    for(p.x=0 ; p.x < b.x ; p.x++){
+  int inc = (int) m_TexelSize;
+  for(p.y=0 ; p.y < b.y ; p.y+=inc){
+    for(p.x=0 ; p.x < b.x ; p.x+=inc){
       UpdateTexel(p, s, ts, toUpdateE);
     }
   }

@@ -14,7 +14,8 @@ Terrain::Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
   m_Precision(p),
   m_NbLevels(n),
   m_Noise(),
-  m_Center(static_cast<glm::i32vec2>(spawn))
+  m_Center(static_cast<glm::i32vec2>(spawn)),
+  m_Scale(1)
 {
   m_Size = s;
 
@@ -27,9 +28,9 @@ Terrain::Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
   //m_HeightMap = new HeightMap("textures/heightmap.png");
   //m_Material = new Material(new Texture("textures/wellington.jpg", "u_HeightMap", 0), sh );
   //m_HeightMap->SavePng("textures/heightmap_test.png");
-  m_HeightMap = new DynamicHeightMap(&m_Noise,size, glm::vec2(1.0f/*/64*/), m_Center - glm::i32vec2(size/2));
+//  m_HeightMap = new DynamicHeightMap(&m_Noise,size, glm::vec2(1.0f/*/64*/), m_Center - glm::i32vec2(size/2));
 
-  m_Material = new Material((Texture *)m_HeightMap, m_Shader );
+  //m_Material = new Material((Texture *)m_HeightMap, m_Shader );
   m_NormalMap = new Texture("textures/wellingtonnormal.jpg", "u_NormalMap", 1);
   m_NormalMap->LinkToShader(m_Shader);
 

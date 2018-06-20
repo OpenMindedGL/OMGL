@@ -15,7 +15,7 @@ class LODLevel;
 #include "LODLevel.h"
 #include "DynamicHeightMap.h"
 
-#define NB_LEVELS 4
+#define NB_LEVELS 2
 #define PRECISION 1.0f
 #define SIZE    131   // -3 should be power of two, dividable by 8
 #define HALFSIZE    SIZE/2
@@ -36,6 +36,7 @@ class Terrain {
 
 
   public :
+    float m_Scale;
     glm::i32vec2 m_Center;
     
     DynamicHeightMap* m_HeightMap;

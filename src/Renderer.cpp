@@ -131,10 +131,13 @@ void Renderer::Draw(Terrain& t)
 {
   t.m_NormalMap->Bind();
   t.m_Shader->Bind();
-  t.m_Shader->SetUniform2i("base",t.m_HeightMap->m_Base);
-  t.m_Shader->SetUniform2i("torBase",t.m_HeightMap->m_TorBase);
   for (unsigned int i = 0; i < t.GetNbLevel(); i++) {
     //printf("Drawing level %d\n",i);
+    t.m_NormalMap->Bind();
+    t.m_Shader->Bind();
+    t.m_Shader->SetUniform2i("base",t.GetLevel(i).GetHeightMap()->m_Base);
+    t.m_Shader->SetUniform2i("torBase",t.GetLevel(i).GetHeightMap()->m_TorBase);
+    t.m_Shader->SetUniform1f("u_UnitSize",(float) t.GetLevel(i).GetUnitSize());
     Draw(t.GetLevel(i));
   }
 }

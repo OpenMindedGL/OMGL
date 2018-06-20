@@ -39,7 +39,7 @@ public:
 
   HeightMap( std::string path, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0)) : NoiseTexture(path, step, base) {} 
 
-  HeightMap( NoiseGen* n, unsigned int width, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0));
+  HeightMap( NoiseGen* n, unsigned int width, float texsize, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0));
 
   Texture* MakeNormalMap();
   float GetHeight(glm::i32vec2 p);

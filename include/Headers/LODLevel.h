@@ -52,6 +52,8 @@ class LODLevel {
 
     glm::i32vec2 m_TorBegin;    // origin in the toroid array
     Terrain * m_Terrain;
+    Material * m_Material;
+    DynamicHeightMap* m_HeightMap;
 
     // 
     unsigned int m_Level;
@@ -79,7 +81,6 @@ class LODLevel {
 
   public:
     glm::i32vec2 m_NewActiveR;
-    DynamicHeightMap* m_HeightMap;
 
     void GridIndices(glm::i32vec2& e, Mesh<Vertexun>& m);
     static void GenMeshes(unsigned int size);
@@ -95,6 +96,8 @@ class LODLevel {
     inline Object* GetTrim() { return m_TrimObj; }
     inline Object* GetSeam() { return m_SeamObj; }
     inline std::vector<Object*>& GetObjs() { return m_Objs; }
+    inline int GetUnitSize() { return m_UnitSize; }
+    inline DynamicHeightMap* GetHeightMap() { return m_HeightMap; }
 };
 
 #endif

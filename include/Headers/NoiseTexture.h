@@ -18,13 +18,14 @@ class NoiseTexture : public Texture
     std::vector<glm::u8vec4> m_Texels;  
 
   public: 
+    float m_TexelSize;
     glm::i32vec2 m_Base;  // bottom left in world coords
     virtual void Gen(glm::i32vec2& base, glm::vec2& step){}
 
   
     NoiseTexture( std::string path, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0)) : Texture(path,DEFAULT_SAMPLER_NAME, 0, false), m_Step(step), m_Base(base) {} 
 
-    NoiseTexture( NoiseGen* n, unsigned int width, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0)) : Texture(width), m_Noise(n), m_Base(base), m_Step(step) {}
+    NoiseTexture( NoiseGen* n, unsigned int width, float texsize, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0)) : Texture(width), m_Noise(n), m_TexelSize(texsize), m_Base(base), m_Step(step) {}
 
     NoiseTexture(){}
 

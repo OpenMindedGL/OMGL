@@ -101,7 +101,8 @@ int main(void){
   Skybox s;
   
   Cube cube;
-  Object c(&cube, new Material((Texture*)t.m_HeightMap, new Shader("shaders/Cube.shader")));
+  Object c(&cube, new Material((Texture*)t.GetLevel(0).GetHeightMap(), new Shader("shaders/Cube.shader")));
+  Object c1(&cube, new Material((Texture*)t.GetLevel(1).GetHeightMap(), new Shader("shaders/Cube.shader")));
   //Object c(&cube, new Material(new Texture("textures/grass.dds"), new Shader("shaders/Cube.shader")));
   //Object c(&cube, new Material("textures/grass.dds", "shaders/Object.shader"));
   //c.Translate(0,0,0);  // thats a f* problem right here
@@ -113,12 +114,15 @@ int main(void){
   //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", true);
   //Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl", false);
   //o.Init(GL_TRIANGLES, "shaders/Object.shader");
-  glm::vec3 a(20.0f,1.0f,20.0f);
+  glm::vec3 a(50.0f,1.0f,50.0f);
   c.SetScale(a);
+  c1.SetScale(a);
 
   // 
-  // o.RotationDeg(90,0,0);
-  // o.Translate(20,0,0);
+  c.RotationDeg(270,0,0);
+  c1.RotationDeg(270,0,0);
+  c.Translate(-60,0,200);
+  c1.Translate(60,0,200);
 
 
   bool update = true;
@@ -155,7 +159,8 @@ int main(void){
     p = glm::i32vec2(pp.x,pp.y);
     //printf("x:%f y:%f \n",pos.x,pos.z);    
 
-    //renderer.Draw(c);
+    renderer.Draw(c);
+    renderer.Draw(c1);
     if(update)
       t.Update(p);
     renderer.Draw(t);

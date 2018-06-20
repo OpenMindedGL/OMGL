@@ -24,6 +24,7 @@ uniform sampler2D u_DefaultSampler;
 uniform sampler2D u_NormalMap;
 uniform ivec2 base;
 uniform ivec2 torBase;
+uniform float u_UnitSize;
 
 vec3 FindNormal(sampler2D tex, vec2 uv, float u)
 {
@@ -55,7 +56,7 @@ void main(){
   vec4 posV = u_V * pos;
   float texsize = textureSize(u_DefaultSampler, 0).x;
   ivec2 wPos = ivec2(pos.x,pos.z);
-  ivec2 tPos = ivec2(mod((torBase + (wPos - base)),texsize)); 
+  ivec2 tPos = ivec2(round(mod(((torBase + (wPos - base))/u_UnitSize),texsize))); 
   uv = (vec2(tPos)/(texsize));
   //uv = (pos.xz+1024)/(2048);
   pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) ) *64-32;//*8000-4000;

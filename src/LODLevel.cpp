@@ -43,6 +43,11 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
 
 //  m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Size,m_ActiveR.y%(unsigned int)m_Size);
 
+  int size = m_Size+2; // tex coords
+  m_HeightMap = new DynamicHeightMap(&(m_Terrain->m_Noise),size, (float) m_UnitSize, glm::vec2((1.0f/m_Terrain->m_Scale)), m_NewActiveR-glm::i32vec2(1*m_UnitSize));
+
+  m_Material = new Material(m_HeightMap,m_Terrain->m_Shader);
+
   MakeObjs();
 
   PlaceTrim();
@@ -219,7 +224,7 @@ void LODLevel::MakeFillObjs(){
 void LODLevel::MakeCrossObj(){
   glm::i32vec2 pos = m_ActiveR+glm::i32vec2(m_HalfSize);
   glm::vec3 p = glm::vec3(pos.x,0,pos.y-1);
-  m_CrossObj = new  Object(&m_Cross, m_Terrain->GetMaterial()) ;
+  m_CrossObj = new  Object(&m_Cross, m_Material) ;
   m_CrossObj->SetPosition(p);
   m_Objs.push_back(m_CrossObj);
 }
@@ -228,7 +233,7 @@ void LODLevel::MakeCrossObj(){
 void LODLevel::MakeTrimObj(glm::i32vec2& pos, glm::vec3& rot){
   glm::vec3 unitSizeVec = glm::vec3(m_UnitSize);
   glm::vec3 p = glm::vec3(pos.x,0,pos.y);
-  m_TrimObj = new  Object(&m_Trim, m_Terrain->GetMaterial()) ;
+  m_TrimObj = new  Object(&m_Trim, m_Material) ;
   m_TrimObj->SetPosition(p);
   m_TrimObj->SetScale(unitSizeVec);
   m_TrimObj->SetRotation(rot);
@@ -236,7 +241,7 @@ void LODLevel::MakeTrimObj(glm::i32vec2& pos, glm::vec3& rot){
 }
 void LODLevel::MakeSeamObj(){
   glm::vec3 unitSizeVec = glm::vec3(m_UnitSize);
-  m_SeamObj = new  Object(&m_Seam, m_Terrain->GetMaterial()) ;
+  m_SeamObj = new  Object(&m_Seam, m_Material) ;
   m_SeamObj->SetScale(unitSizeVec);
   m_Objs.push_back(m_SeamObj);
 }
@@ -244,7 +249,7 @@ void LODLevel::MakeSeamObj(){
 void LODLevel::MakeFillObj(glm::i32vec2& pos, Mesh<Vertexun>* m){
   glm::vec3 unitSizeVec = glm::vec3(m_UnitSize);
   glm::vec3 p = glm::vec3(pos.x,0,pos.y);
-  m_FillObjs.push_back(new  Object(m, m_Terrain->GetMaterial()) );
+  m_FillObjs.push_back(new  Object(m, m_Material) );
   m_FillObjs.back()->SetPosition(p);
   m_FillObjs.back()->SetScale(unitSizeVec);
   m_Objs.push_back(m_FillObjs.back());
@@ -253,7 +258,7 @@ void LODLevel::MakeFillObj(glm::i32vec2& pos, Mesh<Vertexun>* m){
 void LODLevel::MakeTileObj(glm::i32vec2& pos){
   glm::vec3 unitSizeVec = glm::vec3(m_UnitSize);
   glm::vec3 p = glm::vec3(pos.x,0,pos.y);
-  m_TileObjs.push_back(new  Object(&m_Tile, m_Terrain->GetMaterial()) );
+  m_TileObjs.push_back(new  Object(&m_Tile, m_Material) );
 
   m_TileObjs.back()->SetScale(unitSizeVec);
   m_TileObjs.back()->SetPosition(p);
@@ -323,8 +328,8 @@ void LODLevel::Update( glm::i32vec2 center ){
 
   glm::i32vec2 dir = m_NewActiveR - m_ActiveR;
   if(dir.x != 0 || dir.y != 0){
-    printf("[INFO] Updating LOD center: (%d,%d)\n",center.x,center.y);
-    printf("terrain center: (%d,%d)\n",m_Terrain->m_Center.x,m_Terrain->m_Center.y);
+    printf("(lev %d) [INFO] Updating LOD center: (%d,%d)\n",m_Level,center.x,center.y);
+    printf("(lev %d) terrain center: (%d,%d)\n",m_Level,m_Terrain->m_Center.x,m_Terrain->m_Center.y);
     glm::vec3 dir3 = glm::vec3(dir.x, 0.0f, dir.y);
 
     glm::i32vec2 d = glm::i32vec2(0);
@@ -344,9 +349,9 @@ void LODLevel::Update( glm::i32vec2 center ){
     if(glm::abs(d.x) > 1 || glm::abs(d.y) > 1)
     */  
     int q = 2*m_UnitSize;
-    if(m_NewActiveR.x - m_HeightMap->m_Base.x < q || m_HeightMap->m_Base.x+m_HeightMap->GetWidth() - (m_NewActiveR.x + m_Size*m_UnitSize) < q )
+    if(m_NewActiveR.x - m_HeightMap->m_Base.x < q || m_HeightMap->m_Base.x+m_HeightMap->GetWidth()*m_UnitSize - (m_NewActiveR.x + m_Size*m_UnitSize) < q )
       d.x = dir.x;
-    if(m_NewActiveR.y - m_HeightMap->m_Base.y < q || m_HeightMap->m_Base.y+m_HeightMap->GetWidth() - (m_NewActiveR.y + m_Size*m_UnitSize) < q )
+    if(m_NewActiveR.y - m_HeightMap->m_Base.y < q || m_HeightMap->m_Base.y+m_HeightMap->GetWidth()*m_UnitSize - (m_NewActiveR.y + m_Size*m_UnitSize) < q )
       d.y = dir.y;
     m_HeightMap->Update(d);
 
