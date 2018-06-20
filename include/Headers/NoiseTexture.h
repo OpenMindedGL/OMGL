@@ -14,7 +14,7 @@ class NoiseTexture : public Texture
 
     NoiseGen* m_Noise;
 //    glm::i32vec2 m_Base;  // bottom left in world coords
-    glm::i32vec2 m_Step;  // bottom left in world coords
+    glm::vec2 m_Step;  // bottom left in world coords
     std::vector<glm::u8vec4> m_Texels;  
 
   public: 

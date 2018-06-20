@@ -59,9 +59,9 @@ void main(){
   float texsize = textureSize(u_DefaultSampler, 0).x;
   ivec2 wPos = ivec2(pos.x,pos.z);
   ivec2 tPos = ivec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
-  uv = (vec2(tPos)/(texsize))+vec2(0.001,0.001);
+  uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
   //uv = (pos.xz+1024)/(2048);
-  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) ) *64-32;//*8000-4000;
+  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) ) *8000-4000;
 //*64-32;//*8000-4000;
   //vec2 a = texture(u_DefaultSampler, uv).xy;
   //pos.y = a.x*500;// * 256 + a.y;

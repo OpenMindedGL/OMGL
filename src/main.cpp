@@ -157,6 +157,7 @@ int main(void){
     
     pos = renderer.getCameraPosition();
     p = glm::i32vec2(pp.x,pp.y);
+    //p = glm::i32vec2(pos.x,pos.z);
     //printf("x:%f y:%f \n",pos.x,pos.z);    
 
     renderer.Draw(c);

@@ -3,7 +3,7 @@
 
 
 
-HeightMap::HeightMap(NoiseGen* n, unsigned int width, float texsize, glm::vec2 step,glm::i32vec2 base ) : NoiseTexture(n,width, texsize, step, base)
+HeightMap::HeightMap(NoiseGen* n, unsigned int width, int texsize, glm::vec2 step,glm::i32vec2 base ) : NoiseTexture(n,width, texsize, step, base)
 {
   Gen(base,step);
 //  Encode();
@@ -52,6 +52,7 @@ void HeightMap::Decode(){
 
 void HeightMap::Gen(glm::i32vec2& base, glm::vec2& step) {
   
+  printf("(HeightMap::Gen) m_TexelSize: %d\n",m_TexelSize);
   glm::i32vec2 e = base + glm::i32vec2(m_Width*m_TexelSize);
   for(int i=base.y;i<e.y;i+=m_TexelSize){
     for(int j=base.x;j<e.x;j+=m_TexelSize){

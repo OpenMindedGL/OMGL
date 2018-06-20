@@ -15,7 +15,7 @@ Terrain::Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
   m_NbLevels(n),
   m_Noise(),
   m_Center(static_cast<glm::i32vec2>(spawn)),
-  m_Scale(1)
+  m_Scale(64.0f)
 {
   m_Size = s;
 
