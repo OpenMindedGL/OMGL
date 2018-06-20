@@ -36,24 +36,27 @@ private :
 	Texture * m_MapNs;
 	Texture * m_MapD;
 
-	std::vector<bool> m_DynamicUniforms = { false, false, false, false };
+	std::vector<bool> m_DynamicUniforms = { false, false, false, false, false };
 	
 public :
-	Material();
 	Material(std::string name);
-	Material(Texture * texture, Shader * shader);
-	Material(Texture * texture);
-	Material(Cubemap * cubemap);
-	Material(Shader * shader);
+	Material(Texture * texture = NULL, Shader * shader = new Shader(BASICSHADER));
+	Material(float * color);
+    inline Material(std::string texture, std::string shader) : Material(new Texture(texture), new Shader(shader)) {}
+    inline Material(Shader * shader) : Material(NULL, shader) {}
 
-	void CreateShader(std::string shadersPath, std::string genShaderPath);
-	void SetShader(const std::string path);
-	void SetTexture(Cubemap * cubemap);
+
+	void GenerateShader(std::string shadersPath, std::string genShaderPath);
+	inline void SetShader(const std::string path) { SetShader(new Shader(path)); }
+	void SetShader(Shader * shader);
+	
+	//void SetTexture(Cubemap * cubemap);
 	void SetTexture(Texture * texture);
+	
+	/*void LoadTexture(const std::string path, const std::string name, unsigned int slot = 0);
+	void LoadTexture(const std::string path);*/
 
-	void LoadTexture(const std::string path, const std::string name, unsigned int slot = 0);
-	void LoadTexture(const std::string path);
-	void InitTexture(const std::string name, unsigned int id);
+	void LinkTexture(const std::string& name, unsigned int slot);
 	void SetShaderUniformMat4f(const std::string name, glm::mat4 mvp);
 	void Init(std::string shaderpath);
 	void Init();
@@ -71,7 +74,7 @@ public :
 	inline void SetNi(float ni) { m_Ni = ni; }
 	inline void SetD(float d) { m_D = d; }
 	inline void SetIllum(unsigned int illum) { m_illum = illum; }
-	inline void SetTexture(std::string path) { m_Texture = new Texture(path); }
+	//inline void SetTexture(std::string path) { m_Texture = new Texture(path); }
 	inline void SetMapKd(std::string path) { m_MapKd = new Texture(path); }
 	inline void SetMapKs(std::string path) { m_MapKs = new Texture(path); }
 	inline void SetMapKa(std::string path) { m_MapKa = new Texture(path); }

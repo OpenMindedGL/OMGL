@@ -37,7 +37,18 @@ using namespace glm;
 #define WIDTH 1920 
 #define HEIGHT 1080
 
+extern float OMGL_RED[]		  = { 1.0f, 0.1f, 0.1f };
+extern float OMGL_GREEN[]	  = { 0.1f, 1.0f, 0.1f };
+extern float OMGL_BLUE[]	  = { 0.1f, 0.1f, 1.0f };
+extern float OMGL_CYAN[]      = { 0.1f, 1.0f, 1.0f };
+extern float OMGL_MAGENTA[]   = { 1.0f, 0.1f, 1.0f };
+extern float OMGL_YELLOW[]    = { 1.0f, 1.0f, 0.1f };
+extern float OMGL_BROWN[]     = { 0.34f, 0.16f, 0.0f };
+extern float OMGL_GREY[]      = { 0.5f, 0.5f, 0.5f };
+extern float OMGL_ORANGE[]    = { 1.0f, 0.27f, 0.0f };
+
 int init();
+int main(void);
 GLFWwindow* window;
 
 int init() {
@@ -91,22 +102,29 @@ int main(void) {
 
 	Skybox s;
 
-	Cube cube;
-	Object c(&cube, "shaders/Basic.shader");
+	//Cube cube;
+	//Object c(&cube, OMGL_CYAN);
+	//c.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
+	//Object c(&cube, "shaders/Test.shader");
+	
+	//c.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
+	//Object o("res/objects/bugatti/bugatti2.obj", "res/objects/bugatti/bugatti.mtl", false);
+	Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", "res/objects/dodge/", true, GL_TRIANGLES);
+	//Object o("res/objects/falcon/falcon.obj", "res/objects/falcon/falcon.mtl", "res/objects/falcon/", false, GL_TRIANGLES);
+	
+	//Object o("res/objects/Mill/Mill.obj", OMGL_CYAN, false);
+	//Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl", false);
+	
+	o.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
 
-	//Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", true);
-	Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl", false);
-
-	o.CreateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
+	//o.SetTextureDirectory("res/objects/dodge/");
+	//o.LoadTexturesMap();
 	//o.LoadTexturesMap("res/objects/dodge/");
-
-	//o.Init(GL_TRIANGLES, "shaders/Oject.shader");
 
 	//o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
 
 	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
 	{
-
 		renderer.Clear();
 
 		pos = renderer.getCameraPosition();
@@ -114,11 +132,12 @@ int main(void) {
 
 		/*t.load(glm::vec2(pos.x,pos.z));
 		renderer.Draw(t);*/
-
 		renderer.Draw(o);
-		o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));
+		o.RotationDeg(vec3(0.0f, 0.3f, 0.0f));
 
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+		/*renderer.Draw(c);
+		c.RotationDeg(vec3(0.3f, 0.0f, 0.0f));*/
+
 		// Always draw last	
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 		renderer.Draw(s);

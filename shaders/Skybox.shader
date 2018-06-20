@@ -24,8 +24,8 @@ void main(){
 layout(location = 0) out vec4 color;
 in vec3 pos;
 
-uniform samplerCube u_SkyboxSampler;
+uniform samplerCube u_DefaultSampler;
 
 void main(){
-  color = vec4(texture(u_SkyboxSampler, pos).rgb,1.0f);
+  color = vec4(texture(u_DefaultSampler, pos).rgb,1.0f);
 }

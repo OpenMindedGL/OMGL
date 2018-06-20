@@ -1,52 +1,85 @@
 #include "Object.h"
 #include <string.h>
 #include <sstream>
+#include <glm/gtx/transform.hpp>
 
 Object::Object()
 {
-	m_ListMat = new std::map<unsigned int, unsigned int>;
-	m_Mesh = new Mesh<Vertexun>;
+  m_ListMat = new std::map<unsigned int, unsigned int>;
+  m_Mesh = new Mesh<Vertexun>;
 }
 
+//Init les mesh !
 Object::Object(Mesh<Vertexun> * m) : m_Mesh(m)
 {
+	m_Materials.push_back(new Material());
 	m_ListMat = new std::map<unsigned int, unsigned int>;
 }
 
-Object::Object(Mesh<Vertexun> * m, std::string shaderPath) : m_Mesh(m)
+Object::Object(Mesh<Vertexun> * m, std::string shaderPath) : m_Mesh(m) 
 {
-	//m_Mesh = new Mesh<Vertexun>(&m);
-	m_Materials.push_back(new Material(new Shader(shaderPath)));
+  //m_Mesh = new Mesh<Vertexun>(&m);
+  m_Materials.push_back(new Material(new Shader(shaderPath)));
+  m_ListMat = new std::map<unsigned int, unsigned int>;
+}
+
+
+Object::Object(Mesh<Vertexun> * m, float * color) : m_Mesh(m)
+{
+	m_Materials.push_back(new Material(color));
 	m_ListMat = new std::map<unsigned int, unsigned int>;
 }
 
 Object::Object(Mesh<Vertexun> * m, Material* mat) : m_Mesh(m)
 {
-	//On verifie si le mat existe déjà dans la liste des mat, on ajoute ou non dans la liste en fonction
-	m_ListMat = new std::map<unsigned int, unsigned int>;
-	if (!hasMaterial(mat)) m_Materials.push_back(mat);
+  //On verifie si le mat existe déjà dans la liste des mat, on ajoute ou non dans la liste en fonction
+  m_ListMat = new std::map<unsigned int, unsigned int>;
+  if (!hasMaterial(mat)) m_Materials.push_back(mat);
 }
 
 Object::Object(Mesh<Vertexun> * m, std::vector<Material*> mat) : m_Mesh(m)
 {
-	m_ListMat = new std::map<unsigned int, unsigned int>;
-	//On parcourt chaque element dans la liste de mat et on ajoute ceux qui n'existe pas encore
-	for (int i = 0; i < mat.size(); i++) {
-		if (!hasMaterial(mat[i])) m_Materials.push_back(mat[i]);
-	}
+  m_ListMat = new std::map<unsigned int, unsigned int>;
+  //On parcourt chaque element dans la liste de mat et on ajoute ceux qui n'existe pas encore
+  for (int i = 0; i < mat.size(); i++) {
+    if (!hasMaterial(mat[i])) m_Materials.push_back(mat[i]);
+  }
 }
 
-Object::Object(std::string pathObj, std::string pathMtl, bool reverse, int renderType)
+
+Object::Object(std::string pathObj, std::string pathMtl, bool reverse, int renderType) //OK
 {
 	m_ListMat = new std::map<unsigned int, unsigned int>;
 	m_Mesh = new Mesh<Vertexun>;
 	LoadMaterials(pathMtl, m_Materials);
 	LoadObject(pathObj, reverse);
-	m_Mesh->Init(GL_TRIANGLES);
+	m_Mesh->Init(renderType);
 }
 
 
-Object::Object(std::string pathObj, bool reverse)
+Object::Object(std::string pathObj, float * color, bool reverse, int renderType) //OK
+{
+	m_ListMat = new std::map<unsigned int, unsigned int>;
+	m_Mesh = new Mesh<Vertexun>;
+	LoadObject(pathObj, reverse);
+	m_Materials.push_back(new Material(color));
+	m_Mesh->Init(renderType);
+}
+
+
+
+Object::Object(std::string pathObj, std::string pathMtl, std::string texturePath, bool reverse, int renderType) //OK
+	: m_TextureDirectory(texturePath)
+{	
+	m_ListMat = new std::map<unsigned int, unsigned int>;
+	m_Mesh = new Mesh<Vertexun>;
+	LoadMaterials(pathMtl, m_Materials);
+	LoadObject(pathObj, reverse);
+	m_Mesh->Init(renderType);
+	//Object(pathObj, pathMtl, reverse, renderType);
+}
+
+Object::Object(std::string pathObj, bool reverse) //GERER UN SHADER PAR DEFAUT !
 {
 	m_ListMat = new std::map<unsigned int, unsigned int>;
 	m_Mesh = new Mesh<Vertexun>;
@@ -157,7 +190,11 @@ void Object::LoadMaterials(std::string path, std::vector<Material*>& materials)
 {
 	FILE * file = fopen(path.c_str(), "r");
 	int it = -1;
-
+	if (file == NULL) {
+		printf("Impossible top open file, please check the path");
+		getchar();
+		return;
+	}
 	while (1) {
 		char lineHeader[128];
 		int res = fscanf(file, "%s", lineHeader);
@@ -180,6 +217,7 @@ void Object::LoadMaterials(std::string path, std::vector<Material*>& materials)
 		else if (strcmp(lineHeader, "Ns") == 0) {
 			float ns;
 			fscanf(file, "%f\n", &ns);
+			//while (ns > 100) ns /= 10;
 			materials[it]->SetNs(ns);
 		}
 
@@ -229,7 +267,7 @@ void Object::LoadMaterials(std::string path, std::vector<Material*>& materials)
 			std::string name = GetFileName(file);
 			if (name.size() > 2) {
 				materials[it]->GetDynamicsUniforms().at(0) = true;
-				materials[it]->SetMapKd(name);
+				materials[it]->SetMapKd(m_TextureDirectory + name);
 			}
 		}
 
@@ -237,7 +275,7 @@ void Object::LoadMaterials(std::string path, std::vector<Material*>& materials)
 			std::string name = GetFileName(file);
 			if (name.size() > 2) {
 				materials[it]->GetDynamicsUniforms().at(1) = true;
-				materials[it]->SetMapKs(name);
+				materials[it]->SetMapKs(m_TextureDirectory + name);
 			}
 		}
 
@@ -245,15 +283,7 @@ void Object::LoadMaterials(std::string path, std::vector<Material*>& materials)
 			std::string name = GetFileName(file);
 			if (name.size() > 2) {
 				materials[it]->GetDynamicsUniforms().at(2) = true;
-				materials[it]->SetMapKa(name);
-			}
-		}
-
-		else if (strcmp(lineHeader, "map_Ns") == 0) {
-			std::string name = GetFileName(file);
-			if (name.size() > 2) {
-				//materials[it]->GetDynamicsUniforms().push_back("u_NsMap");
-				materials[it]->SetMapNs(name);
+				materials[it]->SetMapKa(m_TextureDirectory + name);
 			}
 		}
 
@@ -261,9 +291,18 @@ void Object::LoadMaterials(std::string path, std::vector<Material*>& materials)
 			std::string name = GetFileName(file);
 			if (name.size() > 2) {
 				materials[it]->GetDynamicsUniforms().at(3) = true;
-				materials[it]->SetMapD(name);
+				materials[it]->SetMapD(m_TextureDirectory + name);
 			}
 		}
+
+		else if (strcmp(lineHeader, "map_Ns") == 0) {
+			std::string name = GetFileName(file);
+			if (name.size() > 2) {
+				materials[it]->GetDynamicsUniforms().at(4) = true;
+				materials[it]->SetMapNs(m_TextureDirectory + name);
+			}
+		}
+
 	}
 }
 
@@ -271,15 +310,15 @@ void Object::LoadTexturesMap()
 {
 	for (int i = 0; i < m_Materials.size(); i++) {
 		if (m_Materials[i]->GetMapKd() != NULL)
-			m_Materials[i]->LoadTexture(m_TextureDirectory + m_Materials[i]->GetMapKd()->GetfilePath());
+			m_Materials[i]->SetTexture(new Texture(m_TextureDirectory + m_Materials[i]->GetMapKd()->GetfilePath()));
 		if (m_Materials[i]->GetMapKs() != NULL)
-			m_Materials[i]->LoadTexture(m_TextureDirectory + m_Materials[i]->GetMapKs()->GetfilePath());
+			m_Materials[i]->SetTexture(new Texture(m_TextureDirectory + m_Materials[i]->GetMapKs()->GetfilePath()));
 		if (m_Materials[i]->GetMapKa() != NULL)
-			m_Materials[i]->LoadTexture(m_TextureDirectory + m_Materials[i]->GetMapKa()->GetfilePath());
+			m_Materials[i]->SetTexture(new Texture(m_TextureDirectory + m_Materials[i]->GetMapKa()->GetfilePath()));
 		if (m_Materials[i]->GetMapNs() != NULL)
-			m_Materials[i]->LoadTexture(m_TextureDirectory + m_Materials[i]->GetMapNs()->GetfilePath());
+			m_Materials[i]->SetTexture(new Texture(m_TextureDirectory + m_Materials[i]->GetMapNs()->GetfilePath()));
 		if (m_Materials[i]->GetMapD() != NULL)
-			m_Materials[i]->LoadTexture(m_TextureDirectory + m_Materials[i]->GetMapD()->GetfilePath());
+			m_Materials[i]->SetTexture(new Texture(m_TextureDirectory + m_Materials[i]->GetMapD()->GetfilePath()));
 	}
 }
 
@@ -288,8 +327,6 @@ void Object::LoadTexturesMap(std::string path)
 	m_TextureDirectory = path;
 	LoadTexturesMap();
 }
-
-
 
 
 int Object::contains(glm::vec3 v, glm::vec2 vt, glm::vec3 vn)
@@ -314,25 +351,29 @@ bool Object::hasMaterial(Material * mat)
 }
 
 unsigned int Object::GetMaterialId(std::string nameMat) {
-	for (int i = 0; i < m_Materials.size(); i++) {
-		if (m_Materials[i]->GetName() == nameMat) return i;
-	}
-	return -1;
+  for (int i = 0; i < m_Materials.size(); i++) {
+    if (m_Materials[i]->GetName() == nameMat) return i;
+  }
+  return -1;
 }
 
-
-void Object::CreateShaders(std::string shadersPath, std::string genShaderPath)
+void Object::GenerateShaders(std::string shadersPath, std::string genShaderPath)
 {
 	for (int i = 0; i < m_Materials.size(); i++) {
-		m_Materials[i]->CreateShader(shadersPath, genShaderPath);
+		m_Materials[i]->GenerateShader(shadersPath, genShaderPath);
 	}
 }
 
 void Object::Init(unsigned int renderType, std::string shaderPath) {
+	m_Scale = glm::vec3(1.0,1.0,1.0);
+	m_Rotation = glm::vec3(0.0,0.0,0.0);
+	m_Position = glm::vec3(0.0,0.0,0.0);
+	UpdateTranslationMatrix();
+	UpdateRotationMatrix();
+	UpdateScaleMatrix();
 	m_Mesh->Init(renderType);
 	for (int i = 0; i < m_Materials.size(); i++) {
-		//if(m_Materials[i]->GetMapKd() != NULL)
-		m_Materials[i]->Init(shaderPath);
+	m_Materials[i]->Init(shaderPath);
 	}
 }
 
@@ -350,44 +391,73 @@ void Object::Unbind()
 	}
 }
 
+void Object::UpdateTranslationMatrix(){
+  m_TranslationMat = glm::translate(m_Position);
+  UpdateModelMatrix();
+};
+
+void Object::UpdateRotationMatrix(){
+  m_RotationMat = glm::rotate(m_Rotation.x,glm::vec3(1.0f, 0.0f, 0.0f));
+  m_RotationMat *= glm::rotate(m_Rotation.y,glm::vec3(0.0f, 1.0f, 0.0f));
+  m_RotationMat *= glm::rotate(m_Rotation.z,glm::vec3(0.0f, 0.0f, 1.0f));
+  UpdateModelMatrix();
+}
+
+void Object::UpdateScaleMatrix(){
+	m_ScaleMat = glm::scale(m_Scale);
+	UpdateModelMatrix();
+};
+
+void Object::UpdateModelMatrix(){
+	m_ModelMatrix = m_TranslationMat * m_RotationMat * m_ScaleMat;
+};
+
 void Object::Translate(float x, float y, float z)
 {
-	m_ModelMatrix = glm::translate(m_ModelMatrix, glm::vec3(x, y, z));
+	//m_ModelMatrix = glm::translate(m_ModelMatrix, glm::vec3(x, y, z));
+	Translate(glm::vec3(x,y,z));
 }
 
-void Object::Translate(glm::vec3 axis)
+void Object::Translate(glm::vec3 vector)
 {
-	m_ModelMatrix = glm::translate(m_ModelMatrix, axis);
+  m_Position+=vector; 
+  UpdateTranslationMatrix();
 }
 
-void Object::RotationRad(float angle, float x, float y, float z)
+void Object::RotationRad(float x, float y, float z)
 {
-	m_ModelMatrix = glm::rotate(m_ModelMatrix, angle, glm::vec3(x, y, z));
+	//m_ModelMatrix = glm::rotate(m_ModelMatrix, angle, glm::vec3(x, y, z));
+	RotationRad(glm::vec3(x,y,z));
 }
 
-void Object::RotationRad(float angle, glm::vec3 axis)
+void Object::RotationRad(glm::vec3 angles)
 {
-	m_ModelMatrix = glm::rotate(m_ModelMatrix, angle, axis);
+	//m_ModelMatrix = glm::rotate(m_ModelMatrix, angle, axis);
+	m_Rotation += angles; 
+	UpdateRotationMatrix();
+
 }
 
-void Object::RotationDeg(float angle, float x, float y, float z)
+void Object::RotationDeg(float x, float y, float z)
 {
-	m_ModelMatrix = glm::rotate(m_ModelMatrix, angle*(3.141592f / 180.0f), glm::vec3(x, y, z));
+  RotationDeg(glm::vec3(x,y,z));
 }
 
-void Object::RotationDeg(float angle, glm::vec3 axis)
+void Object::RotationDeg(glm::vec3 angles)
 {
-	m_ModelMatrix = glm::rotate(m_ModelMatrix, angle*(3.141592f / 180.0f), axis);
+  RotationRad(angles * glm::vec3(3.141592f / 180.0f));
 }
 
 void Object::Scale(float x, float y, float z)
 {
-	m_ModelMatrix = glm::scale(m_ModelMatrix, glm::vec3(x, y, z));
+  Scale(glm::vec3(x,y,z));
 }
 
-void Object::Scale(glm::vec3 axis)
+void Object::Scale(glm::vec3 factors)
 {
-	m_ModelMatrix = glm::scale(m_ModelMatrix, axis);
+	//m_ModelMatrix = glm::scale(m_ModelMatrix, axis);
+	m_Scale *= factors;
+	UpdateScaleMatrix();
 }
 
 std::string Object::GetFileName(FILE * f)

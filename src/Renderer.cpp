@@ -58,14 +58,13 @@ void Renderer::Draw(Object object)
 	}
 	else {
 		object.Bind();
-
 		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_MVP", mvp);
 		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_M", object.GetModelMatrix());
 		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
-
+		object.GetMaterials().at(0)->BindTextures();
 		GLCall(glDrawElements(object.GetMesh()->GetRendererType(), object.GetMesh()->GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
 		object.Unbind();
-	}	
+	}
 }
 
 

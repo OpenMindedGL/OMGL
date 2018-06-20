@@ -7,7 +7,7 @@
 
 #include "Texture.h"
 
-#define NB_FACES        6
+#define NB_FACES 6
 
 class Cubemap : public Texture {
 

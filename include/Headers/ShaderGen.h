@@ -4,6 +4,7 @@
 #define KS 10
 #define KA 100
 #define D 1000
+#define NS 10000
 
 #include <vector>
 #include <string>
@@ -22,10 +23,9 @@ private :
 	std::string m_lightColor;
 	
 	std::vector<bool> m_DynamicUniform;
-	std::vector<std::string> m_UniformsList = { "u_Kd", "u_Ks", "u_Ka", "u_D" };
-	std::vector<std::string> m_UniformsTexturesList = { "u_KdMap", "u_KsMap", "u_KaMap", "u_DMap" };
-	std::vector<std::string> m_UniformsTypeList = { "vec3", "vec3", "vec3", "float" };
-	//std::vector<bool> m_ActualUniformList;
+	std::vector<std::string> m_UniformsList = { "u_Kd", "u_Ks", "u_Ka", "u_D", "u_Ns" };
+	std::vector<std::string> m_UniformsTexturesList = { "u_KdMap", "u_KsMap", "u_KaMap", "u_DMap", "u_NsMap" };
+	std::vector<std::string> m_UniformsTypeList = { "vec3", "vec3", "vec3", "float", "float" };
 
 	std::string m_Name;
 	std::string m_FilePath; 
