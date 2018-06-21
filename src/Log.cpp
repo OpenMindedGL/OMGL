@@ -3,6 +3,8 @@
 #include <vector>
 #include <stdio.h>
 
+bool Log::isOn = false;
+
 void Log::PrintVertices(std::vector<Vertexun>& v){
 
   Vertexun& a = v.at(0);

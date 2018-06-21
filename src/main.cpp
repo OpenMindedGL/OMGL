@@ -90,84 +90,22 @@ int main(void){
   
   Terrain t(glm::vec2(pos.x, pos.z));
 
-  /*Skybox s("shaders/Skybox.shader", {
-        "textures/grass.dds",
-        "textures/grass.dds",
-        "textures/grass.dds",
-        "textures/grass.dds",
-        "textures/grass.dds",
-        "textures/grass.dds"
-        });*/
   Skybox s;
   
-  Cube cube;
-  Object c(&cube, new Material((Texture*)t.GetLevel(0).GetHeightMap(), new Shader("shaders/Cube.shader")));
-  Object c1(&cube, new Material((Texture*)t.GetLevel(1).GetHeightMap(), new Shader("shaders/Cube.shader")));
-  //Object c(&cube, new Material(new Texture("textures/grass.dds"), new Shader("shaders/Cube.shader")));
-  //Object c(&cube, new Material("textures/grass.dds", "shaders/Object.shader"));
-  //c.Translate(0,0,0);  // thats a f* problem right here
-  //c.Translate(2,-10,0);
-  //c.Init();
-  c.Scale(1.0f,1.0f,1.0f);
-  //c1.Scale(1,0.1,1);
-  
-  //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", true);
-  //Object o("objects/Mill/Mill.obj", "objects/Mill/Mill.mtl", false);
-  //o.Init(GL_TRIANGLES, "shaders/Object.shader");
-  glm::vec3 a(50.0f,1.0f,50.0f);
-  c.SetScale(a);
-  c1.SetScale(a);
-
-  // 
-  c.RotationDeg(270,0,0);
-  c1.RotationDeg(270,0,0);
-  c.Translate(-60,0,200);
-  c1.Translate(60,0,200);
-
-
-  bool update = true;
-  glm::vec2 pp(0);
 
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
 
     renderer.Clear();
     renderer.UpdateCamera();
-    if (glfwGetKey(window, GLFW_KEY_U) == GLFW_PRESS) {
-      update = true;
-    }
-    if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS) {
-      update = false;
-    }
-    if(update){
-      if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS) {
-        pp.x+=5.0f;
-      }
-      if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS) {
-        pp.x-=5.0f;
-      }
-      if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS) {
-        pp.y-=5.0f;
-      }
-      if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS) {
-        pp.y+=5.0f;
-      }
-    }
 
-    
     pos = renderer.getCameraPosition();
-    p = glm::i32vec2(pp.x,pp.y);
-    //p = glm::i32vec2(pos.x,pos.z);
+    p = glm::i32vec2(pos.x,pos.z);
     //printf("x:%f y:%f \n",pos.x,pos.z);    
 
-    renderer.Draw(c);
-    renderer.Draw(c1);
-    if(update)
-      t.Update(p);
+
+    t.Update(p);
     renderer.Draw(t);
-  //  renderer.Draw(c1);
-	//renderer.Draw(o);
-	//o.RotationDeg(0.5, vec3(1.0f, 0.0f, 0.0f));
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
     // Always draw last	

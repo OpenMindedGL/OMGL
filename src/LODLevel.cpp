@@ -22,7 +22,7 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
   m_Level(l),
   m_Terrain(t),
   m_UnitSize(glm::pow(2,NB_LEVELS-l-1)),
-  m_HeightMap(t->m_HeightMap)
+  m_HeightMap(t->GetHeightMap())
 {
   if(center.y > 0){
     m_ActiveR.y = glm::floor(center.y / m_UnitSize) * m_UnitSize - m_TileSize*2*m_UnitSize;
@@ -38,29 +38,18 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
     m_ActiveR.x = glm::floor(center.x)-m_HalfSize * m_UnitSize;
     m_ActiveR.x -= m_NewActiveR.x % m_UnitSize;
   }
-  //m_ActiveR = (static_cast<glm::i32vec2>(center)/glm::i32vec2(m_Size))*glm::i32vec2(m_Size)+glm::i32vec2(m_Size);        // just load everything
   m_NewActiveR = m_ActiveR;
 
-//  m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Size,m_ActiveR.y%(unsigned int)m_Size);
 
-  int size = m_Size+2; // tex coords
-  m_HeightMap = new DynamicHeightMap(&(m_Terrain->m_Noise),size, m_UnitSize, glm::vec2(1.0f/64.0f), m_NewActiveR-glm::i32vec2(2*m_UnitSize));//m_Terrain->m_Center-glm::i32vec2((size*m_UnitSize)/2)/*-glm::i32vec2(0,m_Level)*/);
-  /*m_NormalMap = new Texture(size);
-  m_NormalMap->Make();*/
+  int size = m_Size+HEIGHT_MAP_EXCESS; // tex coords
+  m_HeightMap = new DynamicHeightMap(m_Terrain->GetNoise(),size, m_UnitSize, glm::vec2(1.0f/64.0f), m_NewActiveR-glm::i32vec2(HEIGHT_MAP_EXCESS*m_UnitSize));
 
-  m_Material = new Material(m_HeightMap,m_Terrain->m_Shader);
+  m_Material = new Material(m_HeightMap,m_Terrain->GetShader());
 
   MakeObjs();
 
   PlaceTrim();
   //ColorDebug();
-  
-  //Updatecenter);
-  //Upload();
-  //Log::PrintIndices(*m_Indices);
-  //GLCall(Vertexun * a = (Vertexun *) glMapBuffer(GL_ARRAY_BUFFER, GL_READ_ONLY)); 
-  //printf("%f \n",(*a).pos);
-  //GLCall(glUnmapBuffer(GL_ARRAY_BUFFER));
 
 }
 
@@ -73,7 +62,6 @@ void LODLevel::ColorDebug(){
   lightblue->SetKa(glm::vec3(0.0f,0.0f,0.3f));
   lightblue->Bind();
   lightblue->SetUniforms();
-  //lightblue->SetD(1);
   Material* red = new Material(m_HeightMap, new Shader("shaders/Object.shader") );
   red->SetKa(glm::vec3(1.0f,0.0f,0.0f));
   red->Bind();
@@ -86,7 +74,6 @@ void LODLevel::ColorDebug(){
   yellow->SetKa(glm::vec3(1.0f,1.0f,0.0f));
   yellow->Bind();
   yellow->SetUniforms();
-  //red->SetD(1);
   bool isFinestLevel = m_Level == m_Terrain->GetNbLevel()-1;
   for(unsigned int i=0; i < m_TileObjs.size(); i++){
     m_TileObjs[i]->m_Materials.clear();
@@ -120,13 +107,13 @@ void LODLevel::PlaceTrim(){
       (m_NewActiveR.x / m_UnitSize) % 2 == 0,
       (m_NewActiveR.y / m_UnitSize) % 2 == 0
         );
-  printf("(lev%d) newActiveR: (%d,%d)\n",m_Level,m_NewActiveR.x,m_NewActiveR.y);
+  if(Log::isOn) printf("(lev%d) newActiveR: (%d,%d)\n",m_Level,m_NewActiveR.x,m_NewActiveR.y);
   if(m_Level > 0){
-    glm::i32vec2 prev = m_Terrain->m_Lods[m_Level-1]->m_NewActiveR;
-    printf("(lev%d) prev newActiveR: (%d,%d)\n",m_Level-1,prev.x,prev.y);
+    glm::i32vec2 prev = m_Terrain->GetLods()[m_Level-1]->m_NewActiveR;
+    if(Log::isOn) printf("(lev%d) prev newActiveR: (%d,%d)\n",m_Level-1,prev.x,prev.y);
   }
-  printf("(lev%d) newActiveR/unitSize: (%d,%d)\n",m_Level,m_NewActiveR.x/m_UnitSize,m_NewActiveR.y/m_UnitSize);
-  printf("(lev%d) place: (%d,%d)\n",m_Level,place.x,place.y);
+  if(Log::isOn) printf("(lev%d) newActiveR/unitSize: (%d,%d)\n",m_Level,m_NewActiveR.x/m_UnitSize,m_NewActiveR.y/m_UnitSize);
+  if(Log::isOn) printf("(lev%d) place: (%d,%d)\n",m_Level,place.x,place.y);
   glm::i32vec2 pos = m_NewActiveR;
   glm::vec3 rot(0);
   glm::vec3 po(m_NewActiveR.x,0.0f,m_NewActiveR.y);
@@ -154,17 +141,10 @@ void LODLevel::PlaceTrim(){
     po.x-=m_UnitSize;
     po.z-=m_UnitSize;
   }
-  /*if(m_NewActiveR.x > 0)
-    pos.x+=m_UnitSize;
-  if(m_NewActiveR.y > 0)
-    pos.y+=m_UnitSize;*/
   glm::vec3 p(pos.x,0.0f,pos.y);
-  // so nasty
-  //if(m_Level != 0){
-    m_TrimObj->SetPosition(p);
-    m_TrimObj->SetRotation(rot);
-    m_SeamObj->SetPosition(po);
-  //}
+  m_TrimObj->SetPosition(p);
+  m_TrimObj->SetRotation(rot);
+  m_SeamObj->SetPosition(po);
 }
 
 
@@ -277,14 +257,13 @@ void LODLevel::MakeObjs(){
     MakeFillObjs();
   else
     MakeCrossObj();
-  //if(m_Level != 0){
-    // the last level doesnt need a trim nor a seam, it won't overlap nor badly transition to anything
-    glm::vec3 rot = glm::vec3(0);
-    MakeTrimObj(m_ActiveR,rot);
-    MakeSeamObj();
-  //}
+  glm::vec3 rot = glm::vec3(0);
+  MakeTrimObj(m_ActiveR,rot);
+  MakeSeamObj();
 
 }
+
+/* should be done eventually */
 
 /*void LODLevel::Make2D1D(unsigned int s){
   is it already allocated ?
@@ -294,7 +273,7 @@ void LODLevel::MakeObjs(){
         pre2D1D[i] = (unsigned int*) malloc(sizeof(unsigned int) * s);
       }
       if(!pre2D1D){
-        printf("[ERROR] Could not allocate");
+        if(Log::isOn) printf("[ERROR] Could not allocate");
       }
     }
   fill it
@@ -330,30 +309,18 @@ void LODLevel::Update( glm::i32vec2 center ){
 
   glm::i32vec2 dir = m_NewActiveR - m_ActiveR;
   if(dir.x != 0 || dir.y != 0){
-    printf("(lev %d) [INFO] Updating LOD center: (%d,%d)\n",m_Level,center.x,center.y);
-    printf("(lev %d) terrain center: (%d,%d)\n",m_Level,m_Terrain->m_Center.x,m_Terrain->m_Center.y);
+    // we're updating
+    if(Log::isOn) printf("(lev %d) [INFO] Updating LOD center: (%d,%d)\n",m_Level,center.x,center.y);
+    //if(Log::isOn) printf("(lev %d) terrain center: (%d,%d)\n",m_Level,m_Terrain->m_Center.x,m_Terrain->m_Center.y);
     glm::vec3 dir3 = glm::vec3(dir.x, 0.0f, dir.y);
 
     glm::i32vec2 d = glm::i32vec2(0);
-    /*
-    int a = 1;
-    if(m_NewActiveR.x > 0 && dir.x > 0)
-      a = 0;
-    if(glm::abs(m_NewActiveR.x) % 2 == a && dir.x != 0)
-      d.x += glm::sign(dir.x);
 
-    a = 1;
-    if(m_NewActiveR.y > 0 && dir.y > 0)
-      a = 0;
-    if(glm::abs(m_NewActiveR.y) % 2 == a && dir.y != 0)
-      d.y += glm::sign(dir.y);
-
-    if(glm::abs(d.x) > 1 || glm::abs(d.y) > 1)
-    */  
-    int q = 2*m_UnitSize;
-    if(m_NewActiveR.x - m_HeightMap->m_Base.x < q || m_HeightMap->m_Base.x+m_HeightMap->GetWidth()*m_UnitSize - (m_NewActiveR.x + m_Size*m_UnitSize) < q )
+    // update heightmap
+    int q = HEIGHT_MAP_EXCESS*m_UnitSize;
+    if(m_NewActiveR.x - m_HeightMap->GetBase().x < q || m_HeightMap->GetBase().x+m_HeightMap->GetWidth()*m_UnitSize - (m_NewActiveR.x + m_Size*m_UnitSize) < q )
       d.x = dir.x;
-    if(m_NewActiveR.y - m_HeightMap->m_Base.y < q || m_HeightMap->m_Base.y+m_HeightMap->GetWidth()*m_UnitSize - (m_NewActiveR.y + m_Size*m_UnitSize) < q )
+    if(m_NewActiveR.y - m_HeightMap->GetBase().y < q || m_HeightMap->GetBase().y+m_HeightMap->GetWidth()*m_UnitSize - (m_NewActiveR.y + m_Size*m_UnitSize) < q )
       d.y = dir.y;
     m_HeightMap->Update(d);
 
@@ -365,41 +332,10 @@ void LODLevel::Update( glm::i32vec2 center ){
     PlaceTrim();
 
     m_ActiveR = m_NewActiveR;
-    //  height map ?
-    /*if(Load()){
-      Upload();
-      }
-      Unbind();*/
   }
-}
-
-
-void LODLevel::PutVertex(glm::i32vec2& pos){
-  /*
-  // index in the VertexBuffer
-  unsigned int ind = GetIndex(pos);
-  //printf("ind:%d (%d, %d)\n", ind, pos.x, pos.y);
-  glm::i32vec2 p =  glm::i32vec2(m_UnitSize*pos.x,m_UnitSize*pos.y);
-  // put vertex in
-  //m_MappedBuffer[ind] = {
-  m_Vertices->at(ind) = {
-  //glm::vec3( p.x, 0, p.y),
-  glm::vec3( p.x, m_Terrain->m_Noise.compute(p.x*0.06f,p.y*0.06f)*50, p.y),
-  glm::vec2(),
-  glm::vec3()
-  };
-  */
 
 }
 
-//glm::vec2 dir = static_cast<glm::i32vec2>(m_ActiveR - m_NewActiveR);
-
-
-void LODLevel::SetOffset( glm::i32vec2& o ){
-}
-
-void LODLevel::SetScale(int s){
-}
 
 void LODLevel::GenMeshes(unsigned int size){
 

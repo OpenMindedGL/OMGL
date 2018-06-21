@@ -2,6 +2,7 @@
 
 #include "DynamicTexture.h"
 #include "Debug.h"
+#include "Log.h"
 
 void DynamicTexture::Upload(glm::i32vec2 offset, glm::i32vec2 size, const void * data){
   Bind();
@@ -30,8 +31,8 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
   if(d.x == 0 && d.y == 0)
     return 0; 
 
-  printf("[INFO] Updating HeightMap. d:(%d,%d)\n",d.x,d.y);
-  printf("(DynamicTexture::Update) m_TexelSize: %d\n",m_TexelSize);
+  if(Log::isOn) printf("[INFO] Updating HeightMap. d:(%d,%d)\n",d.x,d.y);
+  if(Log::isOn) printf("(DynamicTexture::Update) m_TexelSize: %d\n",m_TexelSize);
 
   bool isDiagonal;
   bool fullReload = false;
@@ -47,7 +48,7 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
   glm::i32vec2 e = n+glm::i32vec2(worldWidth);                       // end
   glm::i32vec2 sign = glm::sign(d);
 
-  //printf("old: (%d,%d) new: (%d,%d), tor:(%d,%d)\n",o.x,o.y,n.x,n.y,m_TorBegin.x,m_TorBegin.y);
+  //if(Log::isOn) printf("old: (%d,%d) new: (%d,%d), tor:(%d,%d)\n",o.x,o.y,n.x,n.y,m_TorBegin.x,m_TorBegin.y);
   // are any currently loaded points still needed ?
   if (glm::abs(d.x) > worldWidth || glm::abs(d.y) > worldWidth){
     // no, replace everything
@@ -98,7 +99,7 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
 
   }
 
-  printf("1st rectangle: s:(%d,%d), e(%d,%d)\n",s.x,s.y,e.x,e.y);
+  if(Log::isOn) printf("1st rectangle: s:(%d,%d), e(%d,%d)\n",s.x,s.y,e.x,e.y);
   UpdateSub(s,e);
 
   if(isDiagonal){
@@ -121,7 +122,7 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
       s.y = o.y + worldWidth;
       e.y = n.y + worldWidth;
     }
-    printf("square: s:(%d,%d), e(%d,%d)\n",s.x,s.y,e.x,e.y);
+    if(Log::isOn) printf("square: s:(%d,%d), e(%d,%d)\n",s.x,s.y,e.x,e.y);
     UpdateSub(s,e);
 
     // Second Rectangle
@@ -147,7 +148,7 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
       s.y = o.y;
       e.y = n.y + worldWidth;
     }
-    printf("2nd rectangle: s:(%d,%d), e(%d,%d)\n",s.x,s.y,e.x,e.y);
+    if(Log::isOn) printf("2nd rectangle: s:(%d,%d), e(%d,%d)\n",s.x,s.y,e.x,e.y);
     UpdateSub(s,e);
     
   }
@@ -155,8 +156,8 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
   m_Base = n;
   glm::i32vec2 a = (m_Base - m_TorBegin)/glm::i32vec2(m_TexelSize);
   m_TorBase = GetTorPos(a)*glm::i32vec2(m_TexelSize);
-  printf("base: (%d,%d), torBase: (%d,%d)\n",m_Base.x,m_Base.y,m_TorBase.x,m_TorBase.y);
-  printf("torBegin: (%d,%d)\n",m_TorBegin.x,m_TorBegin.y);
+  if(Log::isOn) printf("base: (%d,%d), torBase: (%d,%d)\n",m_Base.x,m_Base.y,m_TorBase.x,m_TorBase.y);
+  if(Log::isOn) printf("torBegin: (%d,%d)\n",m_TorBegin.x,m_TorBegin.y);
   //m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Width,m_ActiveR.y%(unsigned int)m_Width);
   //return 1;
   glm::i32vec2 g = glm::i32vec2(m_Width);
@@ -170,17 +171,7 @@ void DynamicTexture::UpdateSub(glm::i32vec2& s, glm::i32vec2& e){
   glm::i32vec2 ts = GetTorPos(d);        // bottom left of the rectangle in toroidal indices
   glm::i32vec2 p;
   std::vector<glm::u8vec4> toUpdateE;
-  //bool around[2] = false;
   glm::i32vec2 b = size;
-//  glm::i32vec2 c = s;
-  /*if(offset.x + b.x > m_Width){
-    b.x = m_Width - offset.x;
-    around[0] = true;
-  }
-  if(offset.y + size.y > m_Width){
-    b.y = m_Width - offset.y;
-    around[1] = true;
-  }*/
   toUpdateE.clear();
   toUpdateE.resize(size.y*size.x+size.x);
   int inc = (int) m_TexelSize;
@@ -189,9 +180,6 @@ void DynamicTexture::UpdateSub(glm::i32vec2& s, glm::i32vec2& e){
       UpdateTexel(p, s, ts, toUpdateE);
     }
   }
-  /*glm::i32vec2 g = glm::i32vec2(m_Width);
-  glm::i32vec2 f = glm::i32vec2(0);
-  Upload(f, g, &m_Texels[0]);*/
 }
 
 void DynamicTexture::UpdateTexel(glm::i32vec2& p, glm::i32vec2& s, glm::i32vec2& t,std::vector<glm::u8vec4>& buffer){
@@ -204,44 +192,8 @@ int DynamicTexture::GetIndex(glm::i32vec2& p){
 }
 
 glm::i32vec2 DynamicTexture::GetTorPos(glm::i32vec2& p){
-  /* with a modulo
-   * glm::i32vec2 torPos = pos % m_Width;
-   * x & (m_Width - 1)
-   */
 
-  /* without one
-   * /!\ only works if |p-m_ActiveR| < 2*m_Width */
-  /*
-  // TODO : just pass those, increment them in the calling function
-  // or declare them globally
-  glm::i32vec2 torPos = p - m_ActiveR;
-  torPos+=m_TorBegin;
-  //glm::i32vec2 dir = m_TorBegin + torPos;
-  if(torPos.x < (int) -m_Width)
-  torPos.x %= m_Width;
-  if(torPos.x >= (int) m_DoubleSize){
-  torPos.x %= m_Width;
-  }
-  else{
-  if(torPos.x > (int) m_Width)
-  torPos.x -= m_Width; 
-  else if(torPos.x < 0)
-  torPos.x += m_Width; 
-  }
-  if(torPos.y < (int) -m_Width)
-  torPos.y %= m_Width;
-  if(torPos.y >= (int) m_DoubleSize){
-  torPos.y %= m_Width;
-  }
-  else{
-  if(torPos.y > (int) m_Width)
-  torPos.y -= m_Width; 
-  else if(torPos.y < 0)
-  torPos.y += m_Width; 
-  }
-  */
-
-  /* (it's roughly a mod) */
+  /* (it's roughly a mod(p,m_Width) ) */
 
   glm::i32vec2 torPos;
   if(p.x < 0){

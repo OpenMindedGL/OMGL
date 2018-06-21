@@ -118,27 +118,23 @@ void Renderer::Draw(LODLevel& l){
   // Drawing all the parts
   for (unsigned int i = 0; i < l.GetObjs().size(); i++) {
     Draw(*l.GetObjs().at(i));
-    /*glm::mat4 mvp = m_Camera->GetMVP();
-    a = mvp*glm::vec4((l.GetObjs().at(i)->GetMesh()->GetVertices()[16],1.0));
-    printf("a0: (%f,%f,%f)\n",a.x,a.y,a.z);
-    a = mvp*glm::vec4((l.GetObjs().at(i)->GetMesh()->GetVertices()[1],1.0));
-    printf("a16: (%f,%f,%f)\n",a.x,a.y,a.z);*/
   }
 
 }
 
 void Renderer::Draw(Terrain& t)
 {
-  t.m_NormalMap->Bind();
-  t.m_Shader->Bind();
   for (unsigned int i = 0; i < t.GetNbLevel(); i++) {
     //printf("Drawing level %d\n",i);
-    t.m_NormalMap->Bind();
-    t.m_Shader->Bind();
-    t.m_Shader->SetUniform2i("base",t.GetLevel(i).GetHeightMap()->m_Base);
-    t.m_Shader->SetUniform2i("torBase",t.GetLevel(i).GetHeightMap()->m_TorBase);
-    t.m_Shader->SetUniform2i("torBegin",t.GetLevel(i).GetHeightMap()->m_TorBegin);
-    t.m_Shader->SetUniform1i("u_UnitSize",t.GetLevel(i).GetUnitSize());
+
+    // make a function inside LOD to do that
+    t.GetShader()->Bind();
+    t.GetShader()->SetUniform2i("base",t.GetLevel(i).GetHeightMap()->GetBase());
+    t.GetShader()->SetUniform2i("torBase",t.GetLevel(i).GetHeightMap()->GetTorBase());
+    t.GetShader()->SetUniform2i("torBegin",t.GetLevel(i).GetHeightMap()->GetTorBegin());
+    t.GetShader()->SetUniform1i("u_UnitSize",t.GetLevel(i).GetUnitSize());
+    //
+    
     Draw(t.GetLevel(i));
   }
 }

@@ -9,6 +9,8 @@
 #include "DynamicTexture.h"
 #include "NoiseGen.h"
 
+#define HEIGHT_MAP_EXCESS       2
+
 
 
 class DynamicHeightMap : public HeightMap, public DynamicTexture

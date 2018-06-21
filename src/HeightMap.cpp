@@ -94,4 +94,5 @@ Texture* HeightMap::MakeNormalMap(){
 // to be put in NoiseTexture eventually
 float HeightMap::GetHeight(glm::i32vec2 p){
   return (m_Noise->compute((float)p.x*m_Step.x,(float)p.y*m_Step.y)+16)/32; // + maxnoise) /maxnoise*2; (mapping to (0,1))
+  // +16/32 should be put inside NoiseGen
 }

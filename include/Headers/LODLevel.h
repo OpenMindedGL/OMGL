@@ -20,7 +20,7 @@ class LODLevel {
 
     static Mesh<Vertexun> m_Tile;
     static Mesh<Vertexun> m_Fill[4];
-    static Mesh<Vertexun> m_Trim;//[4];
+    static Mesh<Vertexun> m_Trim;
     static Mesh<Vertexun> m_Seam;
     static Mesh<Vertexun> m_Cross;
 
@@ -45,7 +45,6 @@ class LODLevel {
     std::vector<Object*> m_Objs;
     std::vector<Object*> m_TileObjs;
     std::vector<Object*> m_FillObjs;
-    //std::vector<Object*> m_TrimObj;
     Object* m_TrimObj;
     Object* m_SeamObj;
     Object* m_CrossObj;
@@ -58,7 +57,7 @@ class LODLevel {
     unsigned int m_Level;
     int m_UnitSize;
     glm::i32vec2 m_ActiveR;
-    //glm::i32vec2 m_NewActiveR;
+    glm::i32vec2 m_NewActiveR;
     
     // Should really put it in Mesh, or make a Grid class
     static void Grid(glm::i32vec2 s, glm::i32vec2 e, Mesh<Vertexun>* m);
@@ -72,20 +71,15 @@ class LODLevel {
     void MakeTrimObj(glm::i32vec2& pos, glm::vec3& rot);
     void MakeSeamObj();
     void PlaceTrim();
-    void SetOffset( glm::i32vec2& o );
-    void SetScale(int s);
     int Load();
 
     void ColorDebug();
 
   public:
-    glm::i32vec2 m_TorBegin;    // origin in the toroid array
-    glm::i32vec2 m_NewActiveR;
 
     void GridIndices(glm::i32vec2& e, Mesh<Vertexun>& m);
     static void GenMeshes(unsigned int size);
     void Update(glm::i32vec2 center);
-    void PutVertex(glm::i32vec2& pos);
     LODLevel(unsigned int l, glm::vec2& center, Terrain* t);
     int GetIndex(glm::i32vec2& p);
 

@@ -19,6 +19,7 @@ class Log
 private : 
 
 public: 
+  static bool isOn;
 	//Log();
         static void PrintVertices(std::vector<Vertexun>& v);
         static void PrintIndices(std::vector<unsigned int>& i);
