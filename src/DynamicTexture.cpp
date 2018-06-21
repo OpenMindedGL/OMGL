@@ -31,6 +31,7 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
     return 0; 
 
   printf("[INFO] Updating HeightMap. d:(%d,%d)\n",d.x,d.y);
+  printf("(DynamicTexture::Update) m_TexelSize: %d\n",m_TexelSize);
 
   bool isDiagonal;
   bool fullReload = false;

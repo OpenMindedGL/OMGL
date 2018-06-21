@@ -15,7 +15,7 @@ class LODLevel;
 #include "LODLevel.h"
 #include "DynamicHeightMap.h"
 
-#define NB_LEVELS 2
+#define NB_LEVELS 10
 #define PRECISION 1.0f
 #define SIZE    131   // -3 should be power of two, dividable by 8
 #define HALFSIZE    SIZE/2

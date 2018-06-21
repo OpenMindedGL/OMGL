@@ -44,7 +44,9 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
 //  m_TorBegin = glm::i32vec2(m_ActiveR.x%(unsigned int)m_Size,m_ActiveR.y%(unsigned int)m_Size);
 
   int size = m_Size+2; // tex coords
-  m_HeightMap = new DynamicHeightMap(&(m_Terrain->m_Noise),size, m_UnitSize, glm::vec2((1.0f/m_Terrain->m_Scale)), m_Terrain->m_Center-glm::i32vec2((size*m_UnitSize)/2)/*-glm::i32vec2(0,m_Level)*/);
+  m_HeightMap = new DynamicHeightMap(&(m_Terrain->m_Noise),size, m_UnitSize, glm::vec2(1.0f/64.0f), m_NewActiveR-glm::i32vec2(2*m_UnitSize));//m_Terrain->m_Center-glm::i32vec2((size*m_UnitSize)/2)/*-glm::i32vec2(0,m_Level)*/);
+  /*m_NormalMap = new Texture(size);
+  m_NormalMap->Make();*/
 
   m_Material = new Material(m_HeightMap,m_Terrain->m_Shader);
 

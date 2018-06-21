@@ -29,7 +29,7 @@ class Texture
     inline unsigned int LoadOther(const std::string& path) { LoadOther(path, GL_TEXTURE_2D); }
     void MakeDDS(bool genMipMaps);
     void MakeOther(bool genMipMaps);
-    void Make(unsigned char * buffer);
+    void Make(unsigned char * buffer, unsigned int interp = GL_NEAREST);
 
   public: 
 

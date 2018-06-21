@@ -36,7 +36,7 @@ m_Slot(0)
   
 }
 
-void Texture::Make(unsigned char* buffer) {
+void Texture::Make(unsigned char* buffer, unsigned int interp) {
   m_LocalBuffer = buffer;
   GLCall(glGenTextures(1, &m_RendererID));
   Bind();
@@ -45,8 +45,8 @@ void Texture::Make(unsigned char* buffer) {
   }*/
 
   GLCall(glTexImage2D(m_Target, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
-  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST));;
-  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));;
+  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, interp));;
+  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, interp));;
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
   Unbind();

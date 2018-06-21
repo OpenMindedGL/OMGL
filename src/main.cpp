@@ -141,22 +141,23 @@ int main(void){
     }
     if(update){
       if (glfwGetKey(window, GLFW_KEY_KP_6) == GLFW_PRESS) {
-        pp.x+=0.2f;
+        pp.x+=5.0f;
       }
       if (glfwGetKey(window, GLFW_KEY_KP_4) == GLFW_PRESS) {
-        pp.x-=0.2f;
+        pp.x-=5.0f;
       }
       if (glfwGetKey(window, GLFW_KEY_KP_2) == GLFW_PRESS) {
-        pp.y-=0.2f;
+        pp.y-=5.0f;
       }
       if (glfwGetKey(window, GLFW_KEY_KP_8) == GLFW_PRESS) {
-        pp.y+=0.2f;
+        pp.y+=5.0f;
       }
     }
 
     
     pos = renderer.getCameraPosition();
     p = glm::i32vec2(pp.x,pp.y);
+    //p = glm::i32vec2(pos.x,pos.z);
     //printf("x:%f y:%f \n",pos.x,pos.z);    
 
     renderer.Draw(c);
