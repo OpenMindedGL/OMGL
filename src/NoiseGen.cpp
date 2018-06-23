@@ -83,10 +83,7 @@ float NoiseCloudRecto::compute(float x, float y){
 }
 
 int NoiseMixBiome::sign(float x){
-  if (x > 0.0f)
-    return 1;
-  else
-    return 0;
+ return x > 0.0f;
 }
 
 float NoiseMixBiome::compute(float x, float y){

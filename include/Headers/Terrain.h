@@ -13,6 +13,7 @@ class LODLevel;
 #include "NoiseGen.h"
 #include "Material.h"
 #include "LODLevel.h"
+#include "Biome.h"
 #include "DynamicHeightMap.h"
 
 /* for now 10 kinda stutters when it needs to update them all in a frame
@@ -35,17 +36,16 @@ class Terrain {
     float m_Scale;
     glm::i32vec2 m_Center;
     
-    DynamicHeightMap* m_HeightMap;
+//    DynamicHeightMap* m_HeightMap;
     LODLevel * m_Lods[NB_LEVELS];
     Material * m_Material;
     Shader * m_Shader;
-    Texture * m_NormalMap;
-    NoiseGen m_Noise;
+  //  Texture * m_NormalMap;
+    YGen * m_Mix;
+    std::vector<Biome> m_Biomes;
 
 
   public :
-    /* should really be private */ 
-    /*                  */
 
     Terrain(glm::vec2 spawn, float p = PRECISION, unsigned int s = SIZE, unsigned int n = NB_LEVELS);
     inline int GetSize(){ return m_Size; }
@@ -57,11 +57,10 @@ class Terrain {
     // getters
     inline unsigned int GetNbLevels(){ return m_NbLevels; }
     inline Material* GetMaterial(){ return m_Material; }
-    inline DynamicHeightMap* GetHeightMap(){ return m_HeightMap;}
+//    inline DynamicHeightMap* GetHeightMap(){ return m_HeightMap;}
     inline LODLevel ** GetLods(){ return m_Lods;}
     inline Shader * GetShader(){ return m_Shader;}
-    inline Texture * GetNormalMap(){ return m_NormalMap;}
-    inline NoiseGen * GetNoise(){ return &m_Noise;}
+//    inline Texture * GetNormalMap(){ return m_NormalMap;}
 
 
 };
