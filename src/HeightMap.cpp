@@ -57,7 +57,7 @@ void HeightMap::Gen(glm::i32vec2& base, glm::vec2& step) {
   for(int i=base.y;i<e.y;i+=m_TexelSize){
     for(int j=base.x;j<e.x;j+=m_TexelSize){
       m_HeightsD.push_back(
-          (m_Noise->compute((float)j*step.x,(float)i*step.y)+16)/32 // + maxnoise) /maxnoise*2; (mapping to (0,1))
+          (m_Noise->compute1((float)j*step.x,(float)i*step.y)+16)/32 // + maxnoise) /maxnoise*2; (mapping to (0,1))
           );
       m_Texels.push_back(
           static_cast<glm::u8vec4>(
@@ -93,6 +93,6 @@ Texture* HeightMap::MakeNormalMap(){
 
 // to be put in NoiseTexture eventually
 float HeightMap::GetHeight(glm::i32vec2 p){
-  return (m_Noise->compute((float)p.x*m_Step.x,(float)p.y*m_Step.y)+16)/32; // + maxnoise) /maxnoise*2; (mapping to (0,1))
+  return (m_Noise->compute1((float)p.x*m_Step.x,(float)p.y*m_Step.y)+16)/32; // + maxnoise) /maxnoise*2; (mapping to (0,1))
   // +16/32 should be put inside NoiseGen
 }
