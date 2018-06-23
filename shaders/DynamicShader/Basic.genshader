@@ -4,7 +4,7 @@
 <layout>layout(location = 1) in vec2 uv_coords;</>
 <layout>layout(location = 2) in vec3 normals;</>
 <out>out vec3 v_normal;</>
-<out>out vec4 v_color;</>
+//<out>out vec4 v_color;</>
 <out>out vec3 v_vertex;</>
 <out>out vec2 uv;</>
 <uniform>uniform mat4 u_MVP;</>
@@ -28,7 +28,7 @@
 
 <in>in vec3 v_normal;</>
 <in>in vec3 v_vertex;</>
-<in>in vec4 v_color;</>
+//<in>in vec4 v_color;</>
 <in>in vec2 uv;</>
 
 <uniform>uniform float u_Ni;</>
@@ -41,10 +41,10 @@
 <calcColor>
 	vec3 ambient_color = u_Ka * u_Kd;
 
-  	vec3 diffuse_color = vec3(v_color) * cos_angle;
+  	vec3 diffuse_color = u_Kd * cos_angle;
   	vec3 reflection = 2.0 * dot(n, to_light) * n - to_light;
 
-  	vec3 to_camera = -1.0 * v_vertex;
+  	vec3 to_camera = 1.0 * v_vertex;
   	reflection = normalize( reflection );
 	to_camera = normalize( to_camera );
 	cos_angle = dot(reflection, to_camera);
@@ -57,7 +57,7 @@
 		diffuse_color = diffuse_color * (1.0 - cos_angle);
 	}
 	vec3 colorPhong = (ambient_color + diffuse_color + specular_color);
-	color = vec4(colorPhong, v_color.a);	
+	color = vec4(colorPhong, vec4(u_Kd, 1.0).a);
 </>
 
 <main>

@@ -144,16 +144,16 @@ void ShaderGenerator::createVertexShader(std::ofstream &file)
 	addLine(file, m_Uniform[VERTEX]);
 
 	//On ajoute u_Kd
-	if (m_DynamicUniform[0])
+	/*if (m_DynamicUniform[0])
 		addLine(file, "uniform sampler2D " + m_UniformsTexturesList[0] + ";");
 	else
 		addLine(file, "uniform " + m_UniformsTypeList[0] + " " + m_UniformsList[0] + ";");
-
+*/
 	addLine(file, "void main(){");
 	addLine(file, m_MainContent[VERTEX]);
-	if (m_DynamicUniform[0])
-		addLine(file, "\tvec3 " + m_UniformsList[0] + " = texture( " + m_UniformsTexturesList[0] + ", uv).rgb;");
-	addLine(file, "\tv_color = vec4(u_Kd, 1.0);");
+	/*if (m_DynamicUniform[0])
+		addLine(file, "\tvec3 " + m_UniformsList[0] + " = texture( " + m_UniformsTexturesList[0] + ", uv).rgb;");*/
+	//addLine(file, "\tv_color = vec4(u_Kd, 1.0);");
 	addLine(file, "}");
 
 }

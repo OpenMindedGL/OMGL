@@ -118,6 +118,8 @@ void Object::LoadObject(std::string pathObj, bool reverse)
 		else if (strcmp(lineHeader, "vt") == 0) {
 			glm::vec2 vertex;
 			fscanf(file, "%f %f\n", &vertex.x, &vertex.y);
+			//vertex.x = 1 - vertex.x;
+			vertex.y = 1 - vertex.y;
 			vt.push_back(vertex);
 		}
 
@@ -137,16 +139,10 @@ void Object::LoadObject(std::string pathObj, bool reverse)
 					&vertexIndex[1], &uvIndex[1], &normalIndex[1],
 					&vertexIndex[2], &uvIndex[2], &normalIndex[2]);
 				for (int i = 0; i < 3; i++) {
-					//r = contains(v[vertexIndex[i] - 1], vt[uvIndex[i] - 1], vn[normalIndex[i] - 1]);
-					//if (r == -1) {
 					this->m_Mesh->GetVertices()->push_back(Vertexun(
 						v[vertexIndex[i] - 1], vt[uvIndex[i] - 1], vn[normalIndex[i] - 1]
 					));
 					m_Mesh->GetIndices()->push_back(++it);
-					//}
-					//else {
-						//m_Mesh->GetIndices()->push_back(r);
-					//}
 				}
 			}
 			else {
@@ -156,16 +152,10 @@ void Object::LoadObject(std::string pathObj, bool reverse)
 					&vertexIndex[2], &normalIndex[2]);
 
 				for (int i = 0; i < 3; i++) {
-					//r = contains(v[vertexIndex[i] - 1], glm::vec2(1), vn[normalIndex[i] - 1]);
-					//if (r == -1) {
 					m_Mesh->GetVertices()->push_back(Vertexun(
 						v[vertexIndex[i] - 1], glm::vec2(1), vn[normalIndex[i] - 1]
 					));
 					m_Mesh->GetIndices()->push_back(++it);
-					//}
-					//else {
-						//m_Mesh->GetIndices()->push_back(r);
-					//}
 				}
 			}
 		}

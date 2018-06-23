@@ -133,7 +133,7 @@ int main(void) {
 		/*t.load(glm::vec2(pos.x,pos.z));
 		renderer.Draw(t);*/
 		renderer.Draw(o);
-		o.RotationDeg(vec3(0.0f, 0.3f, 0.0f));
+		//o.RotationDeg(vec3(0.0f, 0.3f, 0.0f));
 
 		/*renderer.Draw(c);
 		c.RotationDeg(vec3(0.3f, 0.0f, 0.0f));*/

@@ -4,13 +4,11 @@ layout(location = 0) in vec3 vPos;
 layout(location = 1) in vec2 uv_coords;
 layout(location = 2) in vec3 normals;
 out vec3 v_normal;
-out vec4 v_color;
 out vec3 v_vertex;
 out vec2 uv;
 uniform mat4 u_MVP;
 uniform mat4 u_M;
 uniform mat4 u_V;
-uniform vec3 u_Kd;
 void main(){
 	uv = uv_coords;
 	vec3 LightPosition_worldspace = vec3(-10.0f,40.0f,-10.0f);
@@ -19,14 +17,12 @@ void main(){
 	v_normal = ( u_V * u_M * vec4(normals, 0)).xyz;
 	gl_Position =  u_MVP * vec4(vPos,1);	
 
-	v_color = vec4(u_Kd, 1.0);
 }
 #shader fragment
 #version 330 core
 layout (location = 0) out vec4 color;
 in vec3 v_normal;
 in vec3 v_vertex;
-in vec4 v_color;
 in vec2 uv;
 uniform float u_Ni;
 uniform float u_Ke;
@@ -45,10 +41,10 @@ void main(){
 
 	vec3 lightColor = vec3(0.8f);
 	vec3 ambient_color = u_Ka * u_Kd;
-  	vec3 diffuse_color = vec3(v_color) * cos_angle;
+  	vec3 diffuse_color = u_Kd * cos_angle;
   	vec3 reflection = 2.0 * dot(n, to_light) * n - to_light;
 
-  	vec3 to_camera = -1.0 * v_vertex;
+  	vec3 to_camera = 1.0 * v_vertex;
   	reflection = normalize( reflection );
 	to_camera = normalize( to_camera );
 	cos_angle = dot(reflection, to_camera);
@@ -61,6 +57,6 @@ void main(){
 		diffuse_color = diffuse_color * (1.0 - cos_angle);
 	}
 	vec3 colorPhong = (ambient_color + diffuse_color + specular_color);
-	color = vec4(colorPhong, v_color.a);	
+	color = vec4(colorPhong, vec4(u_Kd, 1.0).a);
 
 }
