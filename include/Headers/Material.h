@@ -90,6 +90,8 @@ public :
 	inline glm::vec3 GetKe() { return m_Ke; }
 	inline float GetNi() { return m_Ni; }
 	inline float GetD() { return m_D; }
+	inline Texture* GetTexture() { return m_Texture; }
+	inline Shader* GetShader() { return m_Shader; }
 	inline unsigned int GetId() { return m_Id; }
 	inline Texture* GetTexture() { return m_Texture; }
 	inline Texture* GetMapKd() { return m_MapKd; }

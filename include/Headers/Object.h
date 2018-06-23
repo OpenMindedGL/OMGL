@@ -30,10 +30,10 @@ private :
 protected : 
 
 	Mesh<Vertexun> * m_Mesh;
-	std::vector<Material*> m_Materials;
 	std::map<unsigned int, unsigned int> * m_ListMat;
 
 public :
+	std::vector<Material*> m_Materials;
 	Object();
 	Object(Mesh<Vertexun> * m);
 	Object(Mesh<Vertexun> * m, Material * mat);

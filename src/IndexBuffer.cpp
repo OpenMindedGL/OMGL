@@ -6,8 +6,8 @@ IndexBuffer::IndexBuffer()
 {
 }
 
-IndexBuffer::IndexBuffer(const void * data, unsigned int count)
-	: m_Count(count)
+IndexBuffer::IndexBuffer(const void * d, unsigned int count)
+	: m_Count(count), data(d)
 {
 	GLCall(glGenBuffers(1, &m_RenderID));
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RenderID));
@@ -27,4 +27,11 @@ void IndexBuffer::Bind() const
 void IndexBuffer::Unbind() const
 {
 	GLCall(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0));
+}
+
+void IndexBuffer::Upload(unsigned int offset, unsigned int c){
+        if(c == 0)
+          c = m_Count;
+        Bind();
+	GLCall(glBufferSubData(GL_ELEMENT_ARRAY_BUFFER, offset*sizeof(unsigned int), c*sizeof(unsigned int), data));
 }

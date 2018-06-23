@@ -10,8 +10,8 @@ Material::Material(std::string name) : m_Name(name), m_Id(++NBINSTANCES)
 Material::Material(Texture * texture, Shader * shader) :
 	m_Texture(texture), m_Id(++NBINSTANCES)
 {
-	m_Shader = shader;
-	//m_Texture->LinkToShader(m_Shader);
+  if(m_Texture && m_Shader)
+    m_Texture->LinkToShader(m_Shader);
 }
 
 Material::Material(float * color) 

@@ -10,6 +10,7 @@ Vertex::Vertex(float x, float y, float z):
 {}
 
 Vertex::~Vertex(){}
+Vertex::Vertex(){}
 unsigned int Vertex::nbattrib = 1;
 
 
@@ -22,5 +23,6 @@ unsigned int Vertexu::nbattrib = 2;
 Vertexun::Vertexun(glm::vec3 p, glm::vec2 u, glm::vec3 n)
   : Vertex(p), uv(u), normal(n) 
 {}
+Vertexun::Vertexun(){}
 Vertexun::~Vertexun(){}
 unsigned int Vertexun::nbattrib = 3;

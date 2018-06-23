@@ -6,6 +6,7 @@ class IndexBuffer {
 private:
 	unsigned int m_RenderID;
 	unsigned int m_Count;
+        const void* data;
 
 public:
 
@@ -17,5 +18,7 @@ public:
 	void Unbind() const;
 
 	inline unsigned int GetCount() const { return m_Count;  }
+	inline void SetCount(unsigned int c) { m_Count = c;  }
+        void Upload(unsigned int offset = 0, unsigned int c = 0);
 };
 #endif
