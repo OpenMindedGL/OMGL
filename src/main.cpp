@@ -104,7 +104,7 @@ int main(void){
     //printf("x:%f y:%f \n",pos.x,pos.z);    
 
 
-    t.Update(p);
+//    t.Update(p);
     renderer.Draw(t);
 
 	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
