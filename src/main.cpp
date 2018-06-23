@@ -139,7 +139,7 @@ int main(void) {
 		p = glm::i32vec2(pos.x,pos.z);
 		//printf("x:%f y:%f \n",pos.x,pos.z);    
 
-	    //t.Update(p);
+	    t.Update(p);
 		renderer.Draw(t);
 
 

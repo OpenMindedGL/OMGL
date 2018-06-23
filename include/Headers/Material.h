@@ -27,14 +27,9 @@ private :
 	glm::vec3 m_Ks; 
 	glm::vec3 m_Ke;
 
-	Shader * m_Shader;
+	Shader * m_Shader = NULL;
 
-	Texture * m_Texture;
-	Texture * m_MapKd;
-	Texture * m_MapKs;
-	Texture * m_MapKa;
-	Texture * m_MapNs;
-	Texture * m_MapD;
+	Texture * m_Texture = NULL,  * m_MapKd = NULL,  *m_MapKs = NULL,  *m_MapKa = NULL,  *m_MapNs = NULL,  *m_MapD = NULL;
 
 	std::vector<bool> m_DynamicUniforms = { false, false, false, false, false };
 	
