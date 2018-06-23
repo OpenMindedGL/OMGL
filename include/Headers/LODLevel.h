@@ -14,6 +14,7 @@ class Terrain;
 #include "Terrain.h"
 #include "DynamicHeightMap.h"
 #include "Sampler.h"
+#include <math.h>
 
 class LODLevel { 
 
@@ -73,17 +74,17 @@ class LODLevel {
     void MakeTrimObj(glm::i32vec2& pos, glm::vec3& rot);
     void MakeSeamObj();
     void PlaceTrim();
-    int Load();
+    //int Load();
 
     void ColorDebug();
 
   public:
 
-    void GridIndices(glm::i32vec2& e, Mesh<Vertexun>& m);
+    //void GridIndices(glm::i32vec2& e, Mesh<Vertexun>& m);
     static void GenMeshes(unsigned int size);
     void Update(glm::i32vec2 center);
     LODLevel(unsigned int l, glm::vec2& center, Terrain* t);
-    int GetIndex(glm::i32vec2& p);
+    //int GetIndex(glm::i32vec2& p);
 
 
     // getter

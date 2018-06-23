@@ -3,6 +3,9 @@
 #include "Texture.h"
 #include "Shader.h"
 #include "Cubemap.h"
+#include "ShaderGen.h"
+
+#define BASICSHADER "shaders/Basic.shader"
 
 class Material {
 
@@ -10,36 +13,49 @@ private :
 	
 	static unsigned int NBINSTANCES;
 
-	unsigned int m_Id;
 	std::string m_Name;
+
+	unsigned int m_Id;
+	unsigned int m_illum;
+
 	float m_Ns;
 	float m_Ni;
 	float m_D;
+
 	glm::vec3 m_Ka;
 	glm::vec3 m_Kd;
 	glm::vec3 m_Ks; 
-	glm::vec3 m_Ke; 
-	unsigned int m_illum;
-	Texture * m_Texture;
-	Shader * m_Shader;
+	glm::vec3 m_Ke;
 
+	Shader * m_Shader = NULL;
+
+	Texture * m_Texture = NULL,  * m_MapKd = NULL,  *m_MapKs = NULL,  *m_MapKa = NULL,  *m_MapNs = NULL,  *m_MapD = NULL;
+
+	std::vector<bool> m_DynamicUniforms = { false, false, false, false, false };
+	
 public :
 	Material(std::string name);
-	Material(Texture * texture = NULL, Shader * shader = NULL);
-        inline Material(std::string texture, std::string shader) : Material(new Texture(texture), new Shader(shader)) {}
-        inline Material(Shader * shader) : Material(NULL, shader) {}
+	Material(Texture * texture = NULL, Shader * shader = new Shader(BASICSHADER));
+	Material(float * color);
+    inline Material(std::string texture, std::string shader) : Material(new Texture(texture), new Shader(shader)) {}
+    inline Material(Shader * shader) : Material(NULL, shader) {}
 
+
+	void GenerateShader(std::string shadersPath, std::string genShaderPath);
 	inline void SetShader(const std::string path) { SetShader(new Shader(path)); }
 	void SetShader(Shader * shader);
-	void SetTexture(Cubemap * cubemap);
+	
+	//void SetTexture(Cubemap * cubemap);
 	void SetTexture(Texture * texture);
+	
+	/*void LoadTexture(const std::string path, const std::string name, unsigned int slot = 0);
+	void LoadTexture(const std::string path);*/
 
-	void LoadTexture(const std::string path, const std::string name, unsigned int slot = 0);
-	void LoadTexture(const std::string path);
 	void LinkTexture(const std::string& name, unsigned int slot);
 	void SetShaderUniformMat4f(const std::string name, glm::mat4 mvp);
-	void SetUniforms();
 	void Init(std::string shaderpath);
+	void Init();
+	void BindTextures();
 	void Bind();
 	void Unbind();
 
@@ -53,6 +69,12 @@ public :
 	inline void SetNi(float ni) { m_Ni = ni; }
 	inline void SetD(float d) { m_D = d; }
 	inline void SetIllum(unsigned int illum) { m_illum = illum; }
+	//inline void SetTexture(std::string path) { m_Texture = new Texture(path); }
+	inline void SetMapKd(std::string path) { m_MapKd = new Texture(path); }
+	inline void SetMapKs(std::string path) { m_MapKs = new Texture(path); }
+	inline void SetMapKa(std::string path) { m_MapKa = new Texture(path); }
+	inline void SetMapNs(std::string path) { m_MapNs = new Texture(path); }
+	inline void SetMapD(std::string path) { m_MapD = new Texture(path); }
 
 	//Getters
 	inline std::string GetName() { return m_Name; }
@@ -66,5 +88,11 @@ public :
 	inline Texture* GetTexture() { return m_Texture; }
 	inline Shader* GetShader() { return m_Shader; }
 	inline unsigned int GetId() { return m_Id; }
+	inline Texture* GetMapKd() { return m_MapKd; }
+	inline Texture* GetMapKs() { return m_MapKs; }
+	inline Texture* GetMapKa() { return m_MapKa; }
+	inline Texture* GetMapNs() { return m_MapNs; }
+	inline Texture* GetMapD() { return m_MapD; }
+	inline std::vector<bool> & GetDynamicsUniforms() { return m_DynamicUniforms; }
 
 };

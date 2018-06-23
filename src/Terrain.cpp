@@ -22,7 +22,7 @@ Terrain::Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
   if((m_Size-3) % 4 != 0){
     printf("[WARNING] trying to make a LODLevel with a size-3 not dividable by 4, bad things gonna happend, you've been warned\n");
   }
-  m_Shader =new Shader("shaders/Terrain.shader");
+  m_Shader = new Shader("shaders/Terrain.shader");
   int size = s+2;
 
   LODLevel::GenMeshes(m_Size);   

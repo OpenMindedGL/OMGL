@@ -37,31 +37,45 @@ void Renderer::Draw(Object& object)
 		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
         //ugly hack 
         //TO BE FIXED
-	object.GetMaterials().at(0)->SetShaderUniformMat4f("u_VP", m_Camera->GetProj() * m_Camera->GetView());
+		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_VP", m_Camera->GetProj() * m_Camera->GetView());
 	}
 
 	//If severals mtl
 	if (object.GetListMat()->size() > 1) {
+		object.GetMesh()->Bind();
 		std::map<unsigned int, unsigned int>::iterator it = object.GetListMat()->begin();
 		unsigned int tmp = 0;
+		int id;
 		while (true) {
 			//OBEJCT.GETMATERIALS.SETUNIFORM(it->second...)
-			object.GetMaterials().at(it->second)->SetUniforms();
+			id = it->second;
+			object.GetMaterials().at(id)->GetShader()->Bind();
+			object.GetMaterials().at(id)->SetShaderUniformMat4f("u_MVP", mvp);
+			object.GetMaterials().at(id)->SetShaderUniformMat4f("u_M", object.GetModelMatrix());
+			object.GetMaterials().at(id)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
+			object.GetMaterials().at(id)->BindTextures();
 			++it;
 			GLCall(glDrawElements(
 				object.GetMesh()->GetRendererType(), //type
-				(it == object.GetListMat()->end() ? object.GetMesh()->GetIndexBuffer().GetCount() - tmp: it->first - tmp + 1),//count
+				(it == object.GetListMat()->end() ? object.GetMesh()->GetIndexBuffer().GetCount() - tmp : it->first - tmp + 1),//count
 				GL_UNSIGNED_INT,
 				(const void *)(tmp * sizeof(unsigned int)) //offset indice 
 			));
+			object.GetMaterials().at(id)->Unbind();
 			if (it == object.GetListMat()->end()) break;
 			tmp = it->first + 1;
 		}
+		object.GetMesh()->Unbind();
 	}
 	else {
+		object.Bind();
+		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_MVP", mvp);
+		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_M", object.GetModelMatrix());
+		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
+		object.GetMaterials().at(0)->BindTextures();
 		GLCall(glDrawElements(object.GetMesh()->GetRendererType(), object.GetMesh()->GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
+		object.Unbind();
 	}
-	object.Unbind();
 }
 
 void Renderer::Draw(std::vector<Object>& objects) {

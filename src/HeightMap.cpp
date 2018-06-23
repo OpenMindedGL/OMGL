@@ -69,7 +69,7 @@ void HeightMap::Gen(glm::i32vec2& base, glm::vec2& step) {
 }
 
 
-Texture* HeightMap::MakeNormalMap(){
+//Texture* HeightMap::MakeNormalMap(){
   //u is one uint size, ie 1.0/texture size
   /*vec2 offsets[4];
   offsets[0] = uv + vec2(-u, 0);
@@ -89,7 +89,7 @@ Texture* HeightMap::MakeNormalMap(){
   vec3 vb = normalize( vec3(_step.yx, hts[3]-hts[2]) );
 
   return cross(va,vb).rbg; //you may not need to swizzle the normal*/
-}
+//}
 
 // to be put in NoiseTexture eventually
 float HeightMap::GetHeight(glm::i32vec2 p){

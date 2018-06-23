@@ -2,6 +2,10 @@
 #include "Debug.h"
 #include "Log.h"
 #include "Sampler.h"
+
+#define _USE_MATH_DEFINES
+#include <math.h>
+
 unsigned int** LODLevel::pre2D1D;
 
 Mesh<Vertexun> LODLevel::m_Tile;
@@ -62,23 +66,23 @@ void LODLevel::ColorDebug(){
   Material* blue = new Material(m_HeightMap, new Shader("shaders/Object.shader") );
   blue->SetKa(glm::vec3(0.0f,0.0f,0.6f));
   blue->Bind();
-  blue->SetUniforms();
+  blue->BindTextures();
   Material* lightblue = new Material(m_HeightMap, new Shader("shaders/Object.shader") );
   lightblue->SetKa(glm::vec3(0.0f,0.0f,0.3f));
   lightblue->Bind();
-  lightblue->SetUniforms();
+  lightblue->BindTextures();
   Material* red = new Material(m_HeightMap, new Shader("shaders/Object.shader") );
   red->SetKa(glm::vec3(1.0f,0.0f,0.0f));
   red->Bind();
-  red->SetUniforms();
+  red->BindTextures();
   Material* green = new Material(m_HeightMap, new Shader("shaders/Object.shader") );
   green->SetKa(glm::vec3(0.0f,1.0f,0.0f));
   green->Bind();
-  green->SetUniforms();
+  green->BindTextures();
   Material* yellow = new Material(m_HeightMap, new Shader("shaders/Object.shader") );
   yellow->SetKa(glm::vec3(1.0f,1.0f,0.0f));
   yellow->Bind();
-  yellow->SetUniforms();
+  yellow->BindTextures();
   bool isFinestLevel = m_Level == m_Terrain->GetNbLevel()-1;
   for(unsigned int i=0; i < m_TileObjs.size(); i++){
     m_TileObjs[i]->m_Materials.clear();
@@ -124,7 +128,7 @@ void LODLevel::PlaceTrim(){
   glm::vec3 po(m_NewActiveR.x,0.0f,m_NewActiveR.y);
   unsigned int trimLength = (m_Size-1)*m_UnitSize;
   if(place == glm::i32vec2(1,0)){
-    rot.y = 3*M_PI/2;
+    rot.y = 3* M_PI /2;
     pos.x += trimLength;
     pos.y-=m_UnitSize;
     po.z-=m_UnitSize;

@@ -32,7 +32,6 @@ void main(){
 
   normal = ( u_V * u_M * vec4(normals,0)).xyz; 
 
-
 }
 
 #shader fragment

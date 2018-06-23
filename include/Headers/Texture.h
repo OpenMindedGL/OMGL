@@ -42,7 +42,7 @@ class Texture
 
     unsigned int LoadDDS(const std::string& path){ return LoadDDS(path,m_Target); }
 
-    unsigned int LoadDDS() {  return LoadDDS(m_FilePath); }
+    unsigned int LoadDDS() { return LoadDDS(m_FilePath); }
     unsigned int LoadOther() { return LoadOther(m_FilePath); }
 
     void Make(unsigned char * buffer);
@@ -110,6 +110,7 @@ class Texture
 
       inline int GetWidth() const { return m_Width; }
       inline int GetHeight() const { return m_Height; }
+	  inline std::string GetfilePath() const { return m_FilePath; }
 
       void SavePng(std::string filepath);
 

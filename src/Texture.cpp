@@ -132,7 +132,6 @@ unsigned int Texture::LoadOther(const std::string& path){
   }
   printf("[INFO] Loaded texture file %s\nwidth:%d height:%d channels originally:%d channels now:%d\n",path.c_str(),m_Width, m_Height, c, m_Channels);
 
-
   return 1;
 }
 
@@ -167,7 +166,7 @@ void Texture::Upload(unsigned int target, unsigned int inFmt, unsigned int fmt){
     }
   }
   GLCall(glTexImage2D(target, 0, inFormat, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, m_LocalBuffer));
-  stbi_image_free(m_LocalBuffer);
+  //stbi_image_free(m_LocalBuffer);
   // Return the ID of the texture we just created
 }
 
@@ -279,8 +278,6 @@ unsigned int Texture::LoadDDS(const std::string& path, unsigned int target){
   printf("[INFO] Loaded texture file %s\nwidth:%d height:%d mipmapcount:%d\n",path.c_str(),width, height, mipMapCount);
 
   return 1;
-
-
 }
 
 

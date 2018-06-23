@@ -22,7 +22,7 @@ private:
 	float m_InitialFoV;
 	float m_Speed;
 	float m_MouseSpeed;
-
+	bool m_DisplayType;
 	glm::vec3 m_Position;
 
 	glm::mat4 m_Model;
