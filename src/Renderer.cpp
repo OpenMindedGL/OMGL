@@ -37,7 +37,7 @@ void Renderer::Draw(Object& object)
 		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
         //ugly hack 
         //TO BE FIXED
-	object.GetMaterials().at(0)->SetShaderUniformMat4f("u_VP", m_Camera->GetProj() * m_Camera->GetView());
+		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_VP", m_Camera->GetProj() * m_Camera->GetView());
 	}
 
 	//If severals mtl

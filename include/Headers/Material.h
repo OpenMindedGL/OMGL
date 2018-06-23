@@ -93,13 +93,11 @@ public :
 	inline Texture* GetTexture() { return m_Texture; }
 	inline Shader* GetShader() { return m_Shader; }
 	inline unsigned int GetId() { return m_Id; }
-	inline Texture* GetTexture() { return m_Texture; }
 	inline Texture* GetMapKd() { return m_MapKd; }
 	inline Texture* GetMapKs() { return m_MapKs; }
 	inline Texture* GetMapKa() { return m_MapKa; }
 	inline Texture* GetMapNs() { return m_MapNs; }
 	inline Texture* GetMapD() { return m_MapD; }
 	inline std::vector<bool> & GetDynamicsUniforms() { return m_DynamicUniforms; }
-	inline Shader* GetShader() { return m_Shader; }
 
 };

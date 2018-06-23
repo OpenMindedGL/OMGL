@@ -98,29 +98,54 @@ int main(void) {
 
 	glm::vec3 pos = renderer.getCameraPosition();
 
-  glm::vec3 pos = renderer.getCameraPosition();
-  glm::i32vec2 p;
+	glm::i32vec2 p;
   
-  Terrain t(glm::vec2(pos.x, pos.z));
+	Terrain t(glm::vec2(pos.x, pos.z));
 
-  Skybox s;
+	Skybox s;
+
+
+
+	//Cube cube;
+	//Object c(&cube, OMGL_CYAN);
+	//c.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
+	//Object c(&cube, "shaders/Test.shader");
+
+	//c.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
+	//Object o("res/objects/bugatti/bugatti2.obj", "res/objects/bugatti/bugatti.mtl", false);
+	//Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", "res/objects/dodge/", true, GL_TRIANGLES);
+	//Object o("res/objects/falcon/falcon.obj", "res/objects/falcon/falcon.mtl", "res/objects/falcon/", false, GL_TRIANGLES);
+
+	//Object o("res/objects/Mill/Mill.obj", OMGL_CYAN, false);
+	//Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl", false);
+
+	//o.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
+
+	//o.SetTextureDirectory("res/objects/dodge/");
+	//o.LoadTexturesMap();
+	//o.LoadTexturesMap("res/objects/dodge/");
 
 	//o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
+
 
 	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
 	{
 		renderer.Clear();
 
-    renderer.Clear();
-    renderer.UpdateCamera();
+		renderer.Clear();
+		renderer.UpdateCamera();
 
-    pos = renderer.getCameraPosition();
-    p = glm::i32vec2(pos.x,pos.z);
-    //printf("x:%f y:%f \n",pos.x,pos.z);    
+		pos = renderer.getCameraPosition();
+		p = glm::i32vec2(pos.x,pos.z);
+		//printf("x:%f y:%f \n",pos.x,pos.z);    
+
+	    //t.Update(p);
+		renderer.Draw(t);
 
 
-//    t.Update(p);
-    renderer.Draw(t);
+		/*renderer.Draw(o);
+		o.RotationDeg(vec3(0.0f, 0.3f, 0.0f));*/
+
 
 		// Always draw last	
 		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
