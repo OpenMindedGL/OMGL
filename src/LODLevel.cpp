@@ -1,6 +1,7 @@
 #include "LODLevel.h"
 #include "Debug.h"
 #include "Log.h"
+#include "Sampler.h"
 unsigned int** LODLevel::pre2D1D;
 
 Mesh<Vertexun> LODLevel::m_Tile;
@@ -43,6 +44,10 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
 
   int size = m_Size+HEIGHT_MAP_EXCESS; // tex coords
   m_HeightMap = new DynamicHeightMap(m_Terrain->GetNoise(),size, m_UnitSize, glm::vec2(1.0f/64.0f), m_NewActiveR-glm::i32vec2(HEIGHT_MAP_EXCESS*m_UnitSize));
+  m_HeightMap->SetInterp(GL_NEAREST);
+
+  m_HeightMapLinear = new Sampler("u_HeightMapLinear", 1, GL_LINEAR);
+  m_HeightMapLinear->LinkToShader(m_Terrain->GetShader());
 
   m_Material = new Material(m_HeightMap,m_Terrain->GetShader());
 

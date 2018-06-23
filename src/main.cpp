@@ -91,7 +91,7 @@ int main(void){
   Terrain t(glm::vec2(pos.x, pos.z));
 
   Skybox s;
-  
+
 
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {

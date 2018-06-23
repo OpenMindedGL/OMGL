@@ -13,6 +13,7 @@ class Terrain;
 #include "NoiseGen.h"
 #include "Terrain.h"
 #include "DynamicHeightMap.h"
+#include "Sampler.h"
 
 class LODLevel { 
 
@@ -52,6 +53,7 @@ class LODLevel {
     Terrain * m_Terrain;
     Material * m_Material;
     DynamicHeightMap* m_HeightMap;
+    Sampler* m_HeightMapLinear;
 
     // 
     unsigned int m_Level;
@@ -92,6 +94,7 @@ class LODLevel {
     inline std::vector<Object*>& GetObjs() { return m_Objs; }
     inline int GetUnitSize() { return m_UnitSize; }
     inline DynamicHeightMap* GetHeightMap() { return m_HeightMap; }
+    inline Sampler* GetHeightMapLinear() { return m_HeightMapLinear; }
 };
 
 #endif

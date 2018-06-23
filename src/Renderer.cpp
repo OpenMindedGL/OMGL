@@ -133,6 +133,9 @@ void Renderer::Draw(Terrain& t)
     t.GetShader()->SetUniform2i("torBase",t.GetLevel(i).GetHeightMap()->GetTorBase());
     t.GetShader()->SetUniform2i("torBegin",t.GetLevel(i).GetHeightMap()->GetTorBegin());
     t.GetShader()->SetUniform1i("u_UnitSize",t.GetLevel(i).GetUnitSize());
+    t.GetLevel(i).GetHeightMap()->Bind(1);
+    t.GetLevel(i).GetHeightMapLinear()->Bind(1);
+    t.GetLevel(i).GetHeightMap()->Bind(0);
     //
     
     Draw(t.GetLevel(i));

@@ -11,14 +11,15 @@
 Texture::Texture( const std::string& path, std::string name, unsigned char slot, unsigned int interp, unsigned int wrap, bool genMipMaps, unsigned int nbmipmaps ) : 
   Texture(0,0,name,slot,interp,wrap,genMipMaps,nbmipmaps)
 {
+  m_FilePath = path;
   GLCall(glGenTextures(1, &m_RendererID));
   Bind(); 
   switch (Texture::ParseFormat(path)) {
-    case TEX_DDS:
-      LoadOther();
-      GLCall(glTexImage2D(m_Target, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
-      break;
     case TEX_OTHER:
+      LoadOther();
+      Upload();
+      break;
+    case TEX_DDS:
       LoadDDS();
       break;
   }
@@ -65,7 +66,7 @@ void Texture::Make(unsigned char* buffer) {
   m_LocalBuffer = buffer;
   GLCall(glGenTextures(1, &m_RendererID));
   Bind(m_Slot);
-  GLCall(glTexImage2D(m_Target, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
+  Upload();
   SetParameters();
 
   if(m_Height != m_Width){
@@ -121,29 +122,53 @@ unsigned int Texture::ParseFormat(const std::string& path){
 
 }
 
-unsigned int Texture::LoadOther(const std::string& path, unsigned int target){
+unsigned int Texture::LoadOther(const std::string& path){
   //stbi_set_flip_vertically_on_load(1);
-  m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_Channels, 4);
+  int c;
+  m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &c, m_Channels);
   if (m_LocalBuffer == NULL){
     printf("[ERROR] Could not load texture file %s\n%s\n",path.c_str(),stbi_failure_reason());
     return 0;
   }
-  printf("[INFO] Loaded texture file %s\nwidth:%d height:%d channels:%d\n",path.c_str(),m_Width, m_Height, m_Channels);
+  printf("[INFO] Loaded texture file %s\nwidth:%d height:%d channels originally:%d channels now:%d\n",path.c_str(),m_Width, m_Height, c, m_Channels);
 
 
-
-  GLCall(glTexImage2D(target, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
-
-
-  if (m_LocalBuffer)
-    stbi_image_free(m_LocalBuffer);
-  // Return the ID of the texture we just created
   return 1;
 }
 
 Texture::~Texture()
 {
 	GLCall(glDeleteTextures(-1, &m_RendererID));
+}
+
+void Texture::Upload(unsigned int target, unsigned int inFmt, unsigned int fmt){
+
+  if (!m_LocalBuffer){
+    printf("[ERROR] Could not upload texture (%d) %s, local buffer is empty\n",m_RendererID,m_FilePath.c_str());
+    return;
+  }
+
+  unsigned int inFormat = inFmt;
+  unsigned int format = fmt;
+  if(m_Channels != 4){
+    switch(m_Channels){
+      case 3:
+        inFormat = GL_RGB8;
+        format = GL_RGB;
+        break;
+      case 2:
+        inFormat = GL_RG8;
+        format = GL_RG;
+        break;
+      case 1:
+        inFormat = GL_R8;
+        format = GL_RED;
+        break;
+    }
+  }
+  GLCall(glTexImage2D(target, 0, inFormat, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, m_LocalBuffer));
+  stbi_image_free(m_LocalBuffer);
+  // Return the ID of the texture we just created
 }
 
 void Texture::Bind(unsigned int slot) const

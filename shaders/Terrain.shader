@@ -126,7 +126,8 @@ in vec2 pos;
 in float d1;
 
 //uniform sampler2D u_NormalMap;
-uniform sampler2D u_DefaultSampler;
+//uniform sampler2D u_DefaultSampler;
+uniform sampler2D u_HeightMapLinear;
 //out vec3 color;
 
 vec4 getnormals(sampler2D s, vec2 uv){
@@ -156,7 +157,7 @@ void main(){
   //vec3 norm = texture(u_NormalMap, uv).rgb;
 
   //vec3 normal = ( vec4(norm,0)).xzy; 
-  vec3 normal = getnormals(u_DefaultSampler, uv).xzy;
+  vec3 normal = getnormals(u_HeightMapLinear, uv).xzy;
 
 
   vec3 n = normalize( normal );

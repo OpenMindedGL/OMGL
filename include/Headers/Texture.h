@@ -15,6 +15,9 @@
 #define DEFAULT_TARGET GL_TEXTURE_2D
 #define DEFAULT_NB_MIPMAPS 0
 #define DEFAULT_GEN_MIPMAPS false
+#define DEFAULT_FORMAT GL_RGBA
+#define DEFAULT_INTERNAL_FORMAT GL_RGBA8
+#define DEFAULT_NB_CHANNELS 4
 
 
 class Texture 
@@ -35,10 +38,9 @@ class Texture
     unsigned int m_NbMipMaps; // 0 if has none
 
     unsigned int LoadDDS(const std::string& path, unsigned int target);
-    unsigned int LoadOther(const std::string& path, unsigned int target);
+    unsigned int LoadOther(const std::string& path);
 
     unsigned int LoadDDS(const std::string& path){ LoadDDS(path,m_Target); }
-    unsigned int LoadOther(const std::string& path){ LoadOther(path,m_Target); }
 
     unsigned int LoadDDS() {  LoadDDS(m_FilePath); }
     unsigned int LoadOther() { LoadOther(m_FilePath); }
@@ -54,7 +56,8 @@ class Texture
         unsigned int interp = DEFAULT_INTERP_VALUE,
         unsigned int wrap = DEFAULT_WRAP_VALUE,
         bool genMipMaps = DEFAULT_GEN_MIPMAPS,
-        unsigned int nbmipmaps = DEFAULT_NB_MIPMAPS
+        unsigned int nbmipmaps = DEFAULT_NB_MIPMAPS,
+        unsigned int channels = DEFAULT_NB_CHANNELS
         ) :
       m_Width(width),
       m_Height(height == 0 ? width : height),
@@ -63,7 +66,8 @@ class Texture
       m_Interp(interp),
       m_Wrap(wrap),
       m_GenMipMaps(genMipMaps),
-      m_NbMipMaps(nbmipmaps) { }
+      m_NbMipMaps(nbmipmaps),
+      m_Channels(channels) { }
 
   public: 
 
@@ -92,6 +96,9 @@ class Texture
 
       ~Texture();
 
+
+      void Upload(unsigned int target, unsigned int inFmt = DEFAULT_INTERNAL_FORMAT, unsigned int fmt = DEFAULT_FORMAT);
+      inline void Upload() { Upload(m_Target); }
 
       void Bind(unsigned int slot) const; 
       inline void Bind() const { Bind(m_Slot); }
