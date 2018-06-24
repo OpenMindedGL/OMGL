@@ -104,24 +104,5 @@ class NoiseBiome7 : public NoiseGen{
     float compute(float x, float y);
 };
 
-class NoiseMixBiome : public NoiseGen{
-  private:
-    std::vector<Biome>* myBiomes;
-    std::vector<FastNoise> m_Biomes;
-
-  public:
-    NoiseMixBiome(std::vector<Biome>* Biomes): NoiseGen(), {
-      for(unsigned int l = 1; glm::pow(2,l) <= Biomes.size(); l++){
-        FastNoise temp_noise(seed+l+(nbOctave*4));
-        temp_noise.SetNoiseType(FastNoise::SimplexFractal);
-        temp_noise.SetFractalOctaves(8);
-        temp_noise.SetFrequency(lacunarity * 0.01f * (1.0f/biomes_size_coef));
-        m_Biomes.push_back(temp_noise);
-      }
-    };
-    float compute(float x, float y);
-    int sign(float x);
-
-};
 
 #endif
