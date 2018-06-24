@@ -56,6 +56,7 @@ void main(){
   //vec4 vPosh = vPos;
   vec4 pos = round(u_M * vec4(vPos,1.0));
   vec4 posV = u_V * pos;
+  pp = pos.xz;
   float texsize = textureSize(u_DefaultSampler, 0).x;
   ivec2 wPos = ivec2(pos.x,pos.z);
   ivec2 tPos = ivec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
@@ -122,24 +123,49 @@ layout(location = 0) out vec4 color;
 in vec2 uv;
 //in vec3 normal;
 in vec3 lightdir;
-in vec2 pos;
+in vec2 pp;
 in float d1;
+uniform ivec2 base;
+uniform ivec2 torBase;
+uniform ivec2 torBegin;
+uniform int u_UnitSize;
 
 //uniform sampler2D u_NormalMap;
 //uniform sampler2D u_DefaultSampler;
 uniform sampler2D u_HeightMapLinear;
 //out vec3 color;
 
-vec4 getnormals(sampler2D s, vec2 uv){
-  const vec2 size = vec2(2,0.0);
-  const ivec3 off = ivec3(-1,0,1);
+vec4 getnormals(sampler2D s, vec2 pos){
+  vec2 size = vec2(u_UnitSize,0.0);
+  vec3 off = vec3(-u_UnitSize/2,0,u_UnitSize/2);
 
-  
+  float texsize = textureSize(s, 0).x;
+
+  vec2 wPos = vec2(pos.x,pos.y);
+  vec2 tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
+  vec2 uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
   float s11 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
-  float s01 = dot( textureOffset(s, uv, off.xy), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
-  float s21 = dot( textureOffset(s, uv, off.zy), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
-  float s10 = dot( textureOffset(s, uv, off.yx), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
-  float s12 = dot( textureOffset(s, uv, off.yz), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+
+  wPos = vec2(pos.x,pos.y)+off.xy;
+  tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
+  uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
+  float s01 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+
+  wPos = vec2(pos.x,pos.y)+off.zy;
+  tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
+  uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
+  float s21 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+
+  wPos = vec2(pos.x,pos.y)+off.yx;
+  tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
+  uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
+  float s10 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+
+  wPos = vec2(pos.x,pos.y)+off.yz;
+  tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
+  uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
+  float s12 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+
   vec3 va = normalize(vec3(size.xy,s21-s01));
   vec3 vb = normalize(vec3(size.yx,s12-s10));
   return vec4( cross(va,vb), s11 ); 
@@ -157,7 +183,7 @@ void main(){
   //vec3 norm = texture(u_NormalMap, uv).rgb;
 
   //vec3 normal = ( vec4(norm,0)).xzy; 
-  vec3 normal = getnormals(u_HeightMapLinear, uv).xzy;
+  vec3 normal = getnormals(u_HeightMapLinear, pp).xzy;
 
 
   vec3 n = normalize( normal );

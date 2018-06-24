@@ -186,9 +186,9 @@ void DynamicTexture::UpdateTexel(glm::i32vec2& p, glm::i32vec2& s, glm::i32vec2&
   
 }
 
-int DynamicTexture::GetIndex(glm::i32vec2& p){
-  glm::i32vec2 torPos = GetTorPos(p);
-  return torPos.y*m_Width+torPos.x;
+glm::i32vec2 DynamicTexture::GetIndex(glm::i32vec2& p){
+  glm::i32vec2 a = (p - m_TorBegin) / glm::i32vec2(m_TexelSize);
+  return GetTorPos(a);
 }
 
 glm::i32vec2 DynamicTexture::GetTorPos(glm::i32vec2& p){

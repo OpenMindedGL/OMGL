@@ -53,113 +53,123 @@ GLFWwindow* window;
 
 int init() {
 
-	srand((unsigned int)time(0));
+  srand((unsigned int)time(0));
 
-	if (!glfwInit())
-		return -1;
+  if (!glfwInit())
+    return -1;
 
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+  glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-	// Create a wubdower mode window and its OpenGL context 
-	window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World", NULL, NULL);
-	if (!window) {
-		glfwTerminate();
-		return -1;
-	}
+  // Create a wubdower mode window and its OpenGL context 
+  window = glfwCreateWindow(WIDTH, HEIGHT, "Hello World", NULL, NULL);
+  if (!window) {
+    glfwTerminate();
+    return -1;
+  }
 
-	// Make the window's context current
-	glfwMakeContextCurrent(window);
+  // Make the window's context current
+  glfwMakeContextCurrent(window);
 
-	glfwSwapInterval(1);
+  glfwSwapInterval(1);
 
-	// Needed by some drivers/hardware
-	glewExperimental = GL_TRUE;
+  // Needed by some drivers/hardware
+  glewExperimental = GL_TRUE;
 
-	if (glewInit() != GLEW_OK)
-		return -1;
-	//std::cout << "Error!" << std::endl;
+  if (glewInit() != GLEW_OK)
+    return -1;
+  //std::cout << "Error!" << std::endl;
 
-	std::cout << glGetString(GL_VERSION) << std::endl;
+  std::cout << glGetString(GL_VERSION) << std::endl;
 
-	GLCall(glEnable(GL_BLEND));
-	GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
-	// Enable depth test
-	GLCall(glEnable(GL_DEPTH_TEST));
-	// Accept fragment if it closer to the camera than the former one
-	GLCall(glDepthFunc(GL_LESS));
+  GLCall(glEnable(GL_BLEND));
+  GLCall(glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA));
+  // Enable depth test
+  GLCall(glEnable(GL_DEPTH_TEST));
+  // Accept fragment if it closer to the camera than the former one
+  GLCall(glDepthFunc(GL_LESS));
 }
 
 int main(void) {
 
-	init();
-	Renderer renderer(*window, WIDTH, HEIGHT);
+  init();
+  Renderer renderer(*window, WIDTH, HEIGHT);
 
-	glm::vec3 pos = renderer.getCameraPosition();
+  glm::vec3 pos = renderer.getCameraPosition();
 
-	glm::i32vec2 p;
-  
-	Terrain t(glm::vec2(pos.x, pos.z));
+  glm::i32vec2 p;
 
-	Skybox s;
+  Terrain t(glm::vec2(pos.x, pos.z));
 
-
-
-	//Cube cube;
-	//Object c(&cube, OMGL_CYAN);
-	//c.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
-	//Object c(&cube, "shaders/Test.shader");
-
-	//c.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
-	//Object o("res/objects/bugatti/bugatti2.obj", "res/objects/bugatti/bugatti.mtl", false);
-	//Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", "res/objects/dodge/", true, GL_TRIANGLES);
-	//Object o("res/objects/falcon/falcon.obj", "res/objects/falcon/falcon.mtl", "res/objects/falcon/", false, GL_TRIANGLES);
-
-	//Object o("res/objects/Mill/Mill.obj", OMGL_CYAN, false);
-	//Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl", false);
-
-	//o.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
-
-	//o.SetTextureDirectory("res/objects/dodge/");
-	//o.LoadTexturesMap();
-	//o.LoadTexturesMap("res/objects/dodge/");
-
-	//o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
+  Skybox s;
 
 
-	while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
-	{
-		renderer.Clear();
 
-		renderer.Clear();
-		renderer.UpdateCamera();
+  //Cube cube;
+  //Object c(&cube, OMGL_CYAN);
+  //c.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
+  //Object c(&cube, "shaders/Test.shader");
 
-		pos = renderer.getCameraPosition();
-		p = glm::i32vec2(pos.x,pos.z);
-		//printf("x:%f y:%f \n",pos.x,pos.z);    
+  //c.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
+  //Object o("res/objects/bugatti/bugatti2.obj", "res/objects/bugatti/bugatti.mtl", false);
+  //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", "res/objects/dodge/", true, GL_TRIANGLES);
+  //Object o("res/objects/falcon/falcon.obj", "res/objects/falcon/falcon.mtl", "res/objects/falcon/", false, GL_TRIANGLES);
 
-	    t.Update(p);
-		renderer.Draw(t);
+  //Object o("res/objects/Mill/Mill.obj", OMGL_CYAN, false);
+  //Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl", false);
+
+  //o.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
+
+  //o.SetTextureDirectory("res/objects/dodge/");
+  //o.LoadTexturesMap();
+  //o.LoadTexturesMap("res/objects/dodge/");
+
+  //o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
+
+  bool update = true;
+
+  while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
+  {
+    renderer.Clear();
+
+    renderer.Clear();
+    renderer.UpdateCamera();
+
+    pos = renderer.getCameraPosition();
+    p = glm::i32vec2(pos.x,pos.z);
+    //printf("x:%f y:%f \n",pos.x,pos.z);    
+    if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
+      //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      update = true;
+    }
+    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
+      //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+      update = false;
+    }
+
+    if(update)
+      t.Update(p);
+    renderer.Draw(t);
 
 
-		/*renderer.Draw(o);
-		o.RotationDeg(vec3(0.0f, 0.3f, 0.0f));*/
+    /*renderer.Draw(o);
+      o.RotationDeg(vec3(0.0f, 0.3f, 0.0f));*/
 
 
-		// Always draw last	
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-		renderer.Draw(s);
+    // Always draw last	
+    glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+    renderer.Draw(s);
 
-		/* Swap frint and back buffers */
-		glfwSwapBuffers(window);
+    /* Swap frint and back buffers */
+    glfwSwapBuffers(window);
 
-		/* Poll for and process envents */
-		glfwPollEvents();
+    /* Poll for and process envents */
+    glfwPollEvents();
 
-	}
-	//glDeleteTextures(1,c.GetTexture()->m_RendererID);
-	glfwTerminate();
-	return 0;
+  }
+  //glDeleteTextures(1,c.GetTexture()->m_RendererID);
+  glfwTerminate();
+  return 0;
 }
 

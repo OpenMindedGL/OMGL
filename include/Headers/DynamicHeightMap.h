@@ -20,12 +20,14 @@ private:
 
 protected:
 
+  DynamicHeightMap* m_Coarser = NULL;
+
 
 public:
 
   DynamicHeightMap( std::string path, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0)) : NoiseTexture(), DynamicTexture(), HeightMap(path, step, base) {} 
 
-  DynamicHeightMap( NoiseGen* n, unsigned int width, int texsize, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0)) : NoiseTexture(n,width,texsize,step,base), DynamicTexture(), HeightMap(n,width,texsize,step,base){ m_TexelSize = texsize ;m_TorBegin = m_Base; m_TorBase = glm::i32vec2(0);}
+  DynamicHeightMap( NoiseGen* n, unsigned int width, int texsize, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0), DynamicHeightMap* coarser = NULL) : NoiseTexture(n,width,texsize,step,base), DynamicTexture(), HeightMap(n,width,texsize,step,base), m_Coarser(coarser){ m_TexelSize = texsize ;m_TorBegin = m_Base; m_TorBase = glm::i32vec2(0); m_Coarser = coarser;}
 
 
   virtual void UpdateTexel(glm::i32vec2& p, glm::i32vec2& s, glm::i32vec2& t, std::vector<glm::u8vec4>& buffer);

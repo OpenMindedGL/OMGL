@@ -18,6 +18,7 @@ Texture::Texture( const std::string& path, std::string name, unsigned char slot,
     case TEX_OTHER:
       LoadOther();
       Upload();
+      stbi_image_free(m_LocalBuffer);
       break;
     case TEX_DDS:
       LoadDDS();
@@ -166,7 +167,6 @@ void Texture::Upload(unsigned int target, unsigned int inFmt, unsigned int fmt){
     }
   }
   GLCall(glTexImage2D(target, 0, inFormat, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, m_LocalBuffer));
-  //stbi_image_free(m_LocalBuffer);
   // Return the ID of the texture we just created
 }
 
