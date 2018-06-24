@@ -172,8 +172,6 @@ void DynamicTexture::UpdateSub(glm::i32vec2& s, glm::i32vec2& e){
   glm::i32vec2 p;
   std::vector<glm::u8vec4> toUpdateE;
   glm::i32vec2 b = size;
-  toUpdateE.clear();
-  toUpdateE.resize(size.y*size.x+size.x);
   int inc = (int) m_TexelSize;
   for(p.y=0 ; p.y < b.y ; p.y+=inc){
     for(p.x=0 ; p.x < b.x ; p.x+=inc){

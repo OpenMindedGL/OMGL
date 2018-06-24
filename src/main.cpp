@@ -127,7 +127,6 @@ int main(void) {
 
   //o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
 
-  bool update = true;
 
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
@@ -139,17 +138,7 @@ int main(void) {
     pos = renderer.getCameraPosition();
     p = glm::i32vec2(pos.x,pos.z);
     //printf("x:%f y:%f \n",pos.x,pos.z);    
-    if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS) {
-      //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      update = true;
-    }
-    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS) {
-      //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      update = false;
-    }
-
-    if(update)
-      t.Update(p);
+    t.Update(p);
     renderer.Draw(t);
 
 

@@ -3,7 +3,7 @@
 #include <vector>
 #include <stdio.h>
 
-bool Log::isOn = true;
+bool Log::isOn = false;
 
 void Log::PrintVertices(std::vector<Vertexun>& v){
 
