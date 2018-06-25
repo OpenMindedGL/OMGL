@@ -83,6 +83,7 @@ Object::Object(std::string pathObj, bool reverse) //GERER UN SHADER PAR DEFAUT !
 {
 	m_ListMat = new std::map<unsigned int, unsigned int>;
 	m_Mesh = new Mesh<Vertexun>;
+	m_Materials.push_back(new Material());
 	LoadObject(pathObj, reverse);
 }
 

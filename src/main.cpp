@@ -100,15 +100,14 @@ int main(void) {
 
   glm::i32vec2 p;
 
-  Terrain t(glm::vec2(pos.x, pos.z));
+  //Terrain t(glm::vec2(pos.x, pos.z));
 
   Skybox s;
 
+  Cube cube;
+ /* Object o(&cube, OMGL_BLUE);
+  o.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");*/
 
-
-  //Cube cube;
-  //Object c(&cube, OMGL_CYAN);
-  //c.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
   //Object c(&cube, "shaders/Test.shader");
 
   //c.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
@@ -116,10 +115,17 @@ int main(void) {
   //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", "res/objects/dodge/", true, GL_TRIANGLES);
   //Object o("res/objects/falcon/falcon.obj", "res/objects/falcon/falcon.mtl", "res/objects/falcon/", false, GL_TRIANGLES);
 
-  //Object o("res/objects/Mill/Mill.obj", OMGL_CYAN, false);
+
+  //TROUVER POURQUOI IL VEUT PAS AVEC UN SHADER PAR DEFAUT !
+  //TROUVER POURQUOI LE CUBE N'A PAS LA BONNE COULEUR
+  //TROUVER COMMENT FAIRE POUR QUE SI ON GENERATESHADERS PAS CA MARCHE QUAND MEME
+  //VOIR COMMENT MARCHENT LES NORMALESMAP
+  //COMMENCER A FAIRE LE CR :)
+
+  Object o("res/objects/Mill/Mill.obj", OMGL_BLUE);
   //Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl", false);
 
-  //o.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
+  o.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
 
   //o.SetTextureDirectory("res/objects/dodge/");
   //o.LoadTexturesMap();
@@ -138,12 +144,12 @@ int main(void) {
     pos = renderer.getCameraPosition();
     p = glm::i32vec2(pos.x,pos.z);
     //printf("x:%f y:%f \n",pos.x,pos.z);    
-    t.Update(p);
-    renderer.Draw(t);
+   // t.Update(p);
+    //renderer.Draw(t);
 
 
-    /*renderer.Draw(o);
-      o.RotationDeg(vec3(0.0f, 0.3f, 0.0f));*/
+    renderer.Draw(o);
+    //o.RotationDeg(vec3(0.0f, 0.3f, 0.0f));
 
 
     // Always draw last	
