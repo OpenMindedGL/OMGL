@@ -1,108 +1,51 @@
 #ifndef NoiseGen_H
 #define NoiseGen_H
+
 #include <vector>
-#include <glm/glm.hpp>
 
-#include "FastNoise.h"
 #include "YGen.h"
-#include "Biome.h"
 
+#define DEFAULT_NB_NOISES         3
+#define DEFAULT_NB_OCTAVES        8
+#define DEFAULT_LACUNARITY        2.0f
+#define DEFAULT_PERSISTENCE       0.5f
+#define DEFAULT_ZOOM              3.0f
+#define DEFAULT_SEED              62
 #define MAX_OCTAVES 10
 
 class NoiseGen : public virtual YGen {
 
   protected :
-
-    std::vector<FastNoise> simplex_fractal;
-    std::vector<FastNoise> simplex_fractal2;
-    std::vector<FastNoise> simplex_fractal3;
     
-    long long int seed;
-    unsigned char nbOctave;
-    float lacunarity;
-    float persistence;
-    float zoom;
-    float biomes_size_coef;
+    long long int m_Seed;
+    unsigned char m_Octaves;
+    float m_Lacunarity;
+    float m_Persistence;
+    float m_Zoom;
 
-    float compute1(float x, float y);
-    float compute4(float x, float y);
 
   public :
 
-    NoiseGen();
+    NoiseGen(
+        long long int seed = DEFAULT_SEED,
+        unsigned char nbOctaves = DEFAULT_NB_OCTAVES,
+        float lacunarity = DEFAULT_LACUNARITY,
+        float persistence = DEFAULT_PERSISTENCE,
+        float zoom = DEFAULT_ZOOM
+        ) :
+      m_Seed(seed),
+      m_Octaves(nbOctaves),
+      m_Lacunarity(lacunarity),
+      m_Persistence(persistence),
+      m_Zoom(zoom) {}
+
     float compute(float x, float y) = 0;
 
-    inline void    SetLacunarity(float a){  lacunarity= a; }; 
-    inline void    SetPersistence(float a){  persistence= a; }; 
-    inline void    SetZoom(float a){  zoom= a; }; 
+    inline void    SetLacunarity(float a){  m_Lacunarity= a; }; 
+    inline void    SetPersistence(float a){  m_Persistence= a; }; 
+    inline void    SetZoom(float a){  m_Zoom= a; }; 
 };
 
-class NoiseCloudVerso : public NoiseGen{
-  private:
-    std::vector<FastNoise> m_Biomes;
-  public:
-    NoiseCloudVerso(): NoiseGen(){
-      for(unsigned int l = 0; l < 3; l++){
-        FastNoise temp_noise(seed+l+(nbOctave*4));
-        temp_noise.SetNoiseType(FastNoise::SimplexFractal);
-        temp_noise.SetFractalOctaves(8);
-        temp_noise.SetFrequency(lacunarity * 0.01f * (1.0f/biomes_size_coef));
-        m_Biomes.push_back(temp_noise);
-      }
-    };
-    float compute(float x, float y);
-};
-
-class NoiseCloudRecto : public NoiseGen{
-  private:
-    std::vector<FastNoise> m_Biomes;
-  public:
-    NoiseCloudRecto(): NoiseGen(){
-      for(unsigned int l = 0; l < 3; l++){
-        FastNoise temp_noise(seed+l+(nbOctave*4));
-        temp_noise.SetNoiseType(FastNoise::SimplexFractal);
-        temp_noise.SetFractalOctaves(8);
-        temp_noise.SetFrequency(lacunarity * 0.01f * (1.0f/biomes_size_coef));
-        m_Biomes.push_back(temp_noise);
-      }
-    };
-    float compute(float x, float y);
-};
-
-class NoiseBiome1 : public NoiseGen{
-  public:
-    float compute(float x, float y);
-};
-
-class NoiseBiome2 : public NoiseGen{
-  public:
-    float compute(float x, float y);
-};
-
-class NoiseBiome3 : public NoiseGen{
-  public:
-    float compute(float x, float y);
-};
-
-class NoiseBiome4 : public NoiseGen{
-  public:
-    float compute(float x, float y);
-};
-
-class NoiseBiome5 : public NoiseGen{
-  public:
-    float compute(float x, float y);
-};
-
-class NoiseBiome6 : public NoiseGen{
-  public:
-    float compute(float x, float y);
-};
-
-class NoiseBiome7 : public NoiseGen{
-  public:
-    float compute(float x, float y);
-};
 
 
 #endif

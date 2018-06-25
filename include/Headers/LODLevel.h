@@ -16,6 +16,13 @@ class Terrain;
 #include "Sampler.h"
 #include <math.h>
 
+/* TODO :
+ * precomputed 1D2D
+ * Precision support
+ * Double (Triple ?) texturing
+ * Multithreaded loading
+ */
+
 class LODLevel { 
 
   private:
@@ -41,7 +48,7 @@ class LODLevel {
     static int m_QuarterSize;
     static int m_DoubleSize;
     glm::i32vec2 m_TorEnd;    
-    static unsigned int** pre2D1D;
+//    static unsigned int** pre2D1D;
     /*              */
 
     std::vector<Object*> m_Objs;

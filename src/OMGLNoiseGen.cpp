@@ -1,0 +1,159 @@
+#include <stdio.h>
+#include "NoiseGen.h"
+#include "FastNoise.h"
+
+OMGLNoiseGen( unsigned int nbNoises ) :
+  NoiseGen()
+{
+  m_Noises.resize(nbNoises);
+  long long int sd;
+  FastNoise* tp;
+  for(unsigned int j=0;j < nbNoises;j++){
+    sd = seed + j * nbOctave;
+    for(unsigned int k=0;k < nbOctave;k++){
+      sd+=k;
+      tp = new FastNoise(sd);
+      tp->SetNoiseType(FastNoise::Simplex);
+      tp->SetFrequency(pow(lacunarity, k) * 0.01f / zoom);
+      m_Noises[j].push_back(tp);
+    }
+  }
+
+}
+
+float OMGLNoiseCloud::compute(float x, float y){
+  float a = 0;
+  float c = 0;
+  float b = m_Mix->GetNoise(x*10,y*10);
+  int d = 0;
+  float e,f, ret_val;
+  for(std::vector<FastNoise>::iterator iter_noise = 
+  m_Noises[0].begin(); 
+  (iter_noise < m_Noises[0].end()); iter_noise++){
+    a += glm::abs((*iter_noise)->GetNoise(x*10,y*10) * pow(m_Persistence, d)); 
+    if ((d>0) && (d <= 3))
+      c += glm::abs((*iter_noise)->GetNoise(x*10,y*10) * pow(m_Persistence, d)); 
+    d++;
+  }
+ 
+  if ((b > 0.1f) && (a > 0.5f)){
+    e = glm::abs(m_Mix->GetNoise(x*10,y*10) * pow(persistence, 0)); 
+    m_Mix->SetFractalOctaves(1);
+    f = m_Mix->GetNoise(x*10,y*10);
+    m_Mix->SetFractalOctaves(8);
+    ret_val = e+f;
+    ret_val = glm::pow(ret_val,3)*c + 50.0f +c;
+    return ret_val;
+  }
+  else
+    return 1200.0f;
+}
+
+float OMGLNoiseCloudRecto::compute(float x, float y){
+  float ret_val = OMGLNoiseCloud::compute(x,y); 
+  if(ret_val != 1200.0f)
+    ret_val -= (a+b-0.6f)*c*4.0f;
+  return ret_val;
+}
+
+
+
+float OMGLNoiseBiome::compute1(float x, float y){
+  float a = 0;
+  float b = 0;
+  float c = 0;
+  int d = 0;
+  std::vector<FastNoise*>::iterator iter_noise2 = m_Noises[1].begin();
+  std::vector<FastNoise*>::iterator iter_noise3 = m_Noises[2].begin();
+  for(std::vector<FastNoise*>::iterator iter_noise = 
+  m_Noises[0].begin(); 
+  (iter_noise < m_Noises[0].end()); iter_noise++){
+    a += (*iter_noise)->GetNoise(x*10,y*10) * pow(m_Persistence, d); 
+    b += (*(iter_noise2 + d))->GetNoise(x*10,y*10) * pow(m_Persistence, d); 
+    c += (*(iter_noise3 + d))->GetNoise(x*10,y*10) * pow(m_Persistence, d); 
+    d++;
+  }
+  return a*b*c*m_Zoom;
+}
+
+float OMGLNoiseBiome::compute4(float x, float y){
+  float a = 0;
+  int d = 0;
+  float temp_lacunarity = 4.915f;
+  float temp_persistence = 0.187f;
+  for(std::vector<FastNoise>::iterator iter_noise = 
+  m_Noises[0].begin(); 
+  (iter_noise < m_Noises[0].end()); iter_noise++){
+    (*iter_noise).SetFrequency(pow(temp_lacunarity, d) * 0.006f / m_Zoom);
+    a += glm::abs((*iter_noise).GetNoise(x*10,y*10) * pow(temp_persistence, d)); 
+    (*iter_noise).SetFrequency(pow(m_Lacunarity, d) * 0.01f / m_Zoom);
+    d++;
+  }
+  return a*a*a*1.5f*m_Zoom;
+}
+
+float OMGLNoiseBiome1::compute(float x, float y){
+  return compute1(x, y);
+}
+
+float OMGLNoiseBiome2::compute(float x, float y){
+  return (glm::floor(compute1(x, y)));
+}
+
+float OMGLNoiseBiome3::compute(float x, float y){
+  float ret_value;
+  float temp_m_Persistence = m_Persistence;
+  m_Persistence = 0.154f;
+  ret_value = glm::abs(compute1(x,y)) * (-1);
+  m_Persistence = temp_m_Persistence;
+  return ret_value;
+}
+
+
+float OMGLNoiseBiome4::compute(float x, float y){
+  return compute4(x, y);
+}
+
+float OMGLNoiseBiome5::compute(float x, float y){
+  return compute4(x,y)*(-1);
+}
+
+float OMGLNoiseBiome6::compute(float x, float y){
+  FastNoise my_noise(seed + m_Octaves*4);
+  my_noise.SetNoiseType(FastNoise::Simplex);
+  my_noise.SetFrequency(0.8f/m_Zoom);
+  float a = 0;
+  float temp_lacunarity;
+  int d = 0;
+  for(std::vector<FastNoise>::iterator iter_noise = 
+  m_Noises[0].begin(); 
+  (iter_noise < m_Noises[0].end()); iter_noise++){
+    temp_lacunarity = my_noise.GetNoise(x,y) + 0.5f;
+    (*iter_noise).SetFrequency(pow(temp_lacunarity, d) * 0.01f / m_Zoom);
+    a += (*iter_noise).GetNoise(x*10,y*10) * pow(m_Persistence, d); 
+    (*iter_noise).SetFrequency(pow(m_Lacunarity, d) * 0.01f / m_Zoom);
+    d++;
+  }
+  return a*a*a*m_Zoom/5.0f;
+}
+
+float OMGLNoiseBiome7::compute(float x, float y){
+  FastNoise my_noise(seed + m_Octaves*4 + 1);
+  my_noise.SetNoiseType(FastNoise::Simplex);
+  FastNoise my_noise2(seed + m_Octaves*4 + 2);
+  my_noise2.SetNoiseType(FastNoise::Simplex);
+  my_noise.SetFrequency(my_noise2.GetNoise(x,y)/m_Zoom);
+  float a = 0;
+  float temp_lacunarity;
+  int d = 0;
+  for(std::vector<FastNoise>::iterator iter_noise = 
+  m_Noises[0].begin(); 
+  (iter_noise < m_Noises[0].end()); iter_noise++){
+    temp_lacunarity = my_noise.GetNoise(x,y) + 0.5f;
+    (*iter_noise).SetFrequency(pow(temp_lacunarity, d) * 0.01f / m_Zoom);
+    a += (*iter_noise).GetNoise(x*10,y*10) * pow(m_Persistence, d); 
+    (*iter_noise).SetFrequency(pow(m_Lacunarity, d) * 0.01f / m_Zoom);
+    d++;
+  }
+  return a*a*a*m_Zoom/5.0f;
+}

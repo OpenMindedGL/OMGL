@@ -10,17 +10,15 @@ class LODLevel;
 #include "Mesh.h"
 #include "Object.h"
 #include "Vertex.h"
-#include "NoiseGen.h"
+#include "ProcMixer.h"
 #include "Material.h"
 #include "LODLevel.h"
 #include "Biome.h"
 #include "DynamicHeightMap.h"
 
-/* for now 10 kinda stutters when it needs to update them all in a frame
- * 8 is alright
- * Multithreading would solve the problem
- */
 #define NB_LEVELS 10
+#define DEFAULT_SCALE   64
+#define DEFAULT_SPAWN   glm::i32vec2(0,0)
 
 
 #define PRECISION 1.0f
@@ -31,7 +29,6 @@ class Terrain {
 
   private :
     unsigned int m_NbLevels;
-    float m_Precision;
     int m_Size;
     float m_Scale;
     glm::i32vec2 m_Center;
@@ -41,25 +38,50 @@ class Terrain {
     Material * m_Material;
     Shader * m_Shader;
   //  Texture * m_NormalMap;
-    YGen * m_Mix;
-    std::vector<Biome> m_Biomes;
+    ProcMixer * m_Mixer;
+    std::vector<Biome*>* m_Biomes;
 
+    static std::vector<YGen*>* GetNoises(std::vector<Biome*>* biomes);
 
   public :
 
-    Terrain(glm::vec2 spawn, float p = PRECISION, unsigned int s = SIZE, unsigned int n = NB_LEVELS);
-    inline int GetSize(){ return m_Size; }
-    inline float GetPrecision(){ return m_Precision; }
-    inline unsigned int GetNbLevel(){ return m_NbLevels; }
-    inline LODLevel& GetLevel(unsigned int i){ return *(m_Lods[i]); }
+      Terrain(
+          std::vector<Biome*>* biomes,
+          glm::vec2 spawn = DEFAULT_SPAWN,
+          unsigned int s = SIZE,
+          unsigned int n = NB_LEVELS,
+          float scale = DEFAULT_SCALE
+          ) : 
+        Terrain(
+            biomes,
+            new ProcMixer(Terrain::GetNoises(biomes)),
+            s,
+            n,
+            scale
+            ) {}
+
+    Terrain(
+        std::vector<Biome*>* biomes,
+        ProcMixer* mixer,
+        glm::vec2 spawn = DEFAULT_SPAWN,
+        unsigned int s = SIZE,
+        unsigned int n = NB_LEVELS,
+        float scale = DEFAULT_SCALE
+        );
+
+
     void Update(glm::i32vec2& center);
 
     // getters
+    inline int GetSize(){ return m_Size; }
+    inline unsigned int GetNbLevel(){ return m_NbLevels; }
+    inline LODLevel& GetLevel(unsigned int i){ return *(m_Lods[i]); }
     inline unsigned int GetNbLevels(){ return m_NbLevels; }
     inline Material* GetMaterial(){ return m_Material; }
 //    inline DynamicHeightMap* GetHeightMap(){ return m_HeightMap;}
     inline LODLevel ** GetLods(){ return m_Lods;}
     inline Shader * GetShader(){ return m_Shader;}
+    inline YGen* GetNoise(){ return m_Mixer; }
 //    inline Texture * GetNormalMap(){ return m_NormalMap;}
 
 
