@@ -172,8 +172,6 @@ void DynamicTexture::UpdateSub(glm::i32vec2& s, glm::i32vec2& e){
   glm::i32vec2 p;
   std::vector<glm::u8vec4> toUpdateE;
   glm::i32vec2 b = size;
-  toUpdateE.clear();
-  toUpdateE.resize(size.y*size.x+size.x);
   int inc = (int) m_TexelSize;
   for(p.y=0 ; p.y < b.y ; p.y+=inc){
     for(p.x=0 ; p.x < b.x ; p.x+=inc){
@@ -186,9 +184,9 @@ void DynamicTexture::UpdateTexel(glm::i32vec2& p, glm::i32vec2& s, glm::i32vec2&
   
 }
 
-int DynamicTexture::GetIndex(glm::i32vec2& p){
-  glm::i32vec2 torPos = GetTorPos(p);
-  return torPos.y*m_Width+torPos.x;
+glm::i32vec2 DynamicTexture::GetIndex(glm::i32vec2& p){
+  glm::i32vec2 a = (p - m_TorBegin) / glm::i32vec2(m_TexelSize);
+  return GetTorPos(a);
 }
 
 glm::i32vec2 DynamicTexture::GetTorPos(glm::i32vec2& p){

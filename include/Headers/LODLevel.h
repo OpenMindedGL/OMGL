@@ -55,6 +55,7 @@ class LODLevel {
     Material * m_Material;
     DynamicHeightMap* m_HeightMap;
     Sampler* m_HeightMapLinear;
+    LODLevel* m_Previous;
 
     // 
     unsigned int m_Level;
@@ -83,7 +84,7 @@ class LODLevel {
     //void GridIndices(glm::i32vec2& e, Mesh<Vertexun>& m);
     static void GenMeshes(unsigned int size);
     void Update(glm::i32vec2 center);
-    LODLevel(unsigned int l, glm::vec2& center, Terrain* t);
+    LODLevel(unsigned int l, glm::vec2& center, Terrain* t, LODLevel* prev);
     //int GetIndex(glm::i32vec2& p);
 
 

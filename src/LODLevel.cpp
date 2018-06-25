@@ -23,11 +23,12 @@ int LODLevel::m_DoubleSize;
 // TODO : 
 // Make a plane class, use that to make the grids
 
-LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
+LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t, LODLevel* prev) :
   m_Level(l),
   m_Terrain(t),
   m_UnitSize(glm::pow(2,NB_LEVELS-l-1)),
-  m_HeightMap(t->GetHeightMap())
+  m_HeightMap(t->GetHeightMap()),
+  m_Previous(prev)
 {
   if(center.y > 0){
     m_ActiveR.y = glm::floor(center.y / m_UnitSize) * m_UnitSize - m_TileSize*2*m_UnitSize;
@@ -43,11 +44,16 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t) :
     m_ActiveR.x = glm::floor(center.x)-m_HalfSize * m_UnitSize;
     m_ActiveR.x -= m_NewActiveR.x % m_UnitSize;
   }
+
   m_NewActiveR = m_ActiveR;
 
 
   int size = m_Size+HEIGHT_MAP_EXCESS; // tex coords
-  m_HeightMap = new DynamicHeightMap(m_Terrain->GetNoise(),size, m_UnitSize, glm::vec2(1.0f/64.0f), m_NewActiveR-glm::i32vec2(HEIGHT_MAP_EXCESS*m_UnitSize));
+  if(m_Level != 0 && m_Previous != NULL)
+    m_HeightMap = new DynamicHeightMap(m_Terrain->GetNoise(),size, m_UnitSize, glm::vec2(1.0f/64.0f), m_NewActiveR-glm::i32vec2(HEIGHT_MAP_EXCESS*m_UnitSize), m_Previous->GetHeightMap());
+  else
+    m_HeightMap = new DynamicHeightMap(m_Terrain->GetNoise(),size, m_UnitSize, glm::vec2(1.0f/64.0f), m_NewActiveR-glm::i32vec2(HEIGHT_MAP_EXCESS*m_UnitSize));
+
   m_HeightMap->SetInterp(GL_NEAREST);
 
   m_HeightMapLinear = new Sampler("u_HeightMapLinear", 1, GL_LINEAR);

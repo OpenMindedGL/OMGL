@@ -26,9 +26,10 @@ Terrain::Terrain(glm::vec2 spawn, float p, unsigned int s, unsigned int n) :
   int size = s+2;
 
   LODLevel::GenMeshes(m_Size);   
-  LODLevel* l;
+  LODLevel* lp = NULL;
   for(unsigned int i=0;i<m_NbLevels;i++){
-    m_Lods[i] = new LODLevel(i,spawn,this);
+    m_Lods[i] = new LODLevel(i,spawn,this,lp);
+    lp = m_Lods[i];
   }
 
 }
