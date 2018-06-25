@@ -43,7 +43,7 @@ in vec3 lightdir;
 in vec2 pos;
 
 void main(){
-  vec3 grey = vec3(0.8f,0.8f,0.8f);
+  vec3 grey = vec3(1.0f, 0.0f, 0.0f);
   vec3 n = normalize( normal );
   vec3 l = normalize( lightdir );
   float cost = clamp( dot( n,l ), 0,1 );
