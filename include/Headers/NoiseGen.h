@@ -9,7 +9,7 @@
 #define DEFAULT_NB_OCTAVES        8
 #define DEFAULT_LACUNARITY        2.0f
 #define DEFAULT_PERSISTENCE       0.5f
-#define DEFAULT_ZOOM              3.0f
+#define DEFAULT_ZOOM              1.0f  // has become useless since everything gets encoded in 0,1 range
 #define DEFAULT_SEED              62
 #define MAX_OCTAVES 10
 

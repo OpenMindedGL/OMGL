@@ -12,7 +12,7 @@ class NoiseTexture : public Texture
 {
   protected :
 
-    NoiseGen* m_Noise;
+    YGen* m_Noise;
     glm::vec2 m_Step;  // bottom left in world coords
     std::vector<glm::u8vec4> m_Texels;  
     int m_TexelSize;
@@ -24,7 +24,7 @@ class NoiseTexture : public Texture
   
     NoiseTexture( std::string path, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0)) : Texture(path,DEFAULT_SAMPLER_NAME, 0, false), m_Step(step), m_Base(base) {} 
 
-    NoiseTexture( NoiseGen* n, unsigned int width, int texsize, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0)) : Texture(width), m_Noise(n), m_TexelSize(texsize), m_Base(base), m_Step(step) {}
+    NoiseTexture( YGen* n, unsigned int width, int texsize, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0)) : Texture(width), m_Noise(n), m_TexelSize(texsize), m_Base(base), m_Step(step) {}
 
     NoiseTexture(){}
 

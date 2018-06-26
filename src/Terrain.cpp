@@ -14,7 +14,7 @@
 
 Terrain::Terrain( std::vector<Biome*>* biomes, ProcMixer* mixer, glm::vec2 spawn, unsigned int s, unsigned int n, float scale) : 
   m_Biomes(biomes),
-  m_Mixer(mixer)
+  m_Mixer(mixer),
   m_Center(static_cast<glm::i32vec2>(spawn)),
   m_Size(s),
   m_NbLevels(n),
@@ -56,4 +56,9 @@ void Terrain::Update(glm::i32vec2& center){
 }
 
 
+void Terrain::SetUniforms(){
+  m_Shader->Bind();
+  m_Shader->SetUniform1i("u_MaxHeight",m_Biomes->at(0)->GetMaxHeight()); 
+  m_Shader->SetUniform1i("u_MinHeight",m_Biomes->at(0)->GetMinHeight()); 
+}
 

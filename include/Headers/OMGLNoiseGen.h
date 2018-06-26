@@ -19,28 +19,29 @@ class OMGLNoiseGen : public virtual NoiseGen {
 class OMGLNoiseCloud : public virtual OMGLNoiseGen{
   protected:
     FastNoise* m_Mix;
-    float compute(float x, float y);
+    float compute(float x, float y) { return compute2(x,y)[0]; }
+    float* compute2(float x, float y);
 
   public:
-    OMGLNoiseCloud();
+    OMGLNoiseCloud() : OMGLNoiseGen(1) {}
 
 };
 
-typedef OMGLNoiseCLoud OMGLNoiseCloudVerso;
+typedef OMGLNoiseCloud OMGLNoiseCloudVerso;
 
-class OMGLNoiseCloudRecto : public OMGLNoiseGen{
+class OMGLNoiseCloudRecto : public OMGLNoiseCloud{
   public:
     float compute(float x, float y);
 };
 
 class OMGLNoiseBiome : public virtual OMGLNoiseGen{
   protected:
-    float compute(float x, float y);
+    virtual float compute(float x, float y){return 0.0f;}
     float compute1(float x, float y);
     float compute4(float x, float y);
 
   public:
-    OMGLNoiseBiome();
+    OMGLNoiseBiome() : OMGLNoiseGen(3) {}
 
 };
 

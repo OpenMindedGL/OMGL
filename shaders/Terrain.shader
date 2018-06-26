@@ -27,6 +27,8 @@ uniform ivec2 base;
 uniform ivec2 torBase;
 uniform ivec2 torBegin;
 uniform int u_UnitSize;
+uniform int u_MaxHeight;
+uniform int u_MinHeight;
 
 vec3 FindNormal(sampler2D tex, vec2 uv, float u)
 {
@@ -40,7 +42,7 @@ vec3 FindNormal(sampler2D tex, vec2 uv, float u)
   float hts[4];
   for(int i = 0; i < 4; i++)
   {
-    hts[i] = dot( texture(u_DefaultSampler, offsets[i]), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+    hts[i] = dot( texture(u_DefaultSampler, offsets[i]), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
   }
 
   vec2 _step = vec2(1.0, 0.0);
@@ -62,8 +64,8 @@ void main(){
   ivec2 tPos = ivec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
   uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
   //uv = (pos.xz+1024)/(2048);
-  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) ) *8000-4000;
-//*64-32;//*8000-4000;
+  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) ) *(u_MaxHeight-u_MinHeight)+u_MinHeight;
+//*64-32;//*(u_MaxHeight-u_MinHeight)+u_MinHeight;
   //vec2 a = texture(u_DefaultSampler, uv).xy;
   //pos.y = a.x*500;// * 256 + a.y;
  // gl_Position =  u_MVP * vPos;
@@ -129,6 +131,8 @@ uniform ivec2 base;
 uniform ivec2 torBase;
 uniform ivec2 torBegin;
 uniform int u_UnitSize;
+uniform int u_MaxHeight;
+uniform int u_MinHeight;
 
 //uniform sampler2D u_NormalMap;
 //uniform sampler2D u_DefaultSampler;
@@ -144,27 +148,27 @@ vec4 getnormals(sampler2D s, vec2 pos){
   vec2 wPos = vec2(pos.x,pos.y);
   vec2 tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
   vec2 uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
-  float s11 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+  float s11 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
 
   wPos = vec2(pos.x,pos.y)+off.xy;
   tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
   uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
-  float s01 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+  float s01 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
 
   wPos = vec2(pos.x,pos.y)+off.zy;
   tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
   uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
-  float s21 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+  float s21 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
 
   wPos = vec2(pos.x,pos.y)+off.yx;
   tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
   uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
-  float s10 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+  float s10 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
 
   wPos = vec2(pos.x,pos.y)+off.yz;
   tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
   uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
-  float s12 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*8000-4000;
+  float s12 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
 
   vec3 va = normalize(vec3(size.xy,s21-s01));
   vec3 vb = normalize(vec3(size.yx,s12-s10));

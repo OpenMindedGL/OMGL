@@ -15,7 +15,7 @@ CPPFLAGS := -Wall -g -std=c++11 -I./$(H_DIR)
 main: $(OBJ_FILES)
 	   g++ -o $@ $^ $(LDFLAGS)
 
-$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp 
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp $(H_DIR)/%.h 
 	   g++ $(LIB_I) $(CPPFLAGS) $(CXXFLAGS) $(LDFLAGS) -c -o $@ $<
 
 $(OBJ_DIR)/%.o: $(LIB_DIR)/*/%.cpp

@@ -28,6 +28,7 @@
 #include "VertexArray.h"
 #include "Shader.h"
 #include "VertexBufferLayout.h"
+#include "OMGLBiomes.h"
 #include "Texture.h"
 #include "Terrain.h"
 #include "Skybox.h"
@@ -99,8 +100,11 @@ int main(void) {
   glm::vec3 pos = renderer.getCameraPosition();
 
   glm::i32vec2 p;
+ // std::vector<Biome*> bs = {/*new OMGLMountains(),*/ new OMGLDesert()};
+  //std::vector<Biome*> bs = {new OMGLMountains()};
+  std::vector<Biome*> bs = {new OMGLMountains(), new OMGLDesert()};
 
-  Terrain t(glm::vec2(pos.x, pos.z));
+  Terrain t(&bs);
 
   Skybox s;
 
@@ -135,6 +139,9 @@ int main(void) {
     renderer.Clear();
     renderer.UpdateCamera();
 
+    if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS) {
+      printf("pos: (%f,%f,%f)\n",pos.x,pos.y,pos.z);
+    }
     pos = renderer.getCameraPosition();
     p = glm::i32vec2(pos.x,pos.z);
     //printf("x:%f y:%f \n",pos.x,pos.z);    

@@ -1,6 +1,6 @@
 #include "ProcTexture.h"
 
-ProcTexture::ProcTexture(NoiseGen* n, unsigned int width, glm::vec2 step,glm::i32vec2 base ) : NoiseTexture(n,width,1,step,base)
+ProcTexture::ProcTexture(YGen* n, unsigned int width, glm::vec2 step,glm::i32vec2 base ) : NoiseTexture(n,width,1,step,base)
 {
   Gen(base,step);
   ////should be done like that (giving name and slot)

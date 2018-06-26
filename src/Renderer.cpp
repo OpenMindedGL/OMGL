@@ -143,6 +143,7 @@ void Renderer::Draw(Terrain& t)
 
     // make a function inside LOD to do that
     t.GetShader()->Bind();
+    t.SetUniforms();
     t.GetShader()->SetUniform2i("base",t.GetLevel(i).GetHeightMap()->GetBase());
     t.GetShader()->SetUniform2i("torBase",t.GetLevel(i).GetHeightMap()->GetTorBase());
     t.GetShader()->SetUniform2i("torBegin",t.GetLevel(i).GetHeightMap()->GetTorBegin());
