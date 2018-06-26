@@ -32,6 +32,9 @@
 #include "Terrain.h"
 #include "Skybox.h"
 
+#include "ObjectDefine.h"
+
+
 using namespace glm;
 
 #define WIDTH 1920 
@@ -105,27 +108,28 @@ int main(void) {
   Skybox s;
 
   Cube cube;
- /* Object o(&cube, OMGL_BLUE);
-  o.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");*/
+  Object o(&cube, OMGL_BLUE);
 
-  //Object c(&cube, "shaders/Test.shader");
+  //Object o(&cube, "shaders/Test.shader");
 
-  //c.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
-  //Object o("res/objects/bugatti/bugatti2.obj", "res/objects/bugatti/bugatti.mtl", false);
-  //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", "res/objects/dodge/", true, GL_TRIANGLES);
-  //Object o("res/objects/falcon/falcon.obj", "res/objects/falcon/falcon.mtl", "res/objects/falcon/", false, GL_TRIANGLES);
+  
+  /*Object o("res/objects/bugatti/bugatti2.obj", "res/objects/bugatti/bugatti.mtl",	  
+		   "shaders/DynamicShader",
+		   "shaders/DynamicShader/Basic.genshader",
+		   "res/objects/dodge/");
+  */
+  
+  /*Object o( "res/objects/dodge/CHALLENGER71.obj",
+			"res/objects/dodge/CHALLENGER71.mtl",
+			true, "shaders/DynamicShader",
+			"shaders/DynamicShader/Basic.genshader",
+			"res/objects/dodge/");
+  */ 
 
+  
+  //Object o("res/objects/dodge/CHALLENGER71.obj",OMGL_BROWN);
 
-  //TROUVER POURQUOI IL VEUT PAS AVEC UN SHADER PAR DEFAUT !
-  //TROUVER POURQUOI LE CUBE N'A PAS LA BONNE COULEUR
-  //TROUVER COMMENT FAIRE POUR QUE SI ON GENERATESHADERS PAS CA MARCHE QUAND MEME
-  //VOIR COMMENT MARCHENT LES NORMALESMAP
-  //COMMENCER A FAIRE LE CR :)
-
-  Object o("res/objects/Mill/Mill.obj", OMGL_BLUE);
-  //Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl", false);
-
-  o.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
+  //Object o("res/objects/Mill/Mill.obj", OMGL_BLUE, false);
 
   //o.SetTextureDirectory("res/objects/dodge/");
   //o.LoadTexturesMap();
@@ -134,6 +138,7 @@ int main(void) {
   //o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
 
 
+  o.Translate(0, 10, 0);
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
     renderer.Clear();
@@ -143,6 +148,7 @@ int main(void) {
 
     pos = renderer.getCameraPosition();
     p = glm::i32vec2(pos.x,pos.z);
+
     //printf("x:%f y:%f \n",pos.x,pos.z);    
    // t.Update(p);
     //renderer.Draw(t);

@@ -5,88 +5,66 @@
 
 Object::Object()
 {
-  m_ListMat = new std::map<unsigned int, unsigned int>;
-  m_Mesh = new Mesh<Vertexun>;
+	m_ListMat = new std::map<unsigned int, unsigned int>;
+	m_Mesh = new Mesh<Vertexun>;
+	m_Materials.push_back(new Material());
 }
 
-//Init les mesh !
 Object::Object(Mesh<Vertexun> * m) : m_Mesh(m)
 {
 	m_Materials.push_back(new Material());
 	m_ListMat = new std::map<unsigned int, unsigned int>;
 }
 
-Object::Object(Mesh<Vertexun> * m, std::string shaderPath) : m_Mesh(m) 
-{
-  //m_Mesh = new Mesh<Vertexun>(&m);
-  m_Materials.push_back(new Material(new Shader(shaderPath)));
-  m_ListMat = new std::map<unsigned int, unsigned int>;
-}
-
-
-Object::Object(Mesh<Vertexun> * m, float * color) : m_Mesh(m)
-{
-	m_Materials.push_back(new Material(color));
-	m_ListMat = new std::map<unsigned int, unsigned int>;
-}
-
 Object::Object(Mesh<Vertexun> * m, Material* mat) : m_Mesh(m)
 {
-  //On verifie si le mat existe déjà dans la liste des mat, on ajoute ou non dans la liste en fonction
-  m_ListMat = new std::map<unsigned int, unsigned int>;
-  if (!hasMaterial(mat)) m_Materials.push_back(mat);
+	//On verifie si le mat existe déjà dans la liste des mat, on ajoute ou non dans la liste en fonction
+	m_ListMat = new std::map<unsigned int, unsigned int>;
+	if (!hasMaterial(mat)) m_Materials.push_back(mat);
 }
 
 Object::Object(Mesh<Vertexun> * m, std::vector<Material*> mat) : m_Mesh(m)
 {
-  m_ListMat = new std::map<unsigned int, unsigned int>;
-  //On parcourt chaque element dans la liste de mat et on ajoute ceux qui n'existe pas encore
-  for (int i = 0; i < mat.size(); i++) {
-    if (!hasMaterial(mat[i])) m_Materials.push_back(mat[i]);
-  }
+	m_ListMat = new std::map<unsigned int, unsigned int>;
+	//On parcourt chaque element dans la liste de mat et on ajoute ceux qui n'existe pas encore
+	for (int i = 0; i < mat.size(); i++) {
+		if (!hasMaterial(mat[i])) m_Materials.push_back(mat[i]);
+	}
 }
 
-
-Object::Object(std::string pathObj, std::string pathMtl, bool reverse, int renderType) //OK
+Object::Object(Mesh<Vertexun> * m, std::string shaderPath) : m_Mesh(m)
 {
+	m_Materials.push_back(new Material(new Shader(shaderPath)));
 	m_ListMat = new std::map<unsigned int, unsigned int>;
-	m_Mesh = new Mesh<Vertexun>;
-	LoadMaterials(pathMtl, m_Materials);
-	LoadObject(pathObj, reverse);
-	m_Mesh->Init(renderType);
 }
 
-
-Object::Object(std::string pathObj, float * color, bool reverse, int renderType) //OK
+Object::Object(Mesh<Vertexun> * m, float * color, std::string shadersPath, std::string genShaderPath, int renderType) : m_Mesh(m)
 {
-	m_ListMat = new std::map<unsigned int, unsigned int>;
-	m_Mesh = new Mesh<Vertexun>;
-	LoadObject(pathObj, reverse);
 	m_Materials.push_back(new Material(color));
-	m_Mesh->Init(renderType);
-}
-
-
-
-Object::Object(std::string pathObj, std::string pathMtl, std::string texturePath, bool reverse, int renderType) //OK
-	: m_TextureDirectory(texturePath)
-{	
 	m_ListMat = new std::map<unsigned int, unsigned int>;
-	m_Mesh = new Mesh<Vertexun>;
-	LoadMaterials(pathMtl, m_Materials);
-	LoadObject(pathObj, reverse);
-	m_Mesh->Init(renderType);
-	//Object(pathObj, pathMtl, reverse, renderType);
+	GenerateShaders(shadersPath, genShaderPath);
 }
 
-Object::Object(std::string pathObj, bool reverse) //GERER UN SHADER PAR DEFAUT !
+Object::Object(std::string pathObj, float * color, bool reverse, std::string shadersPath, std::string genShaderPath, int renderType)
+	: m_ListMat(new std::map<unsigned int, unsigned int>), m_Mesh(new Mesh<Vertexun>)
 {
-	m_ListMat = new std::map<unsigned int, unsigned int>;
-	m_Mesh = new Mesh<Vertexun>;
-	m_Materials.push_back(new Material());
+	m_Materials.push_back(new Material(color));
 	LoadObject(pathObj, reverse);
+	m_Mesh->Init(renderType);
+	GenerateShaders(shadersPath, genShaderPath);
 }
 
+Object::Object(
+	std::string pathObj, std::string pathMtl, bool reverse, std::string shadersPath,
+	std::string genShaderPath, std::string texturePath, int renderType
+)
+	: m_TextureDirectory(texturePath), m_ListMat(new std::map<unsigned int, unsigned int>), m_Mesh(new Mesh<Vertexun>)
+{
+	if (pathMtl != "")  LoadMaterials(pathMtl, m_Materials);
+	LoadObject(pathObj, reverse);
+	m_Mesh->Init(renderType);
+	GenerateShaders(shadersPath, genShaderPath);
+}
 
 void Object::LoadObject(std::string pathObj, bool reverse)
 {
@@ -119,7 +97,6 @@ void Object::LoadObject(std::string pathObj, bool reverse)
 		else if (strcmp(lineHeader, "vt") == 0) {
 			glm::vec2 vertex;
 			fscanf(file, "%f %f\n", &vertex.x, &vertex.y);
-			//vertex.x = 1 - vertex.x;
 			vertex.y = 1 - vertex.y;
 			vt.push_back(vertex);
 		}
@@ -208,7 +185,6 @@ void Object::LoadMaterials(std::string path, std::vector<Material*>& materials)
 		else if (strcmp(lineHeader, "Ns") == 0) {
 			float ns;
 			fscanf(file, "%f\n", &ns);
-			//while (ns > 100) ns /= 10;
 			materials[it]->SetNs(ns);
 		}
 
@@ -342,10 +318,10 @@ bool Object::hasMaterial(Material * mat)
 }
 
 unsigned int Object::GetMaterialId(std::string nameMat) {
-  for (int i = 0; i < m_Materials.size(); i++) {
-    if (m_Materials[i]->GetName() == nameMat) return i;
-  }
-  return -1;
+	for (int i = 0; i < m_Materials.size(); i++) {
+		if (m_Materials[i]->GetName() == nameMat) return i;
+	}
+	return -1;
 }
 
 void Object::GenerateShaders(std::string shadersPath, std::string genShaderPath)
@@ -356,15 +332,15 @@ void Object::GenerateShaders(std::string shadersPath, std::string genShaderPath)
 }
 
 void Object::Init(unsigned int renderType, std::string shaderPath) {
-	m_Scale = glm::vec3(1.0,1.0,1.0);
-	m_Rotation = glm::vec3(0.0,0.0,0.0);
-	m_Position = glm::vec3(0.0,0.0,0.0);
+	m_Scale = glm::vec3(1.0, 1.0, 1.0);
+	m_Rotation = glm::vec3(0.0, 0.0, 0.0);
+	m_Position = glm::vec3(0.0, 0.0, 0.0);
 	UpdateTranslationMatrix();
 	UpdateRotationMatrix();
 	UpdateScaleMatrix();
 	m_Mesh->Init(renderType);
 	for (int i = 0; i < m_Materials.size(); i++) {
-	m_Materials[i]->Init(shaderPath);
+		m_Materials[i]->Init(shaderPath);
 	}
 }
 
@@ -382,66 +358,66 @@ void Object::Unbind()
 	}
 }
 
-void Object::UpdateTranslationMatrix(){
-  m_TranslationMat = glm::translate(m_Position);
-  UpdateModelMatrix();
+void Object::UpdateTranslationMatrix() {
+	m_TranslationMat = glm::translate(m_Position);
+	UpdateModelMatrix();
 };
 
-void Object::UpdateRotationMatrix(){
-  m_RotationMat = glm::rotate(m_Rotation.x,glm::vec3(1.0f, 0.0f, 0.0f));
-  m_RotationMat *= glm::rotate(m_Rotation.y,glm::vec3(0.0f, 1.0f, 0.0f));
-  m_RotationMat *= glm::rotate(m_Rotation.z,glm::vec3(0.0f, 0.0f, 1.0f));
-  UpdateModelMatrix();
+void Object::UpdateRotationMatrix() {
+	m_RotationMat = glm::rotate(m_Rotation.x, glm::vec3(1.0f, 0.0f, 0.0f));
+	m_RotationMat *= glm::rotate(m_Rotation.y, glm::vec3(0.0f, 1.0f, 0.0f));
+	m_RotationMat *= glm::rotate(m_Rotation.z, glm::vec3(0.0f, 0.0f, 1.0f));
+	UpdateModelMatrix();
 }
 
-void Object::UpdateScaleMatrix(){
+void Object::UpdateScaleMatrix() {
 	m_ScaleMat = glm::scale(m_Scale);
 	UpdateModelMatrix();
 };
 
-void Object::UpdateModelMatrix(){
+void Object::UpdateModelMatrix() {
 	m_ModelMatrix = m_TranslationMat * m_RotationMat * m_ScaleMat;
 };
 
 void Object::Translate(float x, float y, float z)
 {
 	//m_ModelMatrix = glm::translate(m_ModelMatrix, glm::vec3(x, y, z));
-	Translate(glm::vec3(x,y,z));
+	Translate(glm::vec3(x, y, z));
 }
 
 void Object::Translate(glm::vec3 vector)
 {
-  m_Position+=vector; 
-  UpdateTranslationMatrix();
+	m_Position += vector;
+	UpdateTranslationMatrix();
 }
 
 void Object::RotationRad(float x, float y, float z)
 {
 	//m_ModelMatrix = glm::rotate(m_ModelMatrix, angle, glm::vec3(x, y, z));
-	RotationRad(glm::vec3(x,y,z));
+	RotationRad(glm::vec3(x, y, z));
 }
 
 void Object::RotationRad(glm::vec3 angles)
 {
 	//m_ModelMatrix = glm::rotate(m_ModelMatrix, angle, axis);
-	m_Rotation += angles; 
+	m_Rotation += angles;
 	UpdateRotationMatrix();
 
 }
 
 void Object::RotationDeg(float x, float y, float z)
 {
-  RotationDeg(glm::vec3(x,y,z));
+	RotationDeg(glm::vec3(x, y, z));
 }
 
 void Object::RotationDeg(glm::vec3 angles)
 {
-  RotationRad(angles * glm::vec3(3.141592f / 180.0f));
+	RotationRad(angles * glm::vec3(3.141592f / 180.0f));
 }
 
 void Object::Scale(float x, float y, float z)
 {
-  Scale(glm::vec3(x,y,z));
+	Scale(glm::vec3(x, y, z));
 }
 
 void Object::Scale(glm::vec3 factors)

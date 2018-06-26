@@ -16,7 +16,7 @@ void Renderer::Draw(Object& object)
 {
 	m_Camera->SetModel(object.GetModelMatrix());
 	m_Camera->ComputeMVP();
-        glm::mat4 mvp = m_Camera->GetMVP();
+    glm::mat4 mvp = m_Camera->GetMVP();
 
 	object.Bind();
 
@@ -31,15 +31,6 @@ void Renderer::Draw(Object& object)
 		GLCall(glDisable(GL_PRIMITIVE_RESTART));
 	}
 
-	for (int i = 0; i < object.GetMaterials().size(); i++) {
-		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_MVP", mvp);
-		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_M", object.GetModelMatrix());
-		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
-        //ugly hack 
-        //TO BE FIXED
-		object.GetMaterials().at(i)->SetShaderUniformMat4f("u_VP", m_Camera->GetProj() * m_Camera->GetView());
-	}
-
 	//If severals mtl
 	if (object.GetListMat()->size() > 1) {
 		object.GetMesh()->Bind();
@@ -47,7 +38,6 @@ void Renderer::Draw(Object& object)
 		unsigned int tmp = 0;
 		int id;
 		while (true) {
-			//OBEJCT.GETMATERIALS.SETUNIFORM(it->second...)
 			id = it->second;
 			object.GetMaterials().at(id)->GetShader()->Bind();
 			object.GetMaterials().at(id)->SetShaderUniformMat4f("u_MVP", mvp);
@@ -68,10 +58,11 @@ void Renderer::Draw(Object& object)
 		object.GetMesh()->Unbind();
 	}
 	else {
-		object.Bind();
+		//object.Bind();
 		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_MVP", mvp);
 		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_M", object.GetModelMatrix());
 		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
+		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_VP", m_Camera->GetProj() * m_Camera->GetView());
 		object.GetMaterials().at(0)->BindTextures();
 		GLCall(glDrawElements(object.GetMesh()->GetRendererType(), object.GetMesh()->GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
 		object.Unbind();
