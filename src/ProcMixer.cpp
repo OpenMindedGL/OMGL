@@ -32,7 +32,7 @@ std::tuple<float, unsigned int> OMGLProcMixer::mix(float x, float y){
     unsigned int d = 0;
 
     for(std::vector<FastNoise*>::iterator iter = m_Bits->begin(); iter < m_Bits->end(); ++iter){
-      noise = (*iter)->GetNoise(x*10,y*10);
+      noise = (*iter)->GetNoise(x*0.1f,y*0.1f);
       biome_choice += sign(noise) * glm::pow(2,d);
       smooth_coef *= noise;
       d++;
