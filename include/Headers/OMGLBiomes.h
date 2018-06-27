@@ -23,5 +23,11 @@ class OMGLBlocky : public Biome{
     OMGLBlocky() : Biome(new OMGLNoiseBiome2(), 200, 0) {}
 
 };
+class OMGLPeanuts : public Biome{
+
+  public:
+    OMGLPeanuts() : Biome(new OMGLNoiseBiome4(), 200, 0) {}
+
+};
 #endif
 

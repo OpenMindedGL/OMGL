@@ -1,6 +1,7 @@
 #include "ProcMixer.h"
 #include <glm/glm.hpp>
 
+
 OMGLProcMixer::OMGLProcMixer(std::vector<YGen*> * noises, float noisesSize ) : 
   ProcMixer(noises),
   NoiseGen(),
@@ -11,8 +12,8 @@ OMGLProcMixer::OMGLProcMixer(std::vector<YGen*> * noises, float noisesSize ) :
     // make some noises to mix them
     FastNoise* tp;
     m_Bits = new std::vector<FastNoise*>(0);
-    for(unsigned int l = 1; glm::pow(2,l) <= m_Noises->size(); l++){
-      tp = new FastNoise(m_Seed+l+(m_Octaves*4));
+    for(unsigned int l = 0; glm::pow(2,l) < m_Noises->size(); l++){
+      tp = new FastNoise(m_Seed+l+1+(m_Octaves*4));
       tp->SetNoiseType(FastNoise::SimplexFractal);
       tp->SetFractalOctaves(8);
       tp->SetFrequency(m_Lacunarity * 0.01f * (1.0f/m_NoisesSize));
@@ -46,10 +47,13 @@ std::tuple<float, unsigned int> OMGLProcMixer::mix(float x, float y){
     smooth_coef *= 2.0f;
     smooth_coef = glm::pow(smooth_coef, 0.25f);
 
-    /*if ( glm::abs(m_Bits->at(0)->GetNoise(x*10,y*10)) < 0.04f){
-      ret_value = -0.45f;
+    // TODO
+    // make a member to choose wether to add rivers or not
+    // try to make it a feature of each biome
+    if ( glm::abs(m_Bits->at(0)->GetNoise(x*10,y*10)) < 0.04f){
+      ret_value = -0.05f;
       smooth_coef = 1.0f;
-    }*/
+    }
 
     return std::make_tuple((ret_value * smooth_coef+1)/2.0f,biome_choice);
   }

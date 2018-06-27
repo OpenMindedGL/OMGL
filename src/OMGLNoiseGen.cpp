@@ -95,7 +95,7 @@ float OMGLNoiseBiome::compute4(float x, float y){
     (*iter_noise)->SetFrequency(pow(m_Lacunarity, d) * 0.01f / m_Zoom);
     d++;
   }
-  return a*a*a*1.5f*m_Zoom;
+  return a*a*a/**1.5f*m_Zoom*/;
 }
 
 float OMGLNoiseBiome1::compute(float x, float y){
@@ -106,7 +106,7 @@ float OMGLNoiseBiome1::compute(float x, float y){
 }
 
 float OMGLNoiseBiome2::compute(float x, float y){
-  return (glm::floor(compute1(x, y)*200)/200);
+  return (glm::floor(compute1(x, y)*100)/100);
 }
 
 float OMGLNoiseBiome3::compute(float x, float y){

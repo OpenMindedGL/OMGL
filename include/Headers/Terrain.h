@@ -16,7 +16,7 @@ class LODLevel;
 #include "Biome.h"
 #include "DynamicHeightMap.h"
 
-#define NB_LEVELS 2
+#define NB_LEVELS 6
 #define DEFAULT_SCALE   64
 #define DEFAULT_SPAWN   glm::i32vec2(0,0)
 
