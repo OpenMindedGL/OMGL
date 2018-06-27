@@ -2,6 +2,7 @@
 #include "Skybox.h"
 #include <map>
 
+
 Renderer::Renderer(GLFWwindow & window, int w, int h)
 	: m_Camera(new Camera(window, w, h))
 {}
@@ -11,12 +12,13 @@ void Renderer::Clear() const
 	GLCall(glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT));
 }
 
-void Renderer::Draw(Object object)
+void Renderer::Draw(Object& object)
 {
-	m_Camera->ComputeMatricesFromInputs();
 	m_Camera->SetModel(object.GetModelMatrix());
 	m_Camera->ComputeMVP();
-	glm::mat4 mvp = m_Camera->GetMVP();	
+    glm::mat4 mvp = m_Camera->GetMVP();
+
+	object.Bind();
 
 	if(m_Camera->getTypeDisplay()) glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 	else glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -36,7 +38,6 @@ void Renderer::Draw(Object object)
 		unsigned int tmp = 0;
 		int id;
 		while (true) {
-			//OBEJCT.GETMATERIALS.SETUNIFORM(it->second...)
 			id = it->second;
 			object.GetMaterials().at(id)->GetShader()->Bind();
 			object.GetMaterials().at(id)->SetShaderUniformMat4f("u_MVP", mvp);
@@ -57,20 +58,36 @@ void Renderer::Draw(Object object)
 		object.GetMesh()->Unbind();
 	}
 	else {
-		object.Bind();
+		//object.Bind();
 		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_MVP", mvp);
 		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_M", object.GetModelMatrix());
 		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_V", m_Camera->GetView());
+		object.GetMaterials().at(0)->SetShaderUniformMat4f("u_VP", m_Camera->GetProj() * m_Camera->GetView());
 		object.GetMaterials().at(0)->BindTextures();
 		GLCall(glDrawElements(object.GetMesh()->GetRendererType(), object.GetMesh()->GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
 		object.Unbind();
 	}
 }
 
+void Renderer::Draw(std::vector<Object>& objects) {
 
-void Renderer::Draw(Skybox s)
+	m_Camera->printCoord();
+
+	for (int i = 0; i < objects.size(); i++) {
+		m_Camera->SetModel(objects[i].GetModelMatrix());
+		m_Camera->ComputeMVP();
+		glm::mat4 mvp = m_Camera->GetMVP();
+		objects[i].Bind();
+		for (int j = 0; j < objects[i].GetMaterials().size(); j++) {
+			objects[i].GetMaterials().at(j)->SetShaderUniformMat4f("u_MVP", mvp);
+		}
+		GLCall(glDrawElements(objects[i].GetMesh()->GetRendererType(), objects[i].GetMesh()->GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
+		objects[i].Unbind();
+	}
+}
+
+void Renderer::Draw(Skybox& s)
 {
-	m_Camera->ComputeMatricesFromInputs();
 	m_Camera->SetModel(s.GetModelMatrix());
 	m_Camera->SetView(glm::mat4(glm::mat3(m_Camera->GetView())));
 	m_Camera->ComputeMVP();
@@ -99,21 +116,37 @@ void Renderer::Draw(Skybox s)
 }
 
 
-//Fonction non fonctionnelle
-void Renderer::Draw(std::vector<Object> objects) {
 
-	m_Camera->ComputeMatricesFromInputs();
-	m_Camera->printCoord();
+void Renderer::Draw(LODLevel& l){
+  
+  glm::vec4 a;
+  // Drawing all the parts
+  for (unsigned int i = 0; i < l.GetObjs().size(); i++) {
+    Draw(*l.GetObjs().at(i));
+  }
 
-	for (int i = 0; i < objects.size(); i++) {
-		m_Camera->SetModel(objects[i].GetModelMatrix());
-		m_Camera->ComputeMVP();
-		glm::mat4 mvp = m_Camera->GetMVP();
-		objects[i].Bind();
-		for (int j = 0; j < objects[i].GetMaterials().size(); j++) {
-			objects[i].GetMaterials().at(j)->SetShaderUniformMat4f("u_MVP", mvp);
-		}
-		GLCall(glDrawElements(objects[i].GetMesh()->GetRendererType(), objects[i].GetMesh()->GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
-		objects[i].Unbind();
-	}
+}
+
+void Renderer::Draw(Terrain& t)
+{
+  for (unsigned int i = 0; i < t.GetNbLevel(); i++) {
+    //printf("Drawing level %d\n",i);
+
+    // make a function inside LOD to do that
+    t.GetShader()->Bind();
+    t.GetShader()->SetUniform2i("base",t.GetLevel(i).GetHeightMap()->GetBase());
+    t.GetShader()->SetUniform2i("torBase",t.GetLevel(i).GetHeightMap()->GetTorBase());
+    t.GetShader()->SetUniform2i("torBegin",t.GetLevel(i).GetHeightMap()->GetTorBegin());
+    t.GetShader()->SetUniform1i("u_UnitSize",t.GetLevel(i).GetUnitSize());
+    t.GetLevel(i).GetHeightMap()->Bind(1);
+    t.GetLevel(i).GetHeightMapLinear()->Bind(1);
+    t.GetLevel(i).GetHeightMap()->Bind(0);
+    //
+    
+    Draw(t.GetLevel(i));
+  }
+}
+
+void Renderer::UpdateCamera(){
+  m_Camera->ComputeMatricesFromInputs();
 }

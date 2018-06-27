@@ -34,7 +34,7 @@ uniform float u_Ns;
 void main(){
   	vec3 n = normalize( v_normal );
   	vec3 lightPos = vec3(-10.0f,40.0f,-10.0f);
-  	vec3 to_light = lightPos * v_vertex;
+  	vec3 to_light = lightPos /** v_vertex*/;
   	to_light = normalize(to_light);
   	float cos_angle = dot(n, to_light);
   	cos_angle = clamp(cos_angle, 0.0, 1.0);

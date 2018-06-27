@@ -9,6 +9,7 @@
 
 #include "Camera.h"
 #include "Debug.h"
+#include "Terrain.h"
 
 class Skybox;
 class Object;
@@ -23,11 +24,14 @@ public:
 
 	void Clear() const;
 
-	void Draw(Object object);
+	void Draw(Object& object);
 
-	void Draw(std::vector<Object> objects);
+	void Draw(std::vector<Object>& objects);
 
-	void Draw(Skybox s);
+	void Draw(Skybox& s);
+	void Draw(Terrain& t);
+        void Draw(LODLevel& l);
+        void UpdateCamera();
 
 	inline glm::vec3 getCameraPosition() const { return m_Camera->getPosition(); };
 };

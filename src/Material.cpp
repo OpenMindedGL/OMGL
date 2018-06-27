@@ -8,17 +8,21 @@ Material::Material(std::string name) : m_Name(name), m_Id(++NBINSTANCES)
 }
 
 Material::Material(Texture * texture, Shader * shader) :
-	m_Texture(texture), m_Id(++NBINSTANCES)
+	m_Texture(texture), m_Shader(shader), m_Id(++NBINSTANCES)
 {
-	m_Shader = shader;
-	//m_Texture->LinkToShader(m_Shader);
+  if(m_Texture && m_Shader)
+    m_Texture->LinkToShader(m_Shader);
 }
 
 Material::Material(float * color) 
 {
+	m_Ka = glm::vec3(0.15f, 0.15f, 0.15f);
 	m_Kd = glm::vec3(color[0], color[1], color[2]);
-	m_Ni = 1;
+	m_Ks = glm::vec3(0.0f);
+	m_Ke = glm::vec3(0.0f);
+	m_Ni = 0;
 	m_D = 1;
+	m_Ns = 1;
 }
 
 void Material::GenerateShader(std::string shadersPath, std::string genShaderPath)

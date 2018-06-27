@@ -2,7 +2,7 @@
 #include "NoiseGen.h"
 
 NoiseGen::NoiseGen(){
-  zoom = 5.0f;
+  zoom = 10.0f;
   nbOctave = 8;
   lacunarity = 2.00f;
   persistence = 0.5f;
@@ -52,5 +52,9 @@ float NoiseGen::compute(float x, float y){
         e = nbOctave - 1;
     }*/
   }
-  return a*b*c*zoom;
+  
+  return a*b*c*zoom;  //WAS THIS ORIGINALY
+  //return y/20;
+  //return glm::sin(x/30)*10;
+  //return a*b*c;
 }

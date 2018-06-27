@@ -1,36 +1,52 @@
-#ifndef Map_H
-#define Map_H
+#ifndef HeightMap_H
+#define HeightMap_H
+#pragma once
 
 #include <glm/glm.hpp>
-#include "Texture.h"
-#include "Material.h"
+#include <string.h>
 
-class Map : public Texture {
-
-  private :
-    unsigned int channels;
-    float m_Precision;
-    int m_Size;
-    int m_HalfSize;
-    Object lods_obj[NB_LEVELS];   // Future Objects
-    LODLevel * lods[NB_LEVELS];
-    Material * m_Material;
+#include "NoiseTexture.h"
+#include "NoiseGen.h"
 
 
-  public :
-    
-    NoiseGen m_Noise;
-    Map(glm::vec2 spawn, float p = PRECISION, unsigned int s = SIZE, unsigned int n = NB_LEVELS);
-    inline int GetSize(){ return m_Size; }
-    inline float GetPrecision(){ return m_Precision; }
-    inline unsigned int GetNbLevel(){ return m_NbLevels; }
-    inline Object& GetLevel(unsigned int i){ return lods_obj[i]; }
-    void Update(glm::i32vec2& center);
+#define HEIGHTMAP_SAMPLER_NAME    "u_HeightMap"
+#define JPG_QUALITY    100
+
+class HeightMap : virtual public NoiseTexture
+{
+
+private: 
+
+protected:
+
+  std::vector<float> m_HeightsD;        // Decoded heights
+
+  void Encode();
+  void Decode();
+  virtual void Gen(glm::i32vec2& base, glm::vec2& step);
+
+  /* packing functions */
+  float DecodeFloatRGBA( glm::vec4 rgba );
+  glm::vec4 EncodeFloatRGBA( float v );
+
+  /* pre-computed */
+  static glm::vec4 packing0; 
+  static glm::vec4 packing1; 
+  static glm::vec4 packing2; 
+  /*--------------*/
+
+public:
+
+  HeightMap( std::string path, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0)) : NoiseTexture(path, step, base) {} 
+
+  HeightMap( NoiseGen* n, unsigned int width, int texsize, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0));
+
+  //Texture* MakeNormalMap();
+  float GetHeight(glm::i32vec2 p) { return m_HeightsD[p.x+p.y*m_Width]; }
+  float ComputeHeight(glm::i32vec2 p);
+  //void Load(std::string filepath);
+
 
 
 };
-
-
-
 #endif
-

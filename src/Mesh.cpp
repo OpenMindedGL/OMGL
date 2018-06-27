@@ -21,3 +21,19 @@ void Mesh<Vertexun>::Push()
   m_Layout.Push<float>(2);
   m_Layout.Push<float>(3);
 }
+/*
+template <>
+void Mesh<Vertexfun>::Push()
+{
+  m_Layout.Push<float>(1);
+  m_Layout.Push<float>(2);
+  m_Layout.Push<float>(3);
+}
+
+template <>
+void Mesh<Vertexfn>::Push()
+{
+  m_Layout.Push<float>(1);
+  m_Layout.Push<float>(3);
+}
+*/

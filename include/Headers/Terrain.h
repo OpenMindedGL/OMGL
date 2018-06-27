@@ -1,62 +1,71 @@
 #ifndef Terrain_H
 #define Terrain_H
 
+class LODLevel;
+
 #include <string>
 #include <vector>
+#include <stack>
 #include <glm/glm.hpp>
-#include "Vertex.h"
+#include "Mesh.h"
 #include "Object.h"
+#include "Vertex.h"
 #include "NoiseGen.h"
+#include "Material.h"
+#include "LODLevel.h"
+#include "DynamicHeightMap.h"
 
-#define CHUNK_SIZE 32
-#define CHUNK_PER_SIDE 5   // KEEP ODD !!!!
-#define RENDER_DISTANCE (CHUNK_PER_SIDE/2)
-#define TERRAIN_SZ (CHUNK_PER_SIDE*CHUNK_SIZE)
+/* for now 10 kinda stutters when it needs to update them all in a frame
+ * 8 is alright
+ * Multithreading would solve the problem
+ */
+#define NB_LEVELS 10
 
 
-class Terrain : public Object
-{
+#define PRECISION 1.0f
+#define SIZE    131   // -3 should be power of two, dividable by 8
+#define HALFSIZE    SIZE/2
 
-  private : 
+class Terrain {
 
-    glm::i32vec2 buffer_map[CHUNK_PER_SIDE*CHUNK_PER_SIDE];
-
-    glm::i32vec2 last_chunk; 
+  private :
+    unsigned int m_NbLevels;
+    float m_Precision;
+    int m_Size;
+    float m_Scale;
+    glm::i32vec2 m_Center;
     
-    float precision;
-    NoiseGen noise;
+    DynamicHeightMap* m_HeightMap;
+    LODLevel * m_Lods[NB_LEVELS];
+    Material * m_Material;
+    Shader * m_Shader;
+    Texture * m_NormalMap;
+    NoiseGen m_Noise;
 
-    void loadchunk(glm::i32vec2 coords, glm::i32vec2 replace, std::vector<glm::i32vec2> sides);
-    
-    // returns offset of chunk "coords" in gpu vertex buffer
-    int getOffset(glm::i32vec2 coords);
-    
-    glm::i32vec2 Surround(glm::i32vec2 chunk, unsigned int count);
-    
-    // returns chunk coords for point
-    glm::i32vec2 GetChunk( glm::vec2 pointCoords );
 
-    // returns bottom left point
-    glm::vec2 GetPoint( glm::i32vec2 chunkCoords );
-    
-    bool IsLoaded(glm::i32vec2 chunk);
+  public :
+    /* should really be private */ 
+    /*                  */
 
-    glm::i32vec2 surroundings[4];
-/*      glm::i32vec2(0,-1),
-      glm::i32vec2(0,1),
-      glm::i32vec2(1,0),
-      glm::i32vec2(-1,0)
-    };
-*/
+    Terrain(glm::vec2 spawn, float p = PRECISION, unsigned int s = SIZE, unsigned int n = NB_LEVELS);
+    inline int GetSize(){ return m_Size; }
+    inline float GetPrecision(){ return m_Precision; }
+    inline unsigned int GetNbLevel(){ return m_NbLevels; }
+    inline LODLevel& GetLevel(unsigned int i){ return *(m_Lods[i]); }
+    void Update(glm::i32vec2& center);
 
-  public: 
+    // getters
+    inline unsigned int GetNbLevels(){ return m_NbLevels; }
+    inline Material* GetMaterial(){ return m_Material; }
+    inline DynamicHeightMap* GetHeightMap(){ return m_HeightMap;}
+    inline LODLevel ** GetLods(){ return m_Lods;}
+    inline Shader * GetShader(){ return m_Shader;}
+    inline Texture * GetNormalMap(){ return m_NormalMap;}
+    inline NoiseGen * GetNoise(){ return &m_Noise;}
 
-    Terrain(glm::vec2 center);
-    
-    void initload(glm::vec2 center);
-    void load(glm::vec2 coords);
-    void compute_indices();
 
 };
+
+
 
 #endif

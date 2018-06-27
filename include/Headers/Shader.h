@@ -12,7 +12,6 @@
 
 #include "GL/glew.h"
 
-#include "Renderer.h"
 
 struct ShaderProgramSource
 {
@@ -40,6 +39,7 @@ public :
 
 	//Set uniforms
 	void SetUniform1i(const std::string& name, int value);
+        void SetUniform2i(const std::string & name, glm::i32vec2 value);
 	void SetUniform1f(const std::string& name, float value);
 	void SetUniform3f(const std::string& name, float v0, float v1, float v2);
 	void SetUniform4f(const std::string& name, float v0, float v1, float v2, float v3);

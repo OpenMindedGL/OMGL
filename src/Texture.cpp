@@ -1,49 +1,103 @@
 #include "Texture.h"
+#include "Debug.h"
 #include "Shader.h"
 
 #include <string.h>
-#include "stb_image_aug.h" 
+#define STB_IMAGE_WRITE_IMPLEMENTATION
+#include "stb_image_write.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h" 
 
-
-Texture::Texture(const std::string& path, std::string name, unsigned char slot) :
-  m_FilePath(path),
-  m_Name(name),
-  m_Slot(slot)
+Texture::Texture( const std::string& path, std::string name, unsigned char slot, unsigned int interp, unsigned int wrap, bool genMipMaps, unsigned int nbmipmaps ) : 
+  Texture(0,0,name,slot,interp,wrap,genMipMaps,nbmipmaps)
 {
+  m_FilePath = path;
+  GLCall(glGenTextures(1, &m_RendererID));
+  Bind(); 
   switch (Texture::ParseFormat(path)) {
-    case TEX_DDS:
-      GenDDS();
-      break;
     case TEX_OTHER:
-      GenOther();
+      LoadOther();
+      Upload();
+      stbi_image_free(m_LocalBuffer);
+      break;
+    case TEX_DDS:
+      LoadDDS();
       break;
   }
+  SetParameters();
 
 }
 
+Texture::Texture( unsigned char * buffer, unsigned int width, unsigned int height, std::string name, unsigned char slot, unsigned int interp, unsigned int wrap, bool genMipMaps, unsigned int nbmipmaps ) : 
+  Texture(width,height,name,slot,interp,wrap,genMipMaps,nbmipmaps)
+{
+  Make(buffer);
+}
 
-void Texture::GenDDS(){
+
+void Texture::SetParameters(){
+  Bind();
+
+
+  GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_S, m_Wrap));
+  GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, m_Wrap));
+
+  GLCall(glTexParameteri(m_Target, GL_TEXTURE_MAG_FILTER, m_Interp));;
+
+  // mipmaps
+  if(m_NbMipMaps != 0){
+    // already has them
+    GLCall(glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, m_NbMipMaps));
+    GLCall(glTexParameteri(m_Target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+  }
+  else if(m_GenMipMaps){
+    // we're asked to generate them
+    GLCall(glGenerateMipmap(m_Target));
+    GLCall(glTexParameteri(m_Target, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+  }
+  else{
+    // doesnt have them, doesnt want them
+    GLCall(glTexParameteri(m_Target, GL_TEXTURE_MIN_FILTER, m_Interp));;
+  }
+  Unbind();
+
+}
+
+void Texture::Make(unsigned char* buffer) {
+  m_LocalBuffer = buffer;
+  GLCall(glGenTextures(1, &m_RendererID));
+  Bind(m_Slot);
+  Upload();
+  SetParameters();
+
+  if(m_Height != m_Width){
+    printf("[INFO] Going with a rectangle texture, hey I'm not judging\n");
+  }
+}
+
+/*void Texture::MakeDDS(bool genMipMaps){
+  LoadDDS(m_FilePath, genMipMaps);
+
+  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+  GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_S, m_Wrap));
+  GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, m_Wrap));
+}
+
+void  Texture::MakeOther(bool genMipMaps){
   GLCall(glGenTextures(1, &m_RendererID));
   Bind(); 
-  LoadDDS(m_FilePath);
 
-  GLCall(glTexParameteri (GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 5));
-  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-}
-
-void  Texture::GenOther(){
-  GLCall(glGenTextures(1, &m_RendererID));
-  Bind(); 
-  LoadOther(m_FilePath);
-
-  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
   GLCall(glTexParameteri(m_Target, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-  GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE));
-  GLCall(glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE));
-  GLCall(glGenerateMipmap(m_Target));
-}
+  if(genMipMaps){
+    GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR));
+    GLCall(glGenerateMipmap(m_Target));
+  }
+  else{
+  GLCall(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST));;
+  }
+}*/
 
 void Texture::LinkToShader(Shader* shader, const std::string& name, unsigned char slot)
 {
@@ -69,29 +123,51 @@ unsigned int Texture::ParseFormat(const std::string& path){
 
 }
 
-unsigned int Texture::LoadOther(const std::string& path, unsigned int target){
+unsigned int Texture::LoadOther(const std::string& path){
   //stbi_set_flip_vertically_on_load(1);
-  m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &m_BPP, 4);
+  int c;
+  m_LocalBuffer = stbi_load(path.c_str(), &m_Width, &m_Height, &c, m_Channels);
   if (m_LocalBuffer == NULL){
     printf("[ERROR] Could not load texture file %s\n%s\n",path.c_str(),stbi_failure_reason());
     return 0;
   }
-  printf("[INFO] Loaded texture file %s\nwidth:%d height:%d channels:%d\n",path.c_str(),m_Width, m_Height, m_BPP);
+  printf("[INFO] Loaded texture file %s\nwidth:%d height:%d channels originally:%d channels now:%d\n",path.c_str(),m_Width, m_Height, c, m_Channels);
 
-
-
-  GLCall(glTexImage2D(target, 0, GL_RGBA8, m_Width, m_Height, 0, GL_RGBA, GL_UNSIGNED_BYTE, m_LocalBuffer));
-
-
-  if (m_LocalBuffer)
-    stbi_image_free(m_LocalBuffer);
-  // Return the ID of the texture we just created
   return 1;
 }
 
 Texture::~Texture()
 {
 	GLCall(glDeleteTextures(-1, &m_RendererID));
+}
+
+void Texture::Upload(unsigned int target, unsigned int inFmt, unsigned int fmt){
+
+  if (!m_LocalBuffer){
+    printf("[ERROR] Could not upload texture (%d) %s, local buffer is empty\n",m_RendererID,m_FilePath.c_str());
+    return;
+  }
+
+  unsigned int inFormat = inFmt;
+  unsigned int format = fmt;
+  if(m_Channels != 4){
+    switch(m_Channels){
+      case 3:
+        inFormat = GL_RGB8;
+        format = GL_RGB;
+        break;
+      case 2:
+        inFormat = GL_RG8;
+        format = GL_RG;
+        break;
+      case 1:
+        inFormat = GL_R8;
+        format = GL_RED;
+        break;
+    }
+  }
+  GLCall(glTexImage2D(target, 0, inFormat, m_Width, m_Height, 0, format, GL_UNSIGNED_BYTE, m_LocalBuffer));
+  // Return the ID of the texture we just created
 }
 
 void Texture::Bind(unsigned int slot) const
@@ -142,6 +218,9 @@ unsigned int Texture::LoadDDS(const std::string& path, unsigned int target){
   unsigned int mipMapCount = *(unsigned int*)&(header[24]);
   unsigned int fourCC      = *(unsigned int*)&(header[80]);
 
+  if(!m_GenMipMaps){
+    mipMapCount = 1;
+  }
 
   unsigned char * buffer;
   unsigned int bufsize;
@@ -199,10 +278,12 @@ unsigned int Texture::LoadDDS(const std::string& path, unsigned int target){
   printf("[INFO] Loaded texture file %s\nwidth:%d height:%d mipmapcount:%d\n",path.c_str(),width, height, mipMapCount);
 
   return 1;
-
-
 }
 
 
+
+void Texture::SavePng(std::string filepath){
+  stbi_write_png(filepath.c_str(), m_Width, m_Width, 4, (const void *) m_LocalBuffer, m_Width*4);
+}
 
 

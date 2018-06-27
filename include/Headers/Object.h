@@ -6,15 +6,16 @@
 #include "Material.h"
 #include "Mesh.h"
 
+
+#include "ObjectDefine.h"
+
+
 class Object {
 
 
 private : 
 
 	glm::mat4 m_ModelMatrix;
-
-	std::string m_TextureDirectory;
-
 	glm::mat4 m_TranslationMat;
 	glm::mat4 m_RotationMat;
     glm::mat4 m_ScaleMat;
@@ -26,24 +27,44 @@ private :
     void UpdateTranslationMatrix();
     void UpdateRotationMatrix();
 
+	std::string m_TextureDirectory;
 	std::string GetFileName(FILE * f);
+
 protected : 
 
 	Mesh<Vertexun> * m_Mesh;
-	std::vector<Material*> m_Materials;
 	std::map<unsigned int, unsigned int> * m_ListMat;
 
 public :
-	Object();
-	Object(Mesh<Vertexun> * m);
-	Object(Mesh<Vertexun> * m, Material * mat);
-	Object(Mesh<Vertexun> * m, std::vector<Material*> mat);
-	Object(Mesh<Vertexun> * m, std::string shaderPath);
-	Object(Mesh<Vertexun> * m, float * color);
-	Object(std::string pathObj, std::string pathMtl, bool reverse = false, int renderType = GL_TRIANGLES); //FICHIER OBJ ET MTL
-	Object(std::string pathObj, float * color, bool reverse = false, int renderType = GL_TRIANGLES); //FICHIER OBJ ET CODE COULEUR RBG POUR MODEL
-	Object(std::string pathObj, std::string pathMtl, std::string texturesFile, bool reverse = false, int renderType = GL_TRIANGLES);
-	Object(std::string pathObj, bool reverse = false);
+	std::vector<Material*> m_Materials;
+	Object(); //DEFAULT CONSTRUCTOR
+	Object(Mesh<Vertexun> * m); //CONSTRUCTOR WITH A MESH
+	Object(Mesh<Vertexun> * m, Material * mat); //CONSTRUCTOR WITH A MESH AND A MTL
+	Object(Mesh<Vertexun> * m, std::vector<Material*> mat); //CONSTRUCTOR WITH A MESH AND A LIST OF MTL
+	Object(Mesh<Vertexun> * m, std::string shaderPath); //CONSTRUCTOR WITH A MESH AND A SHADER
+	
+	Object(
+		Mesh<Vertexun> * m, float * color, 
+		std::string shadersPath = SHADERDEFAULTPATH, std::string genShaderPath = GENSHADERDEFAULTPATH, 
+		int renderType = RENDERTYPEDEFAULT
+	); //CONSTRUCTOR WITH A MESH AND A COLOR(RGB)
+		
+	Object(
+		std::string pathObj, float * color, 
+		bool reverse = true,
+		std::string shadersPath = SHADERDEFAULTPATH, std::string genShaderPath = GENSHADERDEFAULTPATH, 
+		int renderType = RENDERTYPEDEFAULT); //CONSTRUCTOR WITH A .OBJ AND A COLOR(RGB)
+
+	//CONSTRUCTOR FOR OBJ FILE
+	Object(
+		std::string pathObj, //PATH OF THE .OBJ FILE
+		std::string pathMtl = "", // PATH OF THE .MTL FILE
+		bool reverse = true, //IF Y AND Z ARE INVERTED
+		std::string shadersPath = SHADERDEFAULTPATH, //PATH OF THE SHADERS' DIRECTORY
+		std::string genShaderPath = GENSHADERDEFAULTPATH, //PATH OF THE .GENSHADER FILE
+		std::string pathTextures = "", // PATH OF THE TEXTURES' DIRECTORY
+		int renderType = RENDERTYPEDEFAULT //RENDERING TYPE (TRIANGLES/STRIP/FAN...)
+	);
 
 	void LoadObject(std::string pathObj, bool reverse);
 	void LoadMaterials(std::string path, std::vector<Material*> & materials);
@@ -53,7 +74,7 @@ public :
 	bool hasMaterial(Material* mat);
 	unsigned int GetMaterialId(std::string nameMat);
 
-	void GenerateShaders(std::string shadersPath, std::string genShaderPath);
+	void GenerateShaders(std::string shadersPath = SHADERDEFAULTPATH, std::string genShaderPath = GENSHADERDEFAULTPATH);
 	void Init(unsigned int renderType, std::string shaderPath);
 	void Bind();
 	void Unbind();

@@ -27,14 +27,9 @@ private :
 	glm::vec3 m_Ks; 
 	glm::vec3 m_Ke;
 
-	Shader * m_Shader;
+	Shader * m_Shader = NULL;
 
-	Texture * m_Texture;
-	Texture * m_MapKd;
-	Texture * m_MapKs;
-	Texture * m_MapKa;
-	Texture * m_MapNs;
-	Texture * m_MapD;
+	Texture * m_Texture = NULL,  * m_MapKd = NULL,  *m_MapKs = NULL,  *m_MapKa = NULL,  *m_MapNs = NULL,  *m_MapD = NULL;
 
 	std::vector<bool> m_DynamicUniforms = { false, false, false, false, false };
 	
@@ -90,14 +85,14 @@ public :
 	inline glm::vec3 GetKe() { return m_Ke; }
 	inline float GetNi() { return m_Ni; }
 	inline float GetD() { return m_D; }
-	inline unsigned int GetId() { return m_Id; }
 	inline Texture* GetTexture() { return m_Texture; }
+	inline Shader* GetShader() { return m_Shader; }
+	inline unsigned int GetId() { return m_Id; }
 	inline Texture* GetMapKd() { return m_MapKd; }
 	inline Texture* GetMapKs() { return m_MapKs; }
 	inline Texture* GetMapKa() { return m_MapKa; }
 	inline Texture* GetMapNs() { return m_MapNs; }
 	inline Texture* GetMapD() { return m_MapD; }
 	inline std::vector<bool> & GetDynamicsUniforms() { return m_DynamicUniforms; }
-	inline Shader* GetShader() { return m_Shader; }
 
 };
