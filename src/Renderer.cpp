@@ -76,6 +76,7 @@ void Renderer::Draw(Object& object)
 		GLCall(glDrawElements(object.GetMesh()->GetRendererType(), object.GetMesh()->GetIndexBuffer().GetCount(), GL_UNSIGNED_INT, nullptr));
 		object.Unbind();
 	}
+        object.Unbind();
 }
 
 void Renderer::Draw(std::vector<Object>& objects) {
@@ -142,6 +143,7 @@ void Renderer::Draw(Terrain& t)
     //printf("Drawing level %d\n",i);
 
     // make a function inside LOD to do that
+    t.GetLevel(i).GetObjs().at(0)->Bind();
     t.GetShader()->Bind();
     t.SetUniforms();
     t.GetShader()->SetUniform2i("base",t.GetLevel(i).GetHeightMap()->GetBase());
@@ -150,7 +152,6 @@ void Renderer::Draw(Terrain& t)
     t.GetShader()->SetUniform1i("u_UnitSize",t.GetLevel(i).GetUnitSize());
     t.GetLevel(i).GetHeightMap()->Bind(1);
     t.GetLevel(i).GetHeightMapLinear()->Bind(1);
-    t.GetLevel(i).GetHeightMap()->Bind(0);
     //
     
     Draw(t.GetLevel(i));

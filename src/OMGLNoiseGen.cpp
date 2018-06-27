@@ -106,7 +106,7 @@ float OMGLNoiseBiome1::compute(float x, float y){
 }
 
 float OMGLNoiseBiome2::compute(float x, float y){
-  return (glm::floor(compute1(x, y)));
+  return (glm::floor(compute1(x, y)*200)/200);
 }
 
 float OMGLNoiseBiome3::compute(float x, float y){
@@ -115,7 +115,7 @@ float OMGLNoiseBiome3::compute(float x, float y){
   m_Persistence = 0.154f;
   ret_value = glm::abs(compute1(x,y)) * (-1);
   m_Persistence = temp_m_Persistence;
-  return ret_value*2+1;
+  return ret_value;
 }
 
 

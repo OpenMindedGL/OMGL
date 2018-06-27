@@ -14,7 +14,13 @@ class OMGLMountains : public Biome{
 class OMGLDesert : public Biome{
 
   public:
-    OMGLDesert() : Biome(new OMGLNoiseBiome3(), 200, 0) {}
+    OMGLDesert() : Biome(new OMGLNoiseBiome3(), 500, -500) {}
+
+};
+class OMGLBlocky : public Biome{
+
+  public:
+    OMGLBlocky() : Biome(new OMGLNoiseBiome2(), 200, 0) {}
 
 };
 #endif

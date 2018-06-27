@@ -67,7 +67,7 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
 
     else if(sign == glm::i32vec2(1,1)){
       s.x = o.x + worldWidth;
-      e.y = o.y;
+      e.y = o.y + worldWidth;
     }
 
     else if(sign == glm::i32vec2(0,1)){
@@ -109,8 +109,8 @@ unsigned int DynamicTexture::Update(glm::i32vec2 dir){
     e = o;
     s = n;
     if(sign == glm::i32vec2(1,1)){
-      s += glm::i32vec2(worldWidth);
-      e += glm::i32vec2(worldWidth);
+      s = o + glm::i32vec2(worldWidth);
+      e = n + glm::i32vec2(worldWidth);
     }
 
     else if(sign == glm::i32vec2(1,-1)){

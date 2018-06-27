@@ -101,8 +101,10 @@ int main(void) {
 
   glm::i32vec2 p;
  // std::vector<Biome*> bs = {/*new OMGLMountains(),*/ new OMGLDesert()};
-  //std::vector<Biome*> bs = {new OMGLMountains()};
-  std::vector<Biome*> bs = {new OMGLMountains(), new OMGLDesert()};
+  std::vector<Biome*> bs = {new OMGLMountains()};
+  //std::vector<Biome*> bs = {new OMGLMountains(), new OMGLDesert()};
+  //std::vector<Biome*> bs = {new OMGLMountains(), new OMGLDesert(), new OMGLBlocky()};
+  //std::vector<Biome*> bs = {new OMGLDesert(), new OMGLBlocky()};
 
   Terrain t(&bs);
 

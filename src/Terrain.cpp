@@ -11,7 +11,6 @@
 #include <glm/glm.hpp>
 
 
-
 Terrain::Terrain( std::vector<Biome*>* biomes, ProcMixer* mixer, glm::vec2 spawn, unsigned int s, unsigned int n, float scale) : 
   m_Biomes(biomes),
   m_Mixer(mixer),
@@ -25,7 +24,6 @@ Terrain::Terrain( std::vector<Biome*>* biomes, ProcMixer* mixer, glm::vec2 spawn
     printf("[WARNING] trying to make a LODLevel with a size-3 not dividable by 4, bad things gonna happend, you've been warned\n");
   }
   m_Shader = new Shader("shaders/Terrain.shader");
-  int size = s+2;
 
   LODLevel::GenMeshes(m_Size);   
   LODLevel* lp = NULL;
