@@ -84,6 +84,7 @@ class Terrain {
     inline LODLevel ** GetLods(){ return m_Lods;}
     inline Shader * GetShader(){ return m_Shader;}
     inline YGen* GetNoise(){ return m_Mixer; }
+    inline float GetScale(){ return m_Scale; }
 //    inline Texture * GetNormalMap(){ return m_NormalMap;}
 
 

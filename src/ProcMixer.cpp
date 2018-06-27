@@ -50,10 +50,10 @@ std::tuple<float, unsigned int> OMGLProcMixer::mix(float x, float y){
     // TODO
     // make a member to choose wether to add rivers or not
     // try to make it a feature of each biome
-    if ( glm::abs(m_Bits->at(0)->GetNoise(x*10,y*10)) < 0.04f){
+    /*if ( glm::abs(m_Bits->at(0)->GetNoise(x*10,y*10)) < 0.04f){
       ret_value = -0.05f;
       smooth_coef = 1.0f;
-    }
+    }*/
 
     return std::make_tuple((ret_value * smooth_coef+1)/2.0f,biome_choice);
   }
