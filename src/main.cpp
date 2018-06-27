@@ -120,7 +120,7 @@ int main(void) {
 
   //c.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
   //Object o("res/objects/bugatti/bugatti2.obj", "res/objects/bugatti/bugatti.mtl", false);
-  //Object o("res/objects/dodge/CHALLENGER71.obj", "res/objects/dodge/CHALLENGER71.mtl", "res/objects/dodge/", true, GL_TRIANGLES);
+  Object o("objects/Dodge/CHALLENGER71.obj", "objects/Dodge/CHALLENGER71.mtl", "objects/Dodge/", true, GL_TRIANGLES);
   //Object o("res/objects/falcon/falcon.obj", "res/objects/falcon/falcon.mtl", "res/objects/falcon/", false, GL_TRIANGLES);
 
   //Object o("res/objects/Mill/Mill.obj", OMGL_CYAN, false);
@@ -148,8 +148,9 @@ int main(void) {
     pos = renderer.getCameraPosition();
     p = glm::i32vec2(pos.x,pos.z);
     //printf("x:%f y:%f \n",pos.x,pos.z);    
-    t.Update(p);
-    renderer.Draw(t);
+    //t.Update(p);
+    //renderer.Draw(t);
+    renderer.Draw(o);
 
 
     /*renderer.Draw(o);

@@ -161,7 +161,7 @@ void main(){
   vec3 n = normalize( v_normal );
 
   vec3 lightPos = vec3(0.0f,10000.0f,0.0f);
-  vec3 to_light = lightPos * v_vertex;
+  vec3 to_light = lightPos - v_vertex;
   to_light = normalize(to_light);
   float cos_angle = dot(n, to_light);
   cos_angle = clamp(cos_angle, 0.0, 1.0);
