@@ -150,6 +150,8 @@ void Renderer::Draw(Terrain& t)
     t.GetShader()->SetUniform2i("torBase",t.GetLevel(i).GetHeightMap()->GetTorBase());
     t.GetShader()->SetUniform2i("torBegin",t.GetLevel(i).GetHeightMap()->GetTorBegin());
     t.GetShader()->SetUniform1i("u_UnitSize",t.GetLevel(i).GetUnitSize());
+    t.GetShader()->SetUniform3f("u_ViewerPos",m_Camera->getPosition());
+    t.GetShader()->SetUniform1i("u_HeightMapLinear",1);
     t.GetLevel(i).GetHeightMap()->Bind(1);
     t.GetLevel(i).GetHeightMapLinear()->Bind(1);
     //

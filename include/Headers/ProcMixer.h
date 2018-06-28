@@ -7,7 +7,7 @@
 #include <vector>
 #include <tuple>
 
-#define DEFAULT_NOISES_SIZE     5.0f
+#define DEFAULT_NOISES_SIZE     15.0f
 
 class ProcMixer : public virtual YGen{
 

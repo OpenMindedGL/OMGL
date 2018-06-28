@@ -7,7 +7,7 @@
 class OMGLMountains : public Biome{
 
   public:
-    OMGLMountains() : Biome(new OMGLNoiseBiome1(),500,-500) {}
+    OMGLMountains() : Biome(new OMGLNoiseBiome1(),1000,-1000) {}
 
 };
 

@@ -101,10 +101,10 @@ int main(void) {
 
   glm::i32vec2 p;
  // std::vector<Biome*> bs = {/*new OMGLMountains(),*/ new OMGLDesert()};
-  //std::vector<Biome*> bs = {new OMGLMountains()};
+  std::vector<Biome*> bs = {new OMGLMountains()};
   //std::vector<Biome*> bs = {new OMGLMountains(), new OMGLDesert()};
   //std::vector<Biome*> bs = {new OMGLBlocky(), new OMGLSilk()};
-  std::vector<Biome*> bs = {new OMGLMountains(), new OMGLDesert(), new OMGLBlocky(), new OMGLPeanuts()};
+  //std::vector<Biome*> bs = {new OMGLMountains(), new OMGLDesert(), new OMGLBlocky(), new OMGLPeanuts()};
   //std::vector<Biome*> bs = {new OMGLDesert(), new OMGLBlocky()};
 
   Terrain t(&bs);
@@ -120,7 +120,7 @@ int main(void) {
 
   //c.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
   //Object o("res/objects/bugatti/bugatti2.obj", "res/objects/bugatti/bugatti.mtl", false);
-  Object o("objects/Dodge/CHALLENGER71.obj", "objects/Dodge/CHALLENGER71.mtl", "objects/Dodge/", true, GL_TRIANGLES);
+  //Object o("objects/Dodge/CHALLENGER71.obj", "objects/Dodge/CHALLENGER71.mtl", "objects/Dodge/", true, GL_TRIANGLES);
   //Object o("res/objects/falcon/falcon.obj", "res/objects/falcon/falcon.mtl", "res/objects/falcon/", false, GL_TRIANGLES);
 
   //Object o("res/objects/Mill/Mill.obj", OMGL_CYAN, false);
@@ -148,9 +148,9 @@ int main(void) {
     pos = renderer.getCameraPosition();
     p = glm::i32vec2(pos.x,pos.z);
     //printf("x:%f y:%f \n",pos.x,pos.z);    
-    //t.Update(p);
-    //renderer.Draw(t);
-    renderer.Draw(o);
+    t.Update(p);
+    renderer.Draw(t);
+    //renderer.Draw(o);
 
 
     /*renderer.Draw(o);

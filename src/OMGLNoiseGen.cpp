@@ -79,7 +79,7 @@ float OMGLNoiseBiome::compute1(float x, float y){
     c += (*(iter_noise3 + d))->GetNoise(x*10,y*10) * pow(m_Persistence, d); 
     d++;
   }
-  return (a*b*c*m_Zoom)/3.0f;
+  return (a*b*c/**m_Zoom*/)/3.0f;
 }
 
 float OMGLNoiseBiome::compute4(float x, float y){

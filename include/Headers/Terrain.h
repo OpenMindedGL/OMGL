@@ -16,13 +16,13 @@ class LODLevel;
 #include "Biome.h"
 #include "DynamicHeightMap.h"
 
-#define NB_LEVELS 6
+#define NB_LEVELS 7
 #define DEFAULT_SCALE   64
 #define DEFAULT_SPAWN   glm::i32vec2(0,0)
 
 
 #define PRECISION 1.0f
-#define SIZE    131   // -3 should be power of two, dividable by 8
+#define SIZE    259   // -3 should be power of two, dividable by 8
 #define HALFSIZE    SIZE/2
 
 class Terrain {
