@@ -1,0 +1,11 @@
+extern float OMGL_RED[] = { 1.0f, 0.1f, 0.1f };
+extern float OMGL_GREEN[] = { 0.1f, 1.0f, 0.1f };
+extern float OMGL_BLUE[] = { 0.1f, 0.1f, 1.0f };
+extern float OMGL_CYAN[] = { 0.1f, 1.0f, 1.0f };
+extern float OMGL_MAGENTA[] = { 1.0f, 0.1f, 1.0f };
+extern float OMGL_YELLOW[] = { 1.0f, 1.0f, 0.1f };
+extern float OMGL_BROWN[] = { 0.34f, 0.16f, 0.0f };
+extern float OMGL_GREY[] = { 0.5f, 0.5f, 0.5f };
+extern float OMGL_ORANGE[] = { 1.0f, 0.27f, 0.0f };
+extern float OMGL_BLACK[] = { 1.0f, 1.0f, 1.0f };
+extern float OMGL_WHITE[] = { 0.0f, 0.0f, 0.0f };

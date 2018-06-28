@@ -436,5 +436,8 @@ std::string Object::GetFileName(FILE * f)
 		path.push_back(c);
 		c = fgetc(f);
 	}
+	if (!path.empty() && path[path.size() - 1] == '\r') {
+		path.erase(path.size() - 1);
+	}
 	return path;
 }
