@@ -33,22 +33,12 @@
 #include "Skybox.h"
 
 #include "ObjectDefine.h"
-
+#include "OMGLCOLOR.h"
 
 using namespace glm;
 
 #define WIDTH 1920 
 #define HEIGHT 1080
-
-extern float OMGL_RED[]		  = { 1.0f, 0.1f, 0.1f };
-extern float OMGL_GREEN[]	  = { 0.1f, 1.0f, 0.1f };
-extern float OMGL_BLUE[]	  = { 0.1f, 0.1f, 1.0f };
-extern float OMGL_CYAN[]      = { 0.1f, 1.0f, 1.0f };
-extern float OMGL_MAGENTA[]   = { 1.0f, 0.1f, 1.0f };
-extern float OMGL_YELLOW[]    = { 1.0f, 1.0f, 0.1f };
-extern float OMGL_BROWN[]     = { 0.34f, 0.16f, 0.0f };
-extern float OMGL_GREY[]      = { 0.5f, 0.5f, 0.5f };
-extern float OMGL_ORANGE[]    = { 1.0f, 0.27f, 0.0f };
 
 int init();
 int main(void);
@@ -108,7 +98,7 @@ int main(void) {
   Skybox s;
 
   Cube cube;
-  Object o(&cube, OMGL_BLUE);
+  //Object o(&cube, OMGL_BLUE);
 
   //Object o(&cube, "shaders/Test.shader");
 
@@ -119,25 +109,18 @@ int main(void) {
 		   "res/objects/dodge/");
   */
   
-  /*Object o( "res/objects/dodge/CHALLENGER71.obj",
+  Object o( "res/objects/dodge/CHALLENGER71.obj",
 			"res/objects/dodge/CHALLENGER71.mtl",
 			true, "shaders/DynamicShader",
 			"shaders/DynamicShader/Basic.genshader",
 			"res/objects/dodge/");
-  */ 
+  
+
+  //Object o("res/objects/dodge/CHALLENGER71.obj", OMGL_BROWN);
+  
+  //Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl", false);
 
   
-  //Object o("res/objects/dodge/CHALLENGER71.obj",OMGL_BROWN);
-
-  //Object o("res/objects/Mill/Mill.obj", OMGL_BLUE, false);
-
-  //o.SetTextureDirectory("res/objects/dodge/");
-  //o.LoadTexturesMap();
-  //o.LoadTexturesMap("res/objects/dodge/");
-
-  //o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
-
-
   o.Translate(0, 10, 0);
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
   {
@@ -155,7 +138,7 @@ int main(void) {
 
 
     renderer.Draw(o);
-    //o.RotationDeg(vec3(0.0f, 0.3f, 0.0f));
+    o.RotationDeg(vec3(0.0f, 0.3f, 0.0f));
 
 
     // Always draw last	
