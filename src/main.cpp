@@ -109,14 +109,14 @@ int main(void) {
 		   "res/objects/dodge/");
   */
   
-  Object o( "res/objects/dodge/CHALLENGER71.obj",
+  /*Object o( "res/objects/dodge/CHALLENGER71.obj",
 			"res/objects/dodge/CHALLENGER71.mtl",
 			true, "shaders/DynamicShader",
 			"shaders/DynamicShader/Basic.genshader",
 			"res/objects/dodge/");
-  
+  */
 
-  //Object o("res/objects/dodge/CHALLENGER71.obj", OMGL_BROWN);
+  Object o("res/objects/dodge/CHALLENGER71.obj", OMGL_BLUE);
   
   //Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl", false);
 
