@@ -45,7 +45,7 @@ void main(){
   vec4 tex = texture(u_DefaultSampler, uv);
   vec3 height = tex.xyz;
   d1 = height; 
-  biome = tex.w ;
+  biome = floor(tex.w*255.0) ;
   pos.y = (dot(height*255.0f, vec3(256.0 * 256.0, 256.0, 1.0)) / max24int )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
   gl_Position =  u_VP * pos;
 
@@ -132,7 +132,14 @@ vec4 getnormals(sampler2D s, vec2 pos){
 }
 
 void main(){
-  vec3 objColor = vec3(0.10f,0.30f*biome*255.0f,0.10f);
+  vec3 objColor;
+  if(biome == 0){
+    objColor = vec3(0.10f,0.30f,0.10f);
+  }
+  else{
+    objColor = vec3(0.30f,0.30f,0.10f);
+  }
+  //vec3 objColor = vec3(0.10f,0.30f*biome*255.0f,0.10f);
   //vec3 objColor = d1;
 //int b = int(biome*255);
 int b = 0;

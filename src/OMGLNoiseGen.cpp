@@ -25,6 +25,15 @@ OMGLNoiseGen::OMGLNoiseGen( unsigned int nbNoises ) :
 
 }
 
+OMGLNoiseCloud::OMGLNoiseCloud() : 
+  OMGLNoiseGen(1)
+{
+  m_Mix =  new FastNoise(m_Seed+(m_Octaves*4));
+  m_Mix->SetNoiseType(FastNoise::SimplexFractal);
+  m_Mix->SetFractalOctaves(8);
+  m_Mix->SetFrequency(m_Lacunarity * 0.01f * (1.0f/m_CloudSize));
+}
+
 float* OMGLNoiseCloud::compute2(float x, float y){
   float a = 0;
   float c = 0;

@@ -1,42 +1,27 @@
-/*#ifndef Sky_H
+#ifndef Sky_H
 #define Sky_H
 
 #include <string>
 #include <vector>
 #include <glm/glm.hpp>
-#include "Vertex.h"
 
-#include "Mesh.h"
+#include "Object.h"
+#include "YGen.h"
 #include "OMGLNoiseGen.h"
+#include "SkyMesh.h"
 
-#define CHUNK_SIZE 32
-#define CHUNK_PER_SIDE 5
-#define RENDER_DISTANCE (CHUNK_PER_SIDE/2)
-#define TERRAIN_SZ (CHUNK_PER_SIDE*CHUNK_SIZE)
+#define DEFAULT_SKY_SHADER "shaders/PerlinClouds.shader"
 
-class Sky : public Model<Vertexun>
+class Sky : public Object
 {
-  private: 
-    glm::i32vec2 buffer_map[CHUNK_PER_SIDE*CHUNK_PER_SIDE];
-
-    glm::i32vec2 last_chunk; 
-    
-    float precision;
-    YGen* m_VNoise;
-    YGen* m_RNoise;
-
-    // returns chunk coords for point
-    glm::i32vec2 GetChunk( glm::vec2 pointCoords );
 
   public: 
 
-    Sky(glm::vec2 center, YGen* rectoNoise, YGen* versoNoise);
-    
-    void initload_sky(glm::vec2 center);
-    void load(glm::vec2 coords);
-    void compute_indices_sky();
-    void compute_normals();
+    //Sky(glm::vec2 center) : Sky(center, new OMGLNoiseCloudRecto(), new OMGLNoiseCloudVerso()) {  }
+
+    Sky(glm::vec2 center, YGen* rectoNoise, YGen* versoNoise)
+      : Object(new SkyMesh(center, rectoNoise, versoNoise), new Material(new Shader(DEFAULT_SKY_SHADER))) {}
 
 };
 
-#endif*/
+#endif

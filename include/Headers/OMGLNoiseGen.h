@@ -6,6 +6,8 @@
 #include "FastNoise.h"
 #include "NoiseGen.h"
 
+#define DEFAULT_CLOUD_SIZE      15.0f
+
 class OMGLNoiseGen : public virtual NoiseGen {
   protected:
     std::vector<std::vector<FastNoise*>> m_Noises;
@@ -19,11 +21,12 @@ class OMGLNoiseGen : public virtual NoiseGen {
 class OMGLNoiseCloud : public virtual OMGLNoiseGen{
   protected:
     FastNoise* m_Mix;
+    float m_CloudSize = DEFAULT_CLOUD_SIZE;
     float compute(float x, float y) { return compute2(x,y)[0]; }
     float* compute2(float x, float y);
 
   public:
-    OMGLNoiseCloud() : OMGLNoiseGen(1) {}
+    OMGLNoiseCloud();
 
 };
 
@@ -31,6 +34,7 @@ typedef OMGLNoiseCloud OMGLNoiseCloudVerso;
 
 class OMGLNoiseCloudRecto : public OMGLNoiseCloud{
   public:
+    OMGLNoiseCloudRecto() : OMGLNoiseCloud() {};
     float compute(float x, float y);
 };
 
