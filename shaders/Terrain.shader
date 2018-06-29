@@ -11,8 +11,9 @@ out vec3 normal;
 out vec3 lightdir;
 out mat4 MV;
 out vec3 pp;
+out float biome;
 
-out float d1;
+out vec3 d1;
 
   
 // Values that stay constant for the whole mesh.
@@ -40,8 +41,12 @@ void main(){
   ivec2 tPos = ivec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
   uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
   //pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) ) *(u_MaxHeight-u_MinHeight)+u_MinHeight;
-const float max24int = 256.0 * 256.0 * 256.0 - 1.0;
-float pos.y = 255.0 * dot(texture(u_DefaultSampler, uv), vec3(256.0 * 256.0, 256.0, 1.0)) / max24int;
+  const float max24int = 256.0 * 256.0 * 256.0 - 1.0;
+  vec4 tex = texture(u_DefaultSampler, uv);
+  vec3 height = tex.xyz;
+  d1 = height; 
+  biome = tex.w ;
+  pos.y = (dot(height*255.0f, vec3(256.0 * 256.0, 256.0, 1.0)) / max24int )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
   gl_Position =  u_VP * pos;
 
 
@@ -71,7 +76,8 @@ in vec2 uv;
 //in vec3 normal;
 in vec3 lightdir;
 in vec3 pp;
-in float d1;
+in vec3 d1;
+in float biome;
 uniform ivec2 base;
 uniform ivec2 torBase;
 uniform ivec2 torBegin;
@@ -79,7 +85,8 @@ uniform int u_UnitSize;
 uniform int u_MaxHeight;
 uniform int u_MinHeight;
 uniform vec3 u_ViewerPos;
-uniform Material u_Mat;
+//uniform int nb_biomes;
+uniform Material u_Mat[1];
 
 
 //uniform sampler2D u_NormalMap;
@@ -90,33 +97,34 @@ uniform sampler2D u_HeightMapLinear;
 vec4 getnormals(sampler2D s, vec2 pos){
   vec2 size = vec2(u_UnitSize,0.0);
   vec3 off = vec3(-u_UnitSize/2.0f,0,u_UnitSize/2.0f);
+  const float max24int = 256.0 * 256.0 * 256.0 - 1.0;
 
   float texsize = textureSize(s, 0).x;
 
   vec2 wPos = vec2(pos.x,pos.y);
   vec2 tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
   vec2 uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
-  float s11 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
+  float s11 = (dot(texture(s,uv).xyz*255.0f, vec3(256.0 * 256.0, 256.0, 1.0)) / max24int )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
 
   wPos = vec2(pos.x,pos.y)+off.xy;
   tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
   uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
-  float s01 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
+  float s01 = (dot(texture(s,uv).xyz*255.0f, vec3(256.0 * 256.0, 256.0, 1.0)) / max24int )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
 
   wPos = vec2(pos.x,pos.y)+off.zy;
   tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
   uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
-  float s21 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
+  float s21 = (dot(texture(s,uv).xyz*255.0f, vec3(256.0 * 256.0, 256.0, 1.0)) / max24int )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
 
   wPos = vec2(pos.x,pos.y)+off.yx;
   tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
   uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
-  float s10 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
+  float s10 =(dot(texture(s,uv).xyz*255.0f, vec3(256.0 * 256.0, 256.0, 1.0)) / max24int )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
 
   wPos = vec2(pos.x,pos.y)+off.yz;
   tPos = vec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
   uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
-  float s12 = dot( texture(s, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
+  float s12 =(dot(texture(s,uv).xyz*255.0f, vec3(256.0 * 256.0, 256.0, 1.0)) / max24int )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
 
   vec3 va = normalize(vec3(size.xy,s21-s01));
   vec3 vb = normalize(vec3(size.yx,s12-s10));
@@ -124,25 +132,28 @@ vec4 getnormals(sampler2D s, vec2 pos){
 }
 
 void main(){
-  vec3 objColor = vec3(0.10f,0.30f,0.10f);
+  vec3 objColor = vec3(0.10f,0.30f*biome*255.0f,0.10f);
+  //vec3 objColor = d1;
+//int b = int(biome*255);
+int b = 0;
 
-  //vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy);
-vec3 n =vec3(0);
+  vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy);
+//vec3 n =vec3(0);
 
   vec3 l = normalize(vec3(4,10.0f,.0)) ;
 
   // ambient
-  vec3 ambient = u_Mat.Ka;
+  vec3 ambient = u_Mat[b].Ka;
 
   // diffuse 
   float diff = max(dot(n, l), 0.0);
-  vec3 diffuse = (diff * u_Mat.Kd);
+  vec3 diffuse = (diff * u_Mat[b].Kd);
 
   // specular
   vec3 viewDir = normalize(u_ViewerPos - pp);
   vec3 reflectDir = reflect(-l, n);  
-  float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Mat.Ns);
-  vec3 specular = (spec * u_Mat.Ks);  
+  float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Mat[b].Ns);
+  vec3 specular = (spec * u_Mat[b].Ks);  
 
   vec3 result = ( ambient + diffuse + specular ) * objColor;
 

@@ -4,9 +4,14 @@
 #include <tuple>
 
 
-BiomeHeightMap::BiomeHeightMap( ProcMixer* n, unsigned int width, int texsize, glm::vec2 step , glm::i32vec2 base ) :
-  HeightMap(n,width,step,base)
+BiomeHeightMap::BiomeHeightMap( ProcMixer* n, unsigned int width, int texsize, glm::vec2 step , glm::i32vec2 base )
 {
+  m_Noise = n;
+  m_Width = width;
+  m_TexelSize = texsize;
+  m_Step = step;
+  m_Base = base;
+
   Gen(base,step);
 //  Encode();
   ////should be done like that (giving name and slot)
@@ -21,15 +26,17 @@ glm::vec4 BiomeHeightMap::packing2 = glm::vec4(1.0, 1/255.0, 1/65025.0, 1/165813
 
 glm::vec3 BiomeHeightMap::EncodeFloatRGB( float v) {
   const float max24int = 256.0 * 256.0 * 256.0 - 1.0;
-  v *= max24int;
-  glm::vec3 result = floor(v / glm::vec3(256.0 * 256.0, 256.0, 1.0));
-  result.gb -= result.rg * 256.0;
-  result /= 255.0;
+  float val = v * max24int;
+  glm::vec3 result = floor(val / glm::vec3(256.0 * 256.0, 256.0, 1.0));
+  result.g -= result.r * 256.0;
+  result.b -= result.g * 256.0;
+  result.b /= 255.0*255.0;
+  //printf("(BiomeHeightMap::EncodeFloatRGB) val: %f, result: (%f,%f,%f)\n",v,result.x,result.y,result.z);
   return glm::vec3(result);
 }
 float BiomeHeightMap::DecodeFloatRGB( glm::vec3 rgb ) {
   const float max24int = 256.0 * 256.0 * 256.0 - 1.0;
-  float result = 255.0 * glm::dot(rgb, glm::vec3(256.0 * 256.0, 256.0, 1.0)) / max24int;
+  float result = glm::dot(rgb, glm::vec3(256.0 * 256.0, 256.0, 1.0)) / max24int;
   return result;
 }
 
@@ -52,8 +59,8 @@ void BiomeHeightMap::Decode(){
     m_HeightsD.push_back(
         DecodeFloatRGB(
             glm::vec3(m_Texels[i].x,m_Texels[i].y,m_Texels[i].z)
-          );
-        )
+          )
+        );
     m_Biomes.push_back(m_Texels[i].w);
   }
 }
@@ -65,17 +72,20 @@ void BiomeHeightMap::Gen(glm::i32vec2& base, glm::vec2& step) {
   std::tuple<float,unsigned int> a;
   for(int i=base.y;i<e.y;i+=m_TexelSize){
     for(int j=base.x;j<e.x;j+=m_TexelSize){
-          a = m_Noise->mix((float)j*step.x,(float)i*step.y) // + maxnoise) /maxnoise*2; (mapping to (0,1))
+          a = m_Noise->mix((float)j*step.x,(float)i*step.y); // + maxnoise) /maxnoise*2; (mapping to (0,1))
       m_HeightsD.push_back(std::get<0>(a));
       m_Biomes.push_back(std::get<1>(a));
+      glm::vec3 enc = EncodeFloatRGB(std::get<0>(a));
+      glm::u8vec3 encoded = static_cast<glm::u8vec3>(enc);
+      //printf("(BiomeHeightMap::Gen) encoded: (%d,%d,%d)\n",encoded.x,encoded.y,encoded.z);
       m_Texels.push_back(
-          static_cast<glm::u8vec4>(
-            EncodeFloatCharRGBA(
-              std::get<0>(a), std::get<1>(a) )
-            )
+          glm::u8vec4(encoded, std::get<1>(a))
           );
+      //printf("biome: %d\n",m_Texels.back().w);
+      //printf("%f, %f\n",m_HeightsD.back(),DecodeFloatRGB(static_cast<glm::vec3>(encoded)));
     }
   }
+
 }
 
 
