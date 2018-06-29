@@ -7,6 +7,6 @@
 !Makefile
 /src/Debug.cpp
 /include/Headers/Debug.h
-design.md.txt
-postmortem.md.txt
-design.md.txt
+!readme.md.txt
+!postmortem.md.txt
+!design.md.txt

@@ -1,0 +1,29 @@
+
+1)	Comment on build
+Il faut installer toutes les librairies nécessaires pour le programme, glew, glm, glfw, stbi et fastnoise.
+Sur visual studio il faut aussi configurer le projet dans les propriétés.
+Le code nécessaire pour faire fonctionner l’application est déjà présent dans le main, il suffit donc de l’exécuter.
+
+2)	Comment utiliser les fonctionnalités principales (terrain, objet..)
+Pour générer un terrain aléatoire : 
+Il faut choisir un/des biome(s), soit parmi ceux déjà existant ou en faire un soit même, en héritant de la classe BIOME. 
+Exemple avec un biome existant : 
+-	std ::vercot<Biome*> bs = {new OMGLMountains()};
+Il suffit ensuite de passer ça a un terrain dans le constructeur : 
+-	Terrain t(&bs) ;
+Pour l’afficher, dans la boucle il faut l’update puis le draw : 
+t.Update() ;
+renderer.Draw(t) ;
+
+Pour générer des objets :
+
+
+3)	Ce qu’il reste à faire 
+
+
+5/
+ROBIN : GEN TERRAIN, LOD, Textures, skybox 
+Hugues : Chargement object Blender, classe Mesh et Materials
+Malo : Physique, gravityobject pas encore fonctionnel
+Weitian : Arbres/Rocher procéduraux, pas encore fonctionnel
+Pablo : Gen terrain, nuages procéduraux, Biomes
