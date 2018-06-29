@@ -5,6 +5,7 @@
 #include "FastNoise.h"
 #include "OMGLNoiseGen.h"
 
+
 OMGLNoiseGen::OMGLNoiseGen( unsigned int nbNoises ) :
   NoiseGen()
 {
@@ -95,7 +96,7 @@ float OMGLNoiseBiome::compute4(float x, float y){
     (*iter_noise)->SetFrequency(pow(m_Lacunarity, d) * 0.01f / m_Zoom);
     d++;
   }
-  return a*a*a/**1.5f*m_Zoom*/;
+  return a*a*a/3.0f/**1.5f*m_Zoom*/;
 }
 
 float OMGLNoiseBiome1::compute(float x, float y){
@@ -110,12 +111,13 @@ float OMGLNoiseBiome2::compute(float x, float y){
 }
 
 float OMGLNoiseBiome3::compute(float x, float y){
+  float variation = (*(*((*(m_Noises.end() - 1)).begin()))).GetNoise(x,y);
   float ret_value;
   float temp_m_Persistence = m_Persistence;
   m_Persistence = 0.154f;
   ret_value = glm::abs(compute1(x,y)) * (-1);
   m_Persistence = temp_m_Persistence;
-  return ret_value;
+  return ret_value + (glm::abs(variation)/3.5f);
 }
 
 

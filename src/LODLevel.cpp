@@ -50,9 +50,9 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t, LODLevel* prev
 
   int size = m_Size+HEIGHT_MAP_EXCESS; // tex coords
   if(m_Level != 0 && m_Previous != NULL)
-    m_HeightMap = new DynamicHeightMap(m_Terrain->GetNoise(),size, m_UnitSize, glm::vec2(1.0f/m_Terrain->GetScale()), m_NewActiveR-glm::i32vec2(HEIGHT_MAP_EXCESS*m_UnitSize), m_Previous->GetHeightMap());
+    m_HeightMap = new DynamicBiomeHeightMap(m_Terrain->GetMixer(),size, m_UnitSize, glm::vec2(1.0f/m_Terrain->GetScale()), m_NewActiveR-glm::i32vec2(HEIGHT_MAP_EXCESS*m_UnitSize), m_Previous->GetHeightMap());
   else
-    m_HeightMap = new DynamicHeightMap(m_Terrain->GetNoise(),size, m_UnitSize, glm::vec2(1.0f/m_Terrain->GetScale()), m_NewActiveR-glm::i32vec2(HEIGHT_MAP_EXCESS*m_UnitSize));
+    m_HeightMap = new DynamicBiomeHeightMap(m_Terrain->GetMixer(),size, m_UnitSize, glm::vec2(1.0f/m_Terrain->GetScale()), m_NewActiveR-glm::i32vec2(HEIGHT_MAP_EXCESS*m_UnitSize));
 
   m_HeightMap->SetInterp(GL_NEAREST);
 

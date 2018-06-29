@@ -12,7 +12,7 @@ class Terrain;
 #include "Vertex.h"
 #include "NoiseGen.h"
 #include "Terrain.h"
-#include "DynamicHeightMap.h"
+#include "DynamicBiomeHeightMap.h"
 #include "Sampler.h"
 #include <math.h>
 
@@ -60,7 +60,7 @@ class LODLevel {
 
     Terrain * m_Terrain;
     Material * m_Material;
-    DynamicHeightMap* m_HeightMap;
+    DynamicBiomeHeightMap* m_HeightMap;
     Sampler* m_HeightMapLinear;
     LODLevel* m_Previous;
 
@@ -102,7 +102,7 @@ class LODLevel {
     inline Object* GetSeam() { return m_SeamObj; }
     inline std::vector<Object*>& GetObjs() { return m_Objs; }
     inline int GetUnitSize() { return m_UnitSize; }
-    inline DynamicHeightMap* GetHeightMap() { return m_HeightMap; }
+    inline DynamicBiomeHeightMap* GetHeightMap() { return m_HeightMap; }
     inline Sampler* GetHeightMapLinear() { return m_HeightMapLinear; }
 };
 

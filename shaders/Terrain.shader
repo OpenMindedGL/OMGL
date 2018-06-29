@@ -10,7 +10,7 @@ out vec2 uv;
 out vec3 normal;
 out vec3 lightdir;
 out mat4 MV;
-out vec2 pp;
+out vec3 pp;
 
 out float d1;
 
@@ -34,12 +34,14 @@ uniform int u_MinHeight;
 void main(){
   vec4 pos = round(u_M * vec4(vPos,1.0));
   vec4 posV = u_V * pos;
-  pp = pos.xz;
+  pp = pos.xyz;
   float texsize = textureSize(u_DefaultSampler, 0).x;
   ivec2 wPos = ivec2(pos.x,pos.z);
   ivec2 tPos = ivec2(mod((torBase + (wPos - base))/u_UnitSize,texsize)); 
   uv = (vec2(tPos)/(texsize))+vec2(0.00001,0.00001);
-  pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) ) *(u_MaxHeight-u_MinHeight)+u_MinHeight;
+  //pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) ) *(u_MaxHeight-u_MinHeight)+u_MinHeight;
+const float max24int = 256.0 * 256.0 * 256.0 - 1.0;
+float pos.y = 255.0 * dot(texture(u_DefaultSampler, uv), vec3(256.0 * 256.0, 256.0, 1.0)) / max24int;
   gl_Position =  u_VP * pos;
 
 
@@ -54,13 +56,21 @@ void main(){
 #shader fragment
 #version 330 core
 
+struct Material {
+  vec3 Ka;
+  vec3 Kd;
+  vec3 Ks;
+  float Ns;
+  sampler2D map_Kd;
+};
+
 layout(location = 0) out vec4 color;
 //uniform mat4 u_M;
 //uniform mat4 u_V;
 in vec2 uv;
 //in vec3 normal;
 in vec3 lightdir;
-in vec2 pp;
+in vec3 pp;
 in float d1;
 uniform ivec2 base;
 uniform ivec2 torBase;
@@ -68,7 +78,8 @@ uniform ivec2 torBegin;
 uniform int u_UnitSize;
 uniform int u_MaxHeight;
 uniform int u_MinHeight;
-uniform int u_ViewerPos;
+uniform vec3 u_ViewerPos;
+uniform Material u_Mat;
 
 
 //uniform sampler2D u_NormalMap;
@@ -113,22 +124,33 @@ vec4 getnormals(sampler2D s, vec2 pos){
 }
 
 void main(){
-  vec3 green = vec3(0.10f,0.30f,0.10f);
-  //vec3 Kd = vec3(0.8f,0.8f,0.0f);
-  vec3 Kd = vec3(0.8f);
-  vec3 Ka = vec3(0.6f);
-  //vec3 norm = texture(u_NormalMap, uv).rgb;
+  vec3 objColor = vec3(0.10f,0.30f,0.10f);
 
-  vec3 normal = getnormals(u_HeightMapLinear, pp).xzy;
+  //vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy);
+vec3 n =vec3(0);
 
   vec3 l = normalize(vec3(4,10.0f,.0)) ;
 
+  // ambient
+  vec3 ambient = u_Mat.Ka;
 
-  vec3 n = normalize( normal );
+  // diffuse 
+  float diff = max(dot(n, l), 0.0);
+  vec3 diffuse = (diff * u_Mat.Kd);
+
+  // specular
+  vec3 viewDir = normalize(u_ViewerPos - pp);
+  vec3 reflectDir = reflect(-l, n);  
+  float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Mat.Ns);
+  vec3 specular = (spec * u_Mat.Ks);  
+
+  vec3 result = ( ambient + diffuse + specular ) * objColor;
+
+  /*vec3 n = normalize( normal );
   float cost = clamp( dot( n,l ), 0,1 );
-  float ambient = 0.5f;
+  float ambient = 0.5f;*/
   
   //color = vec4(Ka*Kd,1);
-  vec3 col = (Ka * Kd + Kd * cost) * green;
-  color = vec4(col ,1.0f);
+  //vec3 col = (Ka * Kd + Kd * cost) * green;
+  color = vec4(result ,1.0f);
 }

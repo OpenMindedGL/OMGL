@@ -11,6 +11,7 @@
 
 #define HEIGHTMAP_SAMPLER_NAME    "u_HeightMap"
 #define JPG_QUALITY    100
+#define DEFAULT_NB_CHANNELS     2
 
 class HeightMap : virtual public NoiseTexture
 {
@@ -40,6 +41,7 @@ public:
   HeightMap( std::string path, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0)) : NoiseTexture(path, step, base) {} 
 
   HeightMap( YGen* n, unsigned int width, int texsize, glm::vec2 step = glm::vec2(1.0f,1.0f), glm::i32vec2 base = glm::i32vec2(0,0));
+  HeightMap(){}
 
   //Texture* MakeNormalMap();
   float GetHeight(glm::i32vec2 p) { return m_HeightsD[p.x+p.y*m_Width]; }
