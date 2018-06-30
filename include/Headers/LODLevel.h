@@ -88,6 +88,8 @@ class LODLevel {
 
   public:
 
+
+    void SetUniforms();
     //void GridIndices(glm::i32vec2& e, Mesh<Vertexun>& m);
     static void GenMeshes(unsigned int size);
     void Update(glm::i32vec2 center);

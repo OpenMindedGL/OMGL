@@ -133,7 +133,9 @@ vec4 getnormals(sampler2D s, vec2 pos){
 
 void main(){
   vec3 objColor;
+  vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy);
   if(biome == 0){
+    
     objColor = vec3(0.10f,0.30f,0.10f);
   }
   else{
@@ -144,7 +146,6 @@ void main(){
 //int b = int(biome*255);
 int b = 0;
 
-  vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy);
 //vec3 n =vec3(0);
 
   vec3 l = normalize(vec3(4,10.0f,.0)) ;

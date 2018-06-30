@@ -19,6 +19,7 @@ class LODLevel;
 #define NB_LEVELS 7
 #define DEFAULT_SCALE   64
 #define DEFAULT_SPAWN   glm::i32vec2(0,0)
+#define DEFAULT_BIOME_MAT_UNIFORM       "u_Mat"
 
 
 #define PRECISION 1.0f
@@ -42,6 +43,8 @@ class Terrain {
     std::vector<Biome*>* m_Biomes;
 
     static std::vector<YGen*>* GetNoises(std::vector<Biome*>* biomes);
+
+    const std::string m_BiomeMatUniform = DEFAULT_BIOME_MAT_UNIFORM;
 
   public :
 

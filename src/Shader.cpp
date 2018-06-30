@@ -65,6 +65,37 @@ void Shader::SetUniformMat4f(const std::string & name, glm::mat4 & matrix)
 	GLCall(glUniformMatrix4fv(GetUniformLocation(name), 1, GL_FALSE, &mvp[0][0]));
 }
 
+void Shader::SetUniformBlock(const std::string& name, UniformBuffer* u, unsigned int binding_index){
+  unsigned int block_index = GetUniformBlockIndex(m_RendererId, name);
+  unsigned int bind_ind;
+  if(!binding_index){
+    bind_ind = u->GetBindIndex();
+    u->Bind();
+  }
+  else{
+    bind_ind = binding_index;
+    u->Bind(binding_index);
+  }
+  glUniformBlockBinding(m_RendererId, block_index, bind_ind);
+
+
+}
+
+int Shader::GetUniformBlockIndex(const std::string& name)
+{
+  //  printf("getting uniform location for %s ! \n", name.c_str());
+	if (m_UniformBlockIndexCache.find(name) != m_UniformBlockIndexCache.end())
+		return m_UniformBlockIndexCache[name];
+
+	GLCall(int location = glGetUniformBlockIndex(m_RendererId, name.c_str()));
+	if (location == -1)
+		printf("Warning uniform block %s doesn't exist ! \n", name.c_str());
+	
+	m_UniformBlockIndexCache[name] = location;
+
+	return location;
+}
+
 int Shader::GetUniformLocation(const std::string& name)
 {
   //  printf("getting uniform location for %s ! \n", name.c_str());

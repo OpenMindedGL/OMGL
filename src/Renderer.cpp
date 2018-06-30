@@ -139,23 +139,16 @@ void Renderer::Draw(LODLevel& l){
 
 void Renderer::Draw(Terrain& t)
 {
+  t.GetShader()->Bind();
+  t.GetShader()->SetUniform3f("u_ViewerPos",m_Camera->getPosition());
+  t.SetUniforms();
   for (unsigned int i = 0; i < t.GetNbLevel(); i++) {
     //printf("Drawing level %d\n",i);
 
     // make a function inside LOD to do that
-    t.GetLevel(i).GetObjs().at(0)->Bind();
     t.GetShader()->Bind();
-    t.SetUniforms();
-    t.GetShader()->SetUniform2i("base",t.GetLevel(i).GetHeightMap()->GetBase());
-    t.GetShader()->SetUniform2i("torBase",t.GetLevel(i).GetHeightMap()->GetTorBase());
-    t.GetShader()->SetUniform2i("torBegin",t.GetLevel(i).GetHeightMap()->GetTorBegin());
-    t.GetShader()->SetUniform1i("u_UnitSize",t.GetLevel(i).GetUnitSize());
-    t.GetShader()->SetUniform1i("u_HeightMapLinear",1);
-    t.GetShader()->SetUniform3f("u_ViewerPos",m_Camera->getPosition());
-    t.GetShader()->SetUniform3f("u_Mat[0].Ka",glm::vec3(0.1));
-    t.GetShader()->SetUniform3f("u_Mat[0].Kd",glm::vec3(0.8));
-    t.GetShader()->SetUniform3f("u_Mat[0].Ks",glm::vec3(0.6));
-    t.GetShader()->SetUniform1f("u_Mat[0].Ns",1);
+    t.GetLevel(i).GetObjs().at(0)->Bind();
+    t.GetLevel(i).SetUniforms();
     t.GetLevel(i).GetHeightMap()->Bind(1);
     t.GetLevel(i).GetHeightMapLinear()->Bind(1);
     //

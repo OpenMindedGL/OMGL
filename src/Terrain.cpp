@@ -60,6 +60,12 @@ void Terrain::Update(glm::i32vec2& center){
 void Terrain::SetUniforms(){
   m_Shader->Bind();
   m_Shader->SetUniform1i("u_MaxHeight",m_Biomes->at(0)->GetMaxHeight()); 
-  m_Shader->SetUniform1i("u_MinHeight",m_Biomes->at(0)->GetMinHeight()); 
+  for(unsigned int i=0;i<biomes->size();i++){
+    m_Shader->SetUniform1i("u_MinHeight",m_Biomes->at(0)->GetMinHeight()); 
+    m_Shader->SetUniform3f("u_Mat[0].Ka",glm::vec3(0.1));
+    m_Shader->SetUniform3f("u_Mat[0].Kd",glm::vec3(0.8));
+    m_Shader->SetUniform3f("u_Mat[0].Ks",glm::vec3(0.6));
+    m_Shader->SetUniform1f("u_Mat[0].Ns",1);
+  }
 }
 
