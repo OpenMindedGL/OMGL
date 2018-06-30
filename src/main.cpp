@@ -97,8 +97,8 @@ int main(void) {
 
   Skybox s;
 
-  Cube cube;
-  //Object o(&cube, OMGL_BLUE);
+  /*Cube cube;
+  Object o(&cube, OMGL_BLUE);*/
 
   //Object o(&cube, "shaders/Test.shader");
 
@@ -109,12 +109,12 @@ int main(void) {
 		   "res/objects/dodge/");
   */
   
-  /*Object o( "res/objects/dodge/CHALLENGER71.obj",
+ /* Object o( "res/objects/dodge/CHALLENGER71.obj",
 			"res/objects/dodge/CHALLENGER71.mtl",
 			true, "shaders/DynamicShader",
 			"shaders/DynamicShader/Basic.genshader",
 			"res/objects/dodge/");
-  */
+ */
 
   Object o("res/objects/dodge/CHALLENGER71.obj", OMGL_BLUE);
   
@@ -133,7 +133,7 @@ int main(void) {
     p = glm::i32vec2(pos.x,pos.z);
 
     //printf("x:%f y:%f \n",pos.x,pos.z);    
-   // t.Update(p);
+	//t.Update(p);
     //renderer.Draw(t);
 
 
