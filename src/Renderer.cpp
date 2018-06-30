@@ -141,6 +141,8 @@ void Renderer::Draw(Terrain& t)
 {
   t.GetShader()->Bind();
   t.GetShader()->SetUniform3f("u_ViewerPos",m_Camera->getPosition());
+  t.GetShader()->SetUniformBlock("ub_Biomes",t.GetUniformBuffer());
+
   t.SetUniforms();
   for (unsigned int i = 0; i < t.GetNbLevel(); i++) {
     //printf("Drawing level %d\n",i);

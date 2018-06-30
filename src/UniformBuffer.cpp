@@ -9,14 +9,14 @@ UniformBuffer::UniformBuffer(const void* data, unsigned int size, unsigned int b
 {
 	GLCall(glGenBuffers(1, &m_RenderID));
         Bind();
-	GLCall(glBufferData(GL_ARRAY_BUFFER, s, d, GL_DYNAMIC_DRAW));
+	GLCall(glBufferData(GL_UNIFORM_BUFFER, size, data, GL_DYNAMIC_DRAW));
 }
 
 void UniformBuffer::Upload(unsigned int offset, unsigned int s){
-        if(s == 0)
+        /*if(s == 0)
           s = size;
         Bind();
-	GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, s, data));
+	GLCall(glBufferSubData(GL_ARRAY_BUFFER, offset, s, data));*/
 }
 
 

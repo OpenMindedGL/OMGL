@@ -19,8 +19,8 @@ Shader::~Shader()
 	GLCall(glDeleteProgram(m_RendererId));
 }
 
-void Shader::Bind() const
-{
+void Shader::Bind() const {
+
 	GLCall(glUseProgram(m_RendererId));
 }
 
@@ -66,7 +66,7 @@ void Shader::SetUniformMat4f(const std::string & name, glm::mat4 & matrix)
 }
 
 void Shader::SetUniformBlock(const std::string& name, UniformBuffer* u, unsigned int binding_index){
-  unsigned int block_index = GetUniformBlockIndex(m_RendererId, name);
+  unsigned int block_index = GetUniformBlockIndex(name);
   unsigned int bind_ind;
   if(!binding_index){
     bind_ind = u->GetBindIndex();

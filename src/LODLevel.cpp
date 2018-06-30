@@ -549,7 +549,7 @@ void LODLevel::GenSeam(){
         );
   }
 }
-void SetUniforms(){
+void LODLevel::SetUniforms(){
     m_Terrain->GetShader()->SetUniform2i("base",m_HeightMap->GetBase());
     m_Terrain->GetShader()->SetUniform2i("torBase",m_HeightMap->GetTorBase());
     m_Terrain->GetShader()->SetUniform2i("torBegin",m_HeightMap->GetTorBegin());

@@ -7,8 +7,8 @@ class UniformBuffer {
 private : 
 	unsigned int m_RenderID;
         unsigned int m_BindingID;
-        const void* data;
-        unsigned int size;
+        const void* m_Data;
+        unsigned int m_Size;
 
 public : 
 	UniformBuffer();
@@ -19,5 +19,8 @@ public :
 	void Bind() const { Bind(m_BindingID); }
 	void Bind( unsigned int binding_id ) const;
 	void Unbind() const;
+
+        // getters
+        unsigned int GetBindIndex(){ return m_BindingID; }
 };
 #endif

@@ -12,6 +12,8 @@ out vec3 lightdir;
 out mat4 MV;
 out vec3 pp;
 out float biome;
+out float height;
+out float rd;
 
 out vec3 d1;
 
@@ -43,10 +45,13 @@ void main(){
   //pos.y =dot( texture(u_DefaultSampler, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) ) *(u_MaxHeight-u_MinHeight)+u_MinHeight;
   const float max24int = 256.0 * 256.0 * 256.0 - 1.0;
   vec4 tex = texture(u_DefaultSampler, uv);
-  vec3 height = tex.xyz;
-  d1 = height; 
+  d1 = tex.xyz;
+  rd = 1-tex.y;
+  
   biome = floor(tex.w*255.0) ;
-  pos.y = (dot(height*255.0f, vec3(256.0 * 256.0, 256.0, 1.0)) / max24int )*(u_MaxHeight-u_MinHeight)+u_MinHeight;
+  height = (dot(d1*255.0f, vec3(256.0 * 256.0, 256.0, 1.0)) / max24int );
+  pos.y = height*(u_MaxHeight-u_MinHeight)+u_MinHeight;
+  pos.y = clamp(pos.y,0,u_MaxHeight);
   gl_Position =  u_VP * pos;
 
 
@@ -61,7 +66,23 @@ void main(){
 #shader fragment
 #version 330 core
 
-struct Material {
+#define MAX_BIOMES_MAT  5;
+
+
+layout (std140) uniform ub_Biomes
+{ 
+  //Material u_Mat[1];
+  float u_m;
+}; 
+
+/*struct AltitudeBiome {
+  float minaltitude;
+  int nbBiomesMaterials;
+  BiomeMaterials[MAX_BIOMES_MAT];
+};
+*/
+struct BiomeMaterial {
+  float mincost;
   vec3 Ka;
   vec3 Kd;
   vec3 Ks;
@@ -77,6 +98,8 @@ in vec2 uv;
 in vec3 lightdir;
 in vec3 pp;
 in vec3 d1;
+in float height;
+in float rd;
 in float biome;
 uniform ivec2 base;
 uniform ivec2 torBase;
@@ -86,7 +109,7 @@ uniform int u_MaxHeight;
 uniform int u_MinHeight;
 uniform vec3 u_ViewerPos;
 //uniform int nb_biomes;
-uniform Material u_Mat[1];
+uniform BiomeMaterial u_Mat[1];
 
 
 //uniform sampler2D u_NormalMap;
@@ -130,13 +153,50 @@ vec4 getnormals(sampler2D s, vec2 pos){
   vec3 vb = normalize(vec3(size.yx,s12-s10));
   return vec4( cross(va,vb), s11 ); 
 }
+int pos_sign(float a){
+  return (int(sign(a))+1)/2;
+}
+
+float rand(vec2 co){
+    return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
+}
 
 void main(){
   vec3 objColor;
   vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy);
+  float rr[3];
+  rr[0] = 0.3f;
+  rr[1] = 0.45f;
+  rr[2] = 0.65f;
+  float r[3];
+  r[0] = 0.3f;
+  r[1] = 0.5f;
+  r[2] = 0.75f;
+  vec3 m[3];
+  //float rd = rand(pp.xz)*2-1;
   if(biome == 0){
-    
-    objColor = vec3(0.10f,0.30f,0.10f);
+    float hh = height;
+    float dd = dot(n,normalize(vec3(n.x,0.0f,n.z)));
+    hh=height+(height*rd)/50;
+    int g = clamp(pos_sign(hh-r[0])+pos_sign(hh-r[1])+pos_sign(hh-r[2])-1,0,2);
+    int gg = clamp(pos_sign(dd-rr[0])+pos_sign(dd-rr[1])+pos_sign(dd-rr[2])-1,0,2);
+    float h = float(g)/2.0f;
+    m[0] = vec3(0.10f,0.1f,0.25f);
+    m[1] = vec3(0.10f,0.30f*h,0.10f);
+    m[2] = vec3(0.40f,0.40f,0.40f);
+    vec3 mm[3];
+    mm[0] = vec3(0.10f,0.3f,0.15f);
+    mm[1] =  mm[0];vec3(0.3f,0.1f,0.3f);
+    mm[2] =vec3(0.30f,0.30f,0.30f);
+    if(g == 1){
+      objColor = mm[gg];
+    }
+    else{
+      objColor = m[g];
+    }
+    if(g == 0){
+      n = vec3(1);
+    }
   }
   else{
     objColor = vec3(0.30f,0.30f,0.10f);

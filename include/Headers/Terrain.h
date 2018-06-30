@@ -13,6 +13,7 @@ class LODLevel;
 #include "ProcMixer.h"
 #include "Material.h"
 #include "LODLevel.h"
+#include "UniformBuffer.h"
 #include "Biome.h"
 #include "DynamicBiomeHeightMap.h"
 
@@ -40,6 +41,7 @@ class Terrain {
     Shader * m_Shader;
   //  Texture * m_NormalMap;
     ProcMixer * m_Mixer;
+    UniformBuffer* m_Ub;
     std::vector<Biome*>* m_Biomes;
 
     static std::vector<YGen*>* GetNoises(std::vector<Biome*>* biomes);
@@ -89,6 +91,7 @@ class Terrain {
     inline YGen* GetNoise(){ return m_Mixer; }
     inline ProcMixer* GetMixer(){ return m_Mixer; }
     inline float GetScale(){ return m_Scale; }
+    inline UniformBuffer* GetUniformBuffer(){ return m_Ub; }
 //    inline Texture * GetNormalMap(){ return m_NormalMap;}
 
 

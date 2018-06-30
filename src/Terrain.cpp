@@ -3,6 +3,7 @@
 #include "Vertex.h"
 #include "HeightMap.h"
 #include "ProcMixer.h"
+#include "UniformBuffer.h"
 #include "Biome.h"
 #include "Debug.h"
 #include "Log.h"
@@ -34,7 +35,8 @@ Terrain::Terrain( std::vector<Biome*>* biomes, ProcMixer* mixer, glm::vec2 spawn
     m_Lods[i] = new LODLevel(i,spawn,this,lp);
     lp = m_Lods[i];
   }
-
+  //float* a = new float(0.9);
+  m_Ub = new UniformBuffer(&m_Scale,4);
 
 }
 
@@ -60,7 +62,7 @@ void Terrain::Update(glm::i32vec2& center){
 void Terrain::SetUniforms(){
   m_Shader->Bind();
   m_Shader->SetUniform1i("u_MaxHeight",m_Biomes->at(0)->GetMaxHeight()); 
-  for(unsigned int i=0;i<biomes->size();i++){
+  for(unsigned int i=0;i<m_Biomes->size();i++){
     m_Shader->SetUniform1i("u_MinHeight",m_Biomes->at(0)->GetMinHeight()); 
     m_Shader->SetUniform3f("u_Mat[0].Ka",glm::vec3(0.1));
     m_Shader->SetUniform3f("u_Mat[0].Kd",glm::vec3(0.8));

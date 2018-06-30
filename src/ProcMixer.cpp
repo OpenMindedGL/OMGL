@@ -1,4 +1,5 @@
 #include "ProcMixer.h"
+#include <math.h>
 #include <glm/glm.hpp>
 
 
@@ -35,12 +36,11 @@ std::tuple<float, unsigned int> OMGLProcMixer::mix(float x, float y){
     for(std::vector<FastNoise*>::iterator iter = m_Bits->begin(); iter < m_Bits->end(); ++iter){
       noise = (*iter)->GetNoise(x,y);
       biome_choice += sign(noise) * glm::pow(2,d);
-      smooth_coef *= noise;
+      smooth_coef *= glm::fract(glm::abs(noise));
       d++;
     }
     biome_choice %= m_Noises->size();
     ret_value = m_Noises->at(biome_choice)->compute(x,y);
-    smooth_coef = glm::fract(glm::abs(smooth_coef));
 
     if (smooth_coef > 0.5f)
       smooth_coef = 1.0f - smooth_coef;
@@ -50,10 +50,12 @@ std::tuple<float, unsigned int> OMGLProcMixer::mix(float x, float y){
     // TODO
     // make a member to choose wether to add rivers or not
     // try to make it a feature of each biome
-    /*if ( glm::abs(m_Bits->at(0)->GetNoise(x*10,y*10)) < 0.04f){
-      ret_value = -0.05f;
+    float coef_river = glm::abs((*(m_Bits->begin()))->GetNoise(x,y));
+    if ( coef_river < 0.004f){
+      coef_river *= 250;
+      ret_value = smooth_coef * glm::pow(coef_river, 0.25f) * ret_value + (1.0f - glm::pow(coef_river, 0.25f)) * (-0.05f);
       smooth_coef = 1.0f;
-    }*/
+    }
 
     return std::make_tuple((ret_value * smooth_coef+1)/2.0f,biome_choice);
   }
