@@ -10,6 +10,6 @@
 readme.md.txt
 !readme.md
 !postmortem.md.txt
-!design.md.txt
-design.md
+design.md.txt
+!design.md
 !gestionProjet.md.txt
