@@ -24,42 +24,43 @@ private :
 
 	glm::vec3 m_Ka;
 	glm::vec3 m_Kd;
-	glm::vec3 m_Ks; 
+	glm::vec3 m_Ks;
 	glm::vec3 m_Ke;
 
 	Shader * m_Shader = NULL;
-
 	Texture * m_Texture = NULL,  * m_MapKd = NULL,  *m_MapKs = NULL,  *m_MapKa = NULL,  *m_MapNs = NULL,  *m_MapD = NULL;
 
 	std::vector<bool> m_DynamicUniforms = { false, false, false, false, false };
 	
 public :
+
+	//Constructeurs
 	Material(std::string name);
 	Material(Texture * texture = NULL, Shader * shader = new Shader(BASICSHADER));
 	Material(float * color);
     inline Material(std::string texture, std::string shader) : Material(new Texture(texture), new Shader(shader)) {}
     inline Material(Shader * shader) : Material(NULL, shader) {}
 
-
+	//Genere les shaders automatiquement
 	void GenerateShader(std::string shadersPath, std::string genShaderPath);
-	inline void SetShader(const std::string path) { SetShader(new Shader(path)); }
-	void SetShader(Shader * shader);
-	
-	//void SetTexture(Cubemap * cubemap);
-	void SetTexture(Texture * texture);
-	
-	/*void LoadTexture(const std::string path, const std::string name, unsigned int slot = 0);
-	void LoadTexture(const std::string path);*/
 
+	//Permet de lier une texture au shader
 	void LinkTexture(const std::string& name, unsigned int slot);
+
+	//Permet de définir un uniform au format mat4f (matrice 4x4 de float)
 	void SetShaderUniformMat4f(const std::string name, glm::mat4 mvp);
+
+	//Pour lier les textures au shader, et créer les uniforms correspondant (pour la génération de shader automatique)
+	void BindTextures();
+
 	void Init(std::string shaderpath);
 	void Init();
-	void BindTextures();
 	void Bind();
 	void Unbind();
 
 	//Setters
+	void SetShader(Shader * shader);
+	void SetTexture(Texture * texture);
 	inline void SetName(std::string name) { m_Name = name; }
 	inline void SetNs(float ns) { m_Ns = ns; }
 	inline void SetKa(glm::vec3 ka) { m_Ka = ka; }
@@ -69,12 +70,12 @@ public :
 	inline void SetNi(float ni) { m_Ni = ni; }
 	inline void SetD(float d) { m_D = d; }
 	inline void SetIllum(unsigned int illum) { m_illum = illum; }
-	//inline void SetTexture(std::string path) { m_Texture = new Texture(path); }
 	inline void SetMapKd(std::string path) { m_MapKd = new Texture(path); }
 	inline void SetMapKs(std::string path) { m_MapKs = new Texture(path); }
 	inline void SetMapKa(std::string path) { m_MapKa = new Texture(path); }
 	inline void SetMapNs(std::string path) { m_MapNs = new Texture(path); }
 	inline void SetMapD(std::string path) { m_MapD = new Texture(path); }
+	inline void SetShader(const std::string path) { SetShader(new Shader(path)); }
 
 	//Getters
 	inline std::string GetName() { return m_Name; }

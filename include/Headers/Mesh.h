@@ -35,6 +35,7 @@ private:
 
 public:
 
+	//Constructeurs
 	Mesh();
 	Mesh(unsigned int renderType, std::vector<T>& positions, std::vector<unsigned int>& indices, std::string shaderPath);
 
@@ -43,13 +44,16 @@ public:
 
 	void Upload();
 	void UploadIndexBuffer();
-        void Upload(unsigned int start, unsigned int count);
+    void Upload(unsigned int start, unsigned int count);
 
 	void Init(unsigned int renderType);
 
+	// Permet de calculter les normales pour chaque points
 	void ComputeNormals();
+
 	inline void BindVertexBuffer() { m_Vb->Bind(); };
-        void GridIndices(glm::i32vec2& e, glm::i32vec2 s=glm::i32vec2(0), unsigned int yoffset = 0);
+
+    void GridIndices(glm::i32vec2& e, glm::i32vec2 s=glm::i32vec2(0), unsigned int yoffset = 0);
 
 
 	// GETTERS
@@ -57,14 +61,12 @@ public:
 	inline IndexBuffer & GetIndexBuffer() const { return *m_Ib; }
 	inline VertexBuffer & GetVertexBuffer() const { return *m_Vb; }
 	inline unsigned int GetRendererType() const { return m_RendererType; }
-
 	inline std::vector<T> * GetVertices() const { return m_Vertices; }
 	inline std::vector<unsigned int> * GetIndices() const { return m_Indices; }
 
-        // SETTERS
-
-        inline void PushVertex(T v){m_Vertices->push_back(v); }
-        inline void PushIndex(unsigned int i){m_Indices->push_back(i); }
+    // SETTERS
+    inline void PushVertex(T v){m_Vertices->push_back(v); }
+    inline void PushIndex(unsigned int i){m_Indices->push_back(i); }
 
 };
 

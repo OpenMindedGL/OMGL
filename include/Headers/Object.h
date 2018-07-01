@@ -66,25 +66,42 @@ public :
 		int renderType = RENDERTYPEDEFAULT //RENDERING TYPE (TRIANGLES/STRIP/FAN...)
 	);
 
+	//Parse fichier .obj
 	void LoadObject(std::string pathObj, bool reverse);
+
+	//Parse fichier .mtl
 	void LoadMaterials(std::string path, std::vector<Material*> & materials);
+
+	//Charge les textures utilisées par le modele
 	void LoadTexturesMap();
 	void LoadTexturesMap(std::string path);
-	int contains(glm::vec3 v, glm::vec2 vt, glm::vec3 vn);
-	bool hasMaterial(Material* mat);
-	unsigned int GetMaterialId(std::string nameMat);
 
+	//Verifie si un vertex est déjà existant dans la liste
+	int contains(glm::vec3 v, glm::vec2 vt, glm::vec3 vn);
+
+	//Verifie si l'object possède ce material
+	bool hasMaterial(Material* mat);
+
+	//Genere les shaders automatiquement
 	void GenerateShaders(std::string shadersPath = SHADERDEFAULTPATH, std::string genShaderPath = GENSHADERDEFAULTPATH);
+	
 	void Init(unsigned int renderType, std::string shaderPath);
 	void Bind();
 	void Unbind();
 	
+	//Translation
 	void Translate(float x, float y, float z);
 	void Translate(glm::vec3 axis);
+	
+	//Rotation radiale
 	void RotationRad(float x, float y, float z);
     void RotationRad(glm::vec3 angles);
+	
+	//Rotation degrès
 	void RotationDeg(float x, float y, float z);
 	void RotationDeg(glm::vec3 angles);
+	
+	//Changement de taille
 	void Scale(float x, float y, float z);
 	void Scale(glm::vec3 axis);
 	
@@ -103,6 +120,8 @@ public :
 	inline glm::vec3 GetScale(){ return m_Scale; }
 	inline glm::vec3 GetRotation(){ return m_Rotation; }
 	
+	unsigned int GetMaterialId(std::string nameMat);
+
 	// setters
 	inline void SetPosition(glm::vec3& p){ m_Position = p; UpdateTranslationMatrix();}
 	inline void SetRotation(glm::vec3& r){ m_Rotation = r; UpdateRotationMatrix();}
