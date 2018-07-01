@@ -7,7 +7,8 @@
 !Makefile
 /src/Debug.cpp
 /include/Headers/Debug.h
-!readme.md.txt
+readme.md.txt
+!readme.md
 !postmortem.md.txt
 !design.md.txt
 !gestionProjet.md.txt
