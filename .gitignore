@@ -9,7 +9,8 @@
 /include/Headers/Debug.h
 readme.md.txt
 !readme.md
-!postmortem.md.txt
+postmortem.md.txt
+!postmortem.md
 design.md.txt
 !design.md
 !gestionProjet.md.txt
