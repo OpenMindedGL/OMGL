@@ -13,8 +13,10 @@ Pour générer un terrain aléatoire :
 Il faut choisir un/des biome(s), soit parmi ceux déjà existant ou en faire un soit même, en héritant de la classe BIOME. 
 Exemple avec un biome existant : 
 -	std ::vercot<Biome*> bs = {new OMGLMountains()};
+
 Il suffit ensuite de passer le passer à un terrain dans le constructeur : 
 -	Terrain t(&bs) ;
+
 Pour l’afficher, dans la boucle il faut l’update puis appeler renderer.Draw() : 
 -	t.Update() ;
 -	renderer.Draw(t) ;
@@ -31,10 +33,12 @@ On peut passer au constructeur un Mesh, ou un chemin vers un .obj, en suite on p
 		 "shaders/DynamicShader/Basic.genshader",
                "res/objects/dodge/");
              (.obj + .mtl)
+
 On peut voir qu’il y a d’autre paramètres à définir, 
 comme préciser si les indices y et z doivent être inversés, le fichier où se trouvent les textures… 
 De plus, si on ne renseigne aucune couleur, aucun Material ni aucun shader, 
 le constructeur va lui-même définir un shader par défaut. 
+
 Pour l’afficher, dans la boucle il suffit d'appeler renderer.Draw() : 
 -	renderer.Draw(o) ;
 
