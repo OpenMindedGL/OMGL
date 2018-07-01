@@ -11,7 +11,7 @@ out vec3 normal;
 out vec3 lightdir;
 out mat4 MV;
 out vec3 pp;
-out float biome;
+out float biom;
 out float height;
 out float rd;
 
@@ -48,10 +48,11 @@ void main(){
   d1 = tex.xyz;
   rd = 1-tex.y;
   
-  biome = floor(tex.w*255.0) ;
+  biom = floor(tex.w*255.0) ;
   height = (dot(d1*255.0f, vec3(256.0 * 256.0, 256.0, 1.0)) / max24int );
+  height = clamp(height,0.499,1);
   pos.y = height*(u_MaxHeight-u_MinHeight)+u_MinHeight;
-  pos.y = clamp(pos.y,0,u_MaxHeight);
+  //pos.y = clamp(pos.y,0,u_MaxHeight);
   gl_Position =  u_VP * pos;
 
 
@@ -66,31 +67,41 @@ void main(){
 #shader fragment
 #version 330 core
 
-#define MAX_BIOMES_MAT  5;
+#define MAX_BIOMES_MAT  3
+#define MAX_ALT_BIOMES  5
+#define MAX_BIOMES  20
 
-
-layout (std140) uniform ub_Biomes
-{ 
-  //Material u_Mat[1];
-  float u_m;
-}; 
-
-/*struct AltitudeBiome {
-  float minaltitude;
-  int nbBiomesMaterials;
-  BiomeMaterials[MAX_BIOMES_MAT];
-};
-*/
 struct BiomeMaterial {
   float mincost;
+  int tex;
+  int texspread;
+  float Ns;
   vec3 Ka;
   vec3 Kd;
   vec3 Ks;
-  float Ns;
-  sampler2D map_Kd;
+};
+struct AltitudeBiome {
+  float minaltitude;
+  int nbBiomesMat;
+  BiomeMaterial biomemats[MAX_BIOMES_MAT];
+};
+struct Biome {
+  int minheight;
+  int maxheight;
+  int nbAltBiomes;
+  AltitudeBiome altbiomes[MAX_ALT_BIOMES];
 };
 
 layout(location = 0) out vec4 color;
+
+layout (std140) uniform ub_Biomes
+{ 
+  Biome biomes[MAX_BIOMES];
+}; 
+
+
+
+
 //uniform mat4 u_M;
 //uniform mat4 u_V;
 in vec2 uv;
@@ -100,22 +111,22 @@ in vec3 pp;
 in vec3 d1;
 in float height;
 in float rd;
-in float biome;
+in float biom;
+uniform int u_UnitSize;
 uniform ivec2 base;
 uniform ivec2 torBase;
 uniform ivec2 torBegin;
-uniform int u_UnitSize;
 uniform int u_MaxHeight;
 uniform int u_MinHeight;
 uniform vec3 u_ViewerPos;
 //uniform int nb_biomes;
-uniform BiomeMaterial u_Mat[1];
 
 
 //uniform sampler2D u_NormalMap;
 //uniform sampler2D u_DefaultSampler;
 uniform sampler2D u_HeightMapLinear;
 //out vec3 color;
+int biome = int(biom);
 
 vec4 getnormals(sampler2D s, vec2 pos){
   vec2 size = vec2(u_UnitSize,0.0);
@@ -161,10 +172,63 @@ float rand(vec2 co){
     return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
+int getAltBiome(float height){
+  int nb = biomes[biome].nbAltBiomes;
+  int res = 0;
+  float limit;
+  for(int i = 0;i<nb;i++){
+    limit = biomes[biome].altbiomes[i].minaltitude;
+    res += pos_sign(height-limit);
+  }
+  return clamp(res-1,0,nb);
+}
+
+int getBiomeMat(const int altbiome, const vec3 normal){
+  int nb = biomes[biome].altbiomes[altbiome].nbBiomesMat;
+  float cost = dot(normal,normalize(vec3(normal.x,0.0f,normal.z)));
+  int res = 0;
+  float limit;
+  for(int i = 0;i<nb;i++){
+    limit = biomes[biome].altbiomes[altbiome].biomemats[i].mincost;
+    res += pos_sign(cost-limit);
+  }
+  return clamp(res-1,0,nb);
+}
+
 void main(){
-  vec3 objColor;
-  vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy);
-  float rr[3];
+  vec3 objColor = vec3(1);
+  int iswater = pos_sign(height-0.49901f);
+  int isnotwater = int(mod(iswater+1,2));
+  vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy)*isnotwater;//*iswater+isnotwater*vec3(0,1,0);
+  vec3 sunpos = vec3(4,10.0f,.0);
+  int altbiome = getAltBiome(height);
+  int biomemat = getBiomeMat(altbiome,n);
+
+  float Ns = biomes[biome].altbiomes[altbiome].biomemats[biomemat].Ns;
+  vec3 Ka = biomes[biome].altbiomes[altbiome].biomemats[biomemat].Ka;
+  vec3 Kd = biomes[biome].altbiomes[altbiome].biomemats[biomemat].Kd;
+  vec3 Ks = biomes[biome].altbiomes[altbiome].biomemats[biomemat].Ks;
+
+  vec3 l = normalize(sunpos) ;
+
+  // ambient
+  vec3 ambient = Ka;
+
+  // diffuse 
+  float diff = max(dot(n, l), 0.0);
+  vec3 diffuse = (diff * Kd);
+
+  // specular
+  vec3 viewDir = normalize(u_ViewerPos - pp);
+  vec3 reflectDir = reflect(-l, n);  
+  float spec = pow(max(dot(viewDir, reflectDir), 0.0), Ns);
+  vec3 specular = (spec * Ks);  
+
+  vec3 result = ( ambient + diffuse + specular ) * objColor;
+
+  color = vec4(result ,1.0f);
+}
+  /*float rr[3];
   rr[0] = 0.3f;
   rr[1] = 0.45f;
   rr[2] = 0.65f;
@@ -176,7 +240,6 @@ void main(){
   //float rd = rand(pp.xz)*2-1;
   if(biome == 0){
     float hh = height;
-    float dd = dot(n,normalize(vec3(n.x,0.0f,n.z)));
     hh=height+(height*rd)/50;
     int g = clamp(pos_sign(hh-r[0])+pos_sign(hh-r[1])+pos_sign(hh-r[2])-1,0,2);
     int gg = clamp(pos_sign(dd-rr[0])+pos_sign(dd-rr[1])+pos_sign(dd-rr[2])-1,0,2);
@@ -208,28 +271,4 @@ int b = 0;
 
 //vec3 n =vec3(0);
 
-  vec3 l = normalize(vec3(4,10.0f,.0)) ;
-
-  // ambient
-  vec3 ambient = u_Mat[b].Ka;
-
-  // diffuse 
-  float diff = max(dot(n, l), 0.0);
-  vec3 diffuse = (diff * u_Mat[b].Kd);
-
-  // specular
-  vec3 viewDir = normalize(u_ViewerPos - pp);
-  vec3 reflectDir = reflect(-l, n);  
-  float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_Mat[b].Ns);
-  vec3 specular = (spec * u_Mat[b].Ks);  
-
-  vec3 result = ( ambient + diffuse + specular ) * objColor;
-
-  /*vec3 n = normalize( normal );
-  float cost = clamp( dot( n,l ), 0,1 );
-  float ambient = 0.5f;*/
-  
-  //color = vec4(Ka*Kd,1);
-  //vec3 col = (Ka * Kd + Kd * cost) * green;
-  color = vec4(result ,1.0f);
-}
+*/

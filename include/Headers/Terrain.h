@@ -78,6 +78,7 @@ class Terrain {
 
     void Update(glm::i32vec2& center);
     void SetUniforms();
+    void FillUniformBuffer();
 
     // getters
     inline int GetSize(){ return m_Size; }

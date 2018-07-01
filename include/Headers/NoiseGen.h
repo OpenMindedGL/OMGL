@@ -6,7 +6,7 @@
 #include "YGen.h"
 
 #define DEFAULT_NB_NOISES         3
-#define DEFAULT_NB_OCTAVES        15
+#define DEFAULT_NB_OCTAVES        8
 #define DEFAULT_LACUNARITY        2.0f
 #define DEFAULT_PERSISTENCE       0.5f
 #define DEFAULT_ZOOM              3.0f

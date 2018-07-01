@@ -23,6 +23,7 @@ Terrain::Terrain( std::vector<Biome*>* biomes, ProcMixer* mixer, glm::vec2 spawn
   m_NbLevels(n),
   m_Scale(scale)
 {
+  FillUniformBuffer();
 
   if((m_Size-3) % 4 != 0){
     printf("[WARNING] trying to make a LODLevel with a size-3 not dividable by 4, bad things gonna happend, you've been warned\n");
@@ -36,7 +37,6 @@ Terrain::Terrain( std::vector<Biome*>* biomes, ProcMixer* mixer, glm::vec2 spawn
     lp = m_Lods[i];
   }
   //float* a = new float(0.9);
-  m_Ub = new UniformBuffer(&m_Scale,4);
 
 }
 
@@ -71,3 +71,17 @@ void Terrain::SetUniforms(){
   }
 }
 
+void Terrain::FillUniformBuffer(){
+  unsigned int size = Biome::UniformSize * MAX_BIOMES;
+  void* p = malloc(size);
+  void* o = p;
+  unsigned int i;
+  for( i=0;i<m_Biomes->size();i++){
+    o = m_Biomes->at(i)->FillUniformBuffer(o);
+  }
+  for(;i<MAX_BIOMES;i++){
+    o = Biome::FillEmptyUniform(o);
+  }
+  m_Ub = new UniformBuffer(p,size);
+
+}

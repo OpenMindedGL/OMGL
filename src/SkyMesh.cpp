@@ -14,7 +14,7 @@ SkyMesh::SkyMesh(glm::vec2 center, YGen* rectoNoise, YGen* versoNoise){
 
   initload_sky(center); 
   compute_indices_sky();
-  //compute_normals();
+  compute_normals();
   Init(GL_TRIANGLE_STRIP);
 }
 
@@ -25,12 +25,12 @@ void SkyMesh::compute_normals(){
   glm::vec3 triangle_normal;
   bool order = true;
   for(unsigned int i=2;i<m_Indices->size()-1;i++){
-    while (((i1 == m_Vertices->size()) || (i2 == m_Vertices->size()) || (m_Indices->at(i) == m_Vertices->size())) && i < m_Indices->size()-1){
+    while ((i1 == m_Vertices->size()) || (i2 == m_Vertices->size()) || ((*m_Indices)[i] == m_Vertices->size())){
       i++;
-      i1 = m_Indices->at(i-2); 
-      i2 = m_Indices->at(i-1);
+      i1 = (*m_Indices)[i-2]; 
+      i2 = (*m_Indices)[i-1];
     }
-    i3 = m_Indices->at(i);
+    i3 = (*m_Indices)[i];
     if (i2 > i1)
       order = true;
     else

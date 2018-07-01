@@ -110,7 +110,7 @@ int main(void) {
 
   Terrain t(&bs);
   //Sky sky(glm::vec2(0,0));
-  //Sky sky(glm::vec2(pos.x+10,pos.z+10), new OMGLNoiseCloudRecto(), new OMGLNoiseCloudVerso());
+  Sky sky(glm::vec2(pos.x+10,pos.z+10), new OMGLNoiseCloudRecto(), new OMGLNoiseCloudVerso());
 
   Skybox s;
 
@@ -153,7 +153,7 @@ int main(void) {
     //printf("x:%f y:%f \n",pos.x,pos.z);    
     t.Update(p);
     renderer.Draw(t);
-    //renderer.Draw(sky);
+  //  renderer.Draw(sky);
     //renderer.Draw(o);
 
 
