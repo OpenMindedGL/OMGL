@@ -102,8 +102,8 @@ int main(void) {
 
   glm::i32vec2 p;
  // std::vector<Biome*> bs = {/*new OMGLMountains(),*/ new OMGLDesert()};
- //std::vector<Biome*> bs = {new OMGLMountains(), new OMGLPeanuts(), new OMGLPeanutsReversed()};
- std::vector<Biome*> bs = {new OMGLMountains(), new OMGLBlocky()};
+ std::vector<Biome*> bs = {new OMGLMountains(), new OMGLPeanuts()};
+ //std::vector<Biome*> bs = {new OMGLMountains(), new OMGLBlocky()};
   //std::vector<Biome*> bs = {new OMGLMountains(), new OMGLDesert()};
   //std::vector<Biome*> bs = {new OMGLBlocky(), new OMGLSilk()};
   //std::vector<Biome*> bs = {new OMGLMountains(), new OMGLDesert(), new OMGLBlocky(), new OMGLPeanuts(), new OMGLPeanutsReversed(), new OMGLMartian2(), new OMGLMartian()};
@@ -111,7 +111,7 @@ int main(void) {
 
   Terrain t(&bs);
   //Sky sky(glm::vec2(0,0));
-  Sky sky(glm::vec2(pos.x+10,pos.z+10), new OMGLNoiseCloudRecto(), new OMGLNoiseCloudVerso());
+//  Sky sky(glm::vec2(pos.x+10,pos.z+10), new OMGLNoiseCloudRecto(), new OMGLNoiseCloudVerso());
 
   Skybox s;
 
@@ -129,7 +129,12 @@ int main(void) {
 
   //Object o("res/objects/Mill/Mill.obj", OMGL_CYAN, false);
   //Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl", false);
-
+  /*Object o( "res/objects/dodge/CHALLENGER71.obj",
+          "res/objects/dodge/CHALLENGER71.mtl",
+          true, "shaders/DynamicShader",
+          "shaders/DynamicShader/Basic.genshader",
+          "res/objects/dodge/");
+*/
   //o.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
 
   //o.SetTextureDirectory("res/objects/dodge/");
@@ -137,6 +142,8 @@ int main(void) {
   //o.LoadTexturesMap("res/objects/dodge/");
 
   //o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
+  glm::vec3 f(30.0f,0.0f,30.0f);
+ // o.SetPosition(f);
 
 
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
@@ -154,8 +161,8 @@ int main(void) {
     //printf("x:%f y:%f \n",pos.x,pos.z);    
     t.Update(p);
     renderer.Draw(t);
-//    renderer.Draw(sky);
-    //renderer.Draw(o);
+ //   renderer.Draw(sky);
+//    renderer.Draw(o);
 
 
     /*renderer.Draw(o);

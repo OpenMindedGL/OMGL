@@ -22,7 +22,7 @@ void Camera::ComputeMatricesFromInputs()
   float deltaTime = float(currentTime - lastTime);
 
   float a = 1/deltaTime;
-  printf("%f\n",a);
+//  printf("%f\n",a);
   // Get mouse position
   double xpos, ypos;
   GLCall(glfwGetCursorPos(&m_Window, &xpos, &ypos));
