@@ -11,8 +11,6 @@ uniform mat4 u_M;
 uniform mat4 u_V;
 void main(){
 	uv = uv_coords;
-	vec3 LightPosition_worldspace = vec3(-10.0f,40.0f,-10.0f);
-	vec3 Position_worldspace = (u_M * vec4(vPos,1)).xyz;
 	v_vertex = ( u_V * u_M * vec4(vPos,1)).xyz;
 	v_normal = ( u_V * u_M * vec4(normals, 0)).xyz;
 	gl_Position =  u_MVP * vec4(vPos,1);	
@@ -26,6 +24,7 @@ in vec3 v_vertex;
 in vec2 uv;
 uniform float u_Ni;
 uniform float u_Ke;
+uniform mat4 u_V;
 uniform vec3 u_Kd;
 uniform vec3 u_Ks;
 uniform vec3 u_Ka;
@@ -33,8 +32,8 @@ uniform sampler2D u_DMap;
 uniform float u_Ns;
 void main(){
   	vec3 n = normalize( v_normal );
-  	vec3 lightPos = vec3(-10.0f,40.0f,-10.0f);
-  	vec3 to_light = lightPos * v_vertex;
+  	vec3 lightPos = (u_V * vec4(0.0f,10000.0f,0.0f,1)).xyz;
+  	vec3 to_light = lightPos - v_vertex;
   	to_light = normalize(to_light);
   	float cos_angle = dot(n, to_light);
   	cos_angle = clamp(cos_angle, 0.0, 1.0);
