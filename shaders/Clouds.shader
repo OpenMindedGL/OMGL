@@ -28,7 +28,7 @@ void main(){
   vec3 EyeDirection_cameraspace = vec3(0,0,0) - vertexPosition_cameraspace;
 
   vec3 LightPosition_cameraspace = ( u_V * vec4(LightPosition_worldspace,1)).xyz;
-  lightdir = LightPosition_cameraspace + EyeDirection_cameraspace;
+  lightdir = vec3(4,10.0f,.0);//LightPosition_cameraspace + EyeDirection_cameraspace;
 
   normal = ( u_V * u_M * vec4(normals,0)).xyz; 
 

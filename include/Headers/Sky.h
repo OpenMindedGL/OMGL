@@ -10,7 +10,7 @@
 #include "OMGLNoiseGen.h"
 #include "SkyMesh.h"
 
-#define DEFAULT_SKY_SHADER "shaders/PerlinClouds.shader"
+#define DEFAULT_SKY_SHADER "shaders/Clouds.shader"
 
 class Sky : public Object
 {

@@ -14,26 +14,7 @@ class OMGLMountains : public Biome{
 class OMGLDesert : public Biome{
 
   public:
-    OMGLDesert() : Biome(new OMGLNoiseBiome3(), 500, -500) {
-    
-      BiomeMaterial* sand = new BiomeMaterial(
-          0.0001f,
-          0.3f,
-          glm::vec3(0.5f),
-          glm::vec3(0.3f,0.3f,0.1f),
-          glm::vec3(0.5f,0.5f,0.1f)
-          );
-      std::vector<BiomeMaterial>* a = new std::vector<BiomeMaterial>();
-      a->push_back(*sand);
-      AltitudeBiome* def = new AltitudeBiome(
-            0.0, 
-            a
-            );
-      m_AltBiomes = new std::vector<AltitudeBiome>(); 
-      m_AltBiomes->push_back(*def);
-    
-    }
-
+    OMGLDesert(); 
 };
 class OMGLBlocky : public Biome{
 

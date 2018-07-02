@@ -153,7 +153,7 @@ int main(void) {
     //printf("x:%f y:%f \n",pos.x,pos.z);    
     t.Update(p);
     renderer.Draw(t);
-  //  renderer.Draw(sky);
+//    renderer.Draw(sky);
     //renderer.Draw(o);
 
 

@@ -37,25 +37,27 @@ OMGLNoiseCloud::OMGLNoiseCloud() :
 float* OMGLNoiseCloud::compute2(float x, float y){
   float a = 0;
   float c = 0;
-  float b = m_Mix->GetNoise(x*10,y*10);
+  float b = m_Mix->GetNoise(x,y);
   int d = 0;
   float e,f, ret_val;
   for(std::vector<FastNoise*>::iterator iter_noise = 
   m_Noises[0].begin(); 
   (iter_noise < m_Noises[0].end()); iter_noise++){
-    a += glm::abs((*iter_noise)->GetNoise(x*10,y*10) * pow(m_Persistence, d)); 
-    if ((d>0) && (d <= 3))
-      c += glm::abs((*iter_noise)->GetNoise(x*10,y*10) * pow(m_Persistence, d)); 
+    a += glm::abs((*iter_noise)->GetNoise(x,y) * pow(m_Persistence, d)); 
+    if ((d>0) && (d <= 8))
+      c += glm::abs((*iter_noise)->GetNoise(x,y) * pow(m_Persistence, d)); 
     d++;
   }
- 
+
+  c *= 10; 
+
   if ((b > 0.1f) && (a > 0.5f)){
-    e = glm::abs(m_Mix->GetNoise(x*10,y*10) * pow(m_Persistence, 0)); 
+    e = glm::abs(m_Mix->GetNoise(x,y) * pow(m_Persistence, 0)); 
     m_Mix->SetFractalOctaves(1);
-    f = m_Mix->GetNoise(x*10,y*10);
+    f = m_Mix->GetNoise(x,y);
     m_Mix->SetFractalOctaves(8);
     ret_val = e+f;
-    ret_val = glm::pow(ret_val,3)*c + 50.0f +c;
+    ret_val = glm::pow(ret_val,3)*c + 150.0f +c;
     float* h = new float[4]{ret_val,a,b,c};
     return h;
   }

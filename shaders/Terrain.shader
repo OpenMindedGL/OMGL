@@ -50,7 +50,7 @@ void main(){
   
   biom = floor(tex.w*255.0) ;
   height = (dot(d1*255.0f, vec3(256.0 * 256.0, 256.0, 1.0)) / max24int );
-  height = clamp(height,0.499,1);
+  height = clamp(height,0.5,1);
   pos.y = height*(u_MaxHeight-u_MinHeight)+u_MinHeight;
   //pos.y = clamp(pos.y,0,u_MaxHeight);
   gl_Position =  u_VP * pos;
@@ -128,6 +128,42 @@ uniform sampler2D u_HeightMapLinear;
 //out vec3 color;
 int biome = int(biom);
 
+//----------------------------------------------------//
+// Simplex 2D noise
+// https://gist.github.com/patriciogonzalezvivo/670c22f3966e662d2f83
+//
+
+vec3 permute(vec3 x) { return mod(((x*34.0)+1.0)*x, 289.0); }
+
+float snoise(vec2 v){
+  const vec4 C = vec4(0.211324865405187, 0.366025403784439,
+           -0.577350269189626, 0.024390243902439);
+  vec2 i  = floor(v + dot(v, C.yy) );
+  vec2 x0 = v -   i + dot(i, C.xx);
+  vec2 i1;
+  i1 = (x0.x > x0.y) ? vec2(1.0, 0.0) : vec2(0.0, 1.0);
+  vec4 x12 = x0.xyxy + C.xxzz;
+  x12.xy -= i1;
+  i = mod(i, 289.0);
+  vec3 p = permute( permute( i.y + vec3(0.0, i1.y, 1.0 ))
+  + i.x + vec3(0.0, i1.x, 1.0 ));
+  vec3 m = max(0.5 - vec3(dot(x0,x0), dot(x12.xy,x12.xy),
+    dot(x12.zw,x12.zw)), 0.0);
+  m = m*m ;
+  m = m*m ;
+  vec3 x = 2.0 * fract(p * C.www) - 1.0;
+  vec3 h = abs(x) - 0.5;
+  vec3 ox = floor(x + 0.5);
+  vec3 a0 = x - ox;
+  m *= 1.79284291400159 - 0.85373472095314 * ( a0*a0 + h*h );
+  vec3 g;
+  g.x  = a0.x  * x0.x  + h.x  * x0.y;
+  g.yz = a0.yz * x12.xz + h.yz * x12.yw;
+  return 130.0 * dot(m, g);
+}
+//
+//----------------------------------------------------//
+
 vec4 getnormals(sampler2D s, vec2 pos){
   vec2 size = vec2(u_UnitSize,0.0);
   vec3 off = vec3(-u_UnitSize/2.0f,0,u_UnitSize/2.0f);
@@ -183,9 +219,8 @@ int getAltBiome(float height){
   return clamp(res-1,0,nb);
 }
 
-int getBiomeMat(const int altbiome, const vec3 normal){
+int getBiomeMat(const int altbiome, float cost){
   int nb = biomes[biome].altbiomes[altbiome].nbBiomesMat;
-  float cost = dot(normal,normalize(vec3(normal.x,0.0f,normal.z)));
   int res = 0;
   float limit;
   for(int i = 0;i<nb;i++){
@@ -197,12 +232,15 @@ int getBiomeMat(const int altbiome, const vec3 normal){
 
 void main(){
   vec3 objColor = vec3(1);
-  int iswater = pos_sign(height-0.49901f);
+  int iswater = pos_sign(height-0.5f);
   int isnotwater = int(mod(iswater+1,2));
-  vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy)*isnotwater;//*iswater+isnotwater*vec3(0,1,0);
+  vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy)*iswater+isnotwater*vec3(0,1,0);
   vec3 sunpos = vec3(4,10.0f,.0);
-  int altbiome = getAltBiome(height);
-  int biomemat = getBiomeMat(altbiome,n);
+  float noiseinfl = 0.01f;
+  float noise = snoise(pp.xz*0.05f) * noiseinfl +1 - noiseinfl/2.0f;
+  float cost = dot(n,normalize(vec3(n.x,0.0f,n.z)));
+  int altbiome = getAltBiome(height*noise);
+  int biomemat = getBiomeMat(altbiome,cost*noise);
 
   float Ns = biomes[biome].altbiomes[altbiome].biomemats[biomemat].Ns;
   vec3 Ka = biomes[biome].altbiomes[altbiome].biomemats[biomemat].Ka;
