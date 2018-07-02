@@ -7,7 +7,7 @@
 #include <glm/gtc/matrix_integer.hpp> 
 
 SkyMesh::SkyMesh(glm::vec2 center, YGen* rectoNoise, YGen* versoNoise){
-  precision = 3.0f; // Beware of 2
+  precision = 1.0f; // Beware of 2
 
   m_VNoise = versoNoise;
   m_RNoise = rectoNoise;

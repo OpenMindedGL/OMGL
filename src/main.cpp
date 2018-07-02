@@ -36,8 +36,8 @@
 
 using namespace glm;
 
-#define WIDTH 1920 
-#define HEIGHT 1080
+#define WIDTH  1920 
+#define HEIGHT 1080 
 
 extern float OMGL_RED[]		  = { 1.0f, 0.1f, 0.1f };
 extern float OMGL_GREEN[]	  = { 0.1f, 1.0f, 0.1f };
@@ -129,12 +129,27 @@ int main(void) {
 
   //Object o("res/objects/Mill/Mill.obj", OMGL_CYAN, false);
   //Object o("res/objects/Mill/Mill.obj", "res/objects/Mill/Mill.mtl", false);
-  /*Object o( "res/objects/dodge/CHALLENGER71.obj",
+ /* Object o1( "res/objects/dodge/CHALLENGER71.obj",
           "res/objects/dodge/CHALLENGER71.mtl",
           true, "shaders/DynamicShader",
           "shaders/DynamicShader/Basic.genshader",
-          "res/objects/dodge/");
-*/
+          "res/objects/dodge/");*/
+
+  /*Object o1( "objects/IronMan/IronMan.obj",
+          "objects/IronMan/IronMan.mtl",
+          true, "shaders/DynamicShader",
+          "shaders/DynamicShader/Basic.genshader",
+          "objects/IronMan/");*/
+  /*Object o1( "objects/tree/Tree_V10_Final.obj",
+          "objects/tree/Tree_V10_Final.mtl",
+          true, "shaders/DynamicShader",
+          "shaders/DynamicShader/Basic.genshader",
+          "objects/tree/");*/
+  /*Object o1( "objects/house/Bambo_House.obj",
+          "objects/house/Bambo_House.mtl",
+          true, "shaders/DynamicShader",
+          "shaders/DynamicShader/Basic.genshader",
+          "objects/house/");*/
   //o.GenerateShaders("shaders/DynamicShader", "shaders/DynamicShader/Basic.genshader");
 
   //o.SetTextureDirectory("res/objects/dodge/");
@@ -142,8 +157,10 @@ int main(void) {
   //o.LoadTexturesMap("res/objects/dodge/");
 
   //o.RotationRad(3.1415/2, 0.0f, 1.0f, 0.0f);
-  glm::vec3 f(30.0f,0.0f,30.0f);
- // o.SetPosition(f);
+  glm::vec3 f(0.0f,0.0f,30.0f);
+  //o.SetPosition(f);
+
+  glm::vec3 rot(0,0,0);
 
 
   while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0)
@@ -159,10 +176,15 @@ int main(void) {
     pos = renderer.getCameraPosition();
     p = glm::i32vec2(pos.x,pos.z);
     //printf("x:%f y:%f \n",pos.x,pos.z);    
+
+    //o.RotationDeg(rot);
+//    o1.RotationDeg(rot);
+//    rot.y+=0.0001f;
     t.Update(p);
     renderer.Draw(t);
- //   renderer.Draw(sky);
-//    renderer.Draw(o);
+  //  renderer.Draw(sky);
+    //renderer.Draw(o);
+    //renderer.Draw(o1);
 
 
     /*renderer.Draw(o);

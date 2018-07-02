@@ -230,7 +230,7 @@ float fractalPerlin1(vec2 c, float freq){
 }
 
 float fractalPerlin(vec2 c, float freq){
- return snoise(c*freq*16)*0.0625f +snoise(c*freq*8)*0.125f +snoise(c*freq*4)*0.25f +snoise(c*freq*2)*0.5f ;
+ return /*snoise(c*freq*16)*0.0625f*/ +snoise(c*freq*8)*0.125f +snoise(c*freq*4)*0.25f +snoise(c*freq*2)*0.5f ;
 }
 
 int inverse(int a){

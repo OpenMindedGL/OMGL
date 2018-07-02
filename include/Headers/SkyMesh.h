@@ -11,7 +11,7 @@
 #include "OMGLNoiseGen.h"
 
 #define CHUNK_SIZE 32
-#define CHUNK_PER_SIDE 5
+#define CHUNK_PER_SIDE 10
 #define RENDER_DISTANCE (CHUNK_PER_SIDE/2)
 #define TERRAIN_SZ (CHUNK_PER_SIDE*CHUNK_SIZE)
 

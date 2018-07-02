@@ -1,7 +1,12 @@
-## Read me : 
+# OpenMindedGL 
 
-[![Vidéo du Terrain :](https://img.youtube.com/vi/fisfBXuztiY/0.jpg)](https://www.youtube.com/watch?v=fisfBXuztiY)
-(Vidéo des autres fonctionnalités en cours)
+## Vidéos :
+
+[![Chargement d'objets](https://img.youtube.com/vi/gQ1umVHBQwQ/0.jpg)](https://www.youtube.com/watch?v=gQ1umVHBQwQ)  
+[![Terrain avec Level Of Details et dynamic loading](https://img.youtube.com/vi/fisfBXuztiY/0.jpg)](https://www.youtube.com/watch?v=fisfBXuztiY)  
+[![Nuages volumétriques procéduraux](https://img.youtube.com/vi/PXKE34vR3rY/0.jpg)](https://www.youtube.com/watch?v=PXKE34vR3rY)  
+(Désolé pour le framerate, ma machine n'est pas très puissante)
+
 
 Le principe de notre solution est de proposer un ensemble de classes et de fonctions permettant de simplifier l’utilisation d’OpenGL avec C++. 
 Il est donc possible créer des objets tels que de cubes, ou de charger des fichiers .obj et ainsi d’utiliser des créations faites avec des logiciels de modélisation tel que blender. 
