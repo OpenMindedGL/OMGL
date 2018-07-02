@@ -106,7 +106,7 @@ OMGLMountains::OMGLMountains()  :
 
 OMGLDesert::OMGLDesert() : Biome(new OMGLNoiseBiome3(), 500, -500) {
 
-  BiomeMaterial* sand = new BiomeMaterial(
+  /*BiomeMaterial* sand = new BiomeMaterial(
       0.001f,
       1.5f,
       glm::vec3(0.5f),
@@ -114,6 +114,15 @@ OMGLDesert::OMGLDesert() : Biome(new OMGLNoiseBiome3(), 500, -500) {
       glm::vec3(0.1f),
       0.01,
       0.05
+      );*/
+  BiomeMaterial* sand = new BiomeMaterial(
+      0.001f,
+      1.0f,
+      glm::vec3(0.2f),
+      glm::vec3(0.8f,0.6,0.25f)*0.8f,
+      glm::vec3(0)*1.6f,
+      0.00,
+      0.00
       );
   std::vector<BiomeMaterial>* a = new std::vector<BiomeMaterial>();
   a->push_back(*sand);
@@ -126,3 +135,186 @@ OMGLDesert::OMGLDesert() : Biome(new OMGLNoiseBiome3(), 500, -500) {
 
 }
 
+OMGLBlocky::OMGLBlocky() :
+  Biome(new OMGLNoiseBiome2(), 1000, -1000)
+{
+
+  BiomeMaterial* dirt = new BiomeMaterial(
+      0.4f,
+      1.0f,
+      glm::vec3(0.1f),
+      glm::vec3(0.3f,0.22f,0)*0.6f,
+      glm::vec3(0),
+      0.01,
+      0.05
+      );
+  BiomeMaterial* grass = new BiomeMaterial(
+      0.0f,
+      1.0f,
+      glm::vec3(0.1f),
+      glm::vec3(0.1f,0.31f,0.1f)*0.4f,
+      glm::vec3(0.0),
+      0.01,
+      0.05
+      );
+  std::vector<BiomeMaterial>* a = new std::vector<BiomeMaterial>();
+  a->push_back(*grass);
+  a->push_back(*dirt);
+  AltitudeBiome* valleys = new AltitudeBiome(
+      0.5003f, 
+      a,
+      0.0001,
+      0.2
+      );
+  m_AltBiomes = new std::vector<AltitudeBiome>(); 
+  m_AltBiomes->push_back(*valleys);
+  
+  
+}
+
+
+OMGLPeanuts::OMGLPeanuts() :
+  Biome(new OMGLNoiseBiome4(), 1000, -1000)
+{
+
+  BiomeMaterial* dirt = new BiomeMaterial(
+      0.45f,
+      1.0f,
+      glm::vec3(0.1f),
+      glm::vec3(0.9f,0.7f,0.4)*0.9f,
+      glm::vec3(0),
+      0.00,
+      0.00
+      );
+  BiomeMaterial* grass = new BiomeMaterial(
+      0.0f,
+      1.0f,
+      glm::vec3(0.1f),
+      glm::vec3(0.9f,0.7f,0.4)*0.7f,
+      glm::vec3(0.0),
+      0.00,
+      0.00
+      );
+  std::vector<BiomeMaterial>* a = new std::vector<BiomeMaterial>();
+  a->push_back(*grass);
+  a->push_back(*dirt);
+  AltitudeBiome* valleys = new AltitudeBiome(
+      0.0f, 
+      a,
+      0.0000,
+      0.0
+      );
+  m_AltBiomes = new std::vector<AltitudeBiome>(); 
+  m_AltBiomes->push_back(*valleys);
+  
+  
+}
+
+OMGLPeanutsReversed::OMGLPeanutsReversed() :
+  Biome(new OMGLNoiseBiome5(), 1000, -1000)
+{
+
+  BiomeMaterial* dirt = new BiomeMaterial(
+      0.1f,
+      1.0f,
+      glm::vec3(0.1f),
+      glm::vec3(0.9f,0.7f,0.4)*0.9f,
+      glm::vec3(0),
+      0.00,
+      0.00
+      );
+  BiomeMaterial* grass = new BiomeMaterial(
+      0.0f,
+      1.0f,
+      glm::vec3(0.1f),
+      glm::vec3(0.9f,0.7f,0.4)*0.7f,
+      glm::vec3(0.0),
+      0.00,
+      0.00
+      );
+  std::vector<BiomeMaterial>* a = new std::vector<BiomeMaterial>();
+  a->push_back(*grass);
+  a->push_back(*dirt);
+  AltitudeBiome* valleys = new AltitudeBiome(
+      0.0f, 
+      a,
+      0.0000,
+      0.0
+      );
+  m_AltBiomes = new std::vector<AltitudeBiome>(); 
+  m_AltBiomes->push_back(*valleys);
+  
+  
+}
+OMGLMartian2::OMGLMartian2() :
+  Biome(new OMGLNoiseBiome7(), 200, 0)
+{
+
+  BiomeMaterial* dirt = new BiomeMaterial(
+      0.1f,
+      1.0f,
+      glm::vec3(0.1f),
+      glm::vec3(0.3f,0.22f,0)*0.6f,
+      glm::vec3(0),
+      0.01,
+      0.05
+      );
+  BiomeMaterial* grass = new BiomeMaterial(
+      0.0f,
+      1.0f,
+      glm::vec3(0.1f),
+      glm::vec3(0.1f,0.31f,0.1f)*0.4f,
+      glm::vec3(0.0),
+      0.01,
+      0.05
+      );
+  std::vector<BiomeMaterial>* a = new std::vector<BiomeMaterial>();
+  a->push_back(*grass);
+  a->push_back(*dirt);
+  AltitudeBiome* valleys = new AltitudeBiome(
+      0.5003f, 
+      a,
+      0.0001,
+      0.2
+      );
+  m_AltBiomes = new std::vector<AltitudeBiome>(); 
+  m_AltBiomes->push_back(*valleys);
+  
+  
+}
+OMGLMartian::OMGLMartian() :
+  Biome(new OMGLNoiseBiome6(), 200, 0)
+{
+
+  BiomeMaterial* dirt = new BiomeMaterial(
+      0.4f,
+      1.0f,
+      glm::vec3(0.1f),
+      glm::vec3(0.3f,0.22f,0)*0.6f,
+      glm::vec3(0),
+      0.01,
+      0.05
+      );
+  BiomeMaterial* grass = new BiomeMaterial(
+      0.0f,
+      1.0f,
+      glm::vec3(0.1f),
+      glm::vec3(0.1f,0.31f,0.1f)*0.4f,
+      glm::vec3(0.0),
+      0.01,
+      0.05
+      );
+  std::vector<BiomeMaterial>* a = new std::vector<BiomeMaterial>();
+  a->push_back(*grass);
+  a->push_back(*dirt);
+  AltitudeBiome* valleys = new AltitudeBiome(
+      0.5003f, 
+      a,
+      0.0001,
+      0.2
+      );
+  m_AltBiomes = new std::vector<AltitudeBiome>(); 
+  m_AltBiomes->push_back(*valleys);
+  
+  
+}

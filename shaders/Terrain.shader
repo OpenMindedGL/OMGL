@@ -6,15 +6,13 @@ layout(location = 0) in vec3 vPos;
 layout(location = 1) in vec2 uv_coords;
 layout(location = 2) in vec3 normals;
 
+out float haswater;
 out vec2 uv;
-out vec3 normal;
 out vec3 lightdir;
-out mat4 MV;
 out vec3 pp;
 out float biom;
 out float height;
 out float rd;
-
 out vec3 d1;
 
   
@@ -33,6 +31,12 @@ uniform int u_UnitSize;
 uniform int u_MaxHeight;
 uniform int u_MinHeight;
 
+int pos_sign(float a){
+  return (int(sign(a))+1)/2;
+}
+int inverse(int a){
+  return int(mod(a+1,2));
+}
   
 void main(){
   vec4 pos = round(u_M * vec4(vPos,1.0));
@@ -51,11 +55,12 @@ void main(){
   //biom = floor(tex.w*255.0) ;
   biom = tex.w;
   height = (dot(d1*255.0f, vec3(256.0 * 256.0, 256.0, 1.0)) / max24int );
-  int a = int(mod(floor((biom+0.001)*255.0)+1,2));
+  int a = inverse(pos_sign(floor((biom+0.001)*255.0)));
   height = clamp(height,0.49999*a,1);
   pos.y = height*(u_MaxHeight-u_MinHeight)+u_MinHeight;
   //pos.y = clamp(pos.y,0,u_MaxHeight);
   gl_Position =  u_VP * pos;
+
 
 
   vec3 Position_worldspace = pos.xyz;
@@ -110,8 +115,8 @@ layout (std140) uniform ub_Biomes
 
 //uniform mat4 u_M;
 //uniform mat4 u_V;
+in float haswater;
 in vec2 uv;
-//in vec3 normal;
 in vec3 lightdir;
 in vec3 pp;
 in vec3 d1;
@@ -287,10 +292,11 @@ int getBiomeMat(const int altbiome, float cost){
 
 void main(){
   vec3 objColor = vec3(1);
-  int iswater = pos_sign(height-0.5f);
-  int isnotwater = int(mod(iswater+1,2));
-  //vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy)*iswater+isnotwater*vec3(0,1,0);
-  vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy)*iswater+isnotwater*vec3(0,1,0);
+  /*int iswater = pos_sign(height-0.5f);*/
+  //int isnotwater = int(mod(iswater+1,2));
+  //vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy)*haswater+isnotwater*vec3(0,1,0);
+  int gotwater = pos_sign(float(biome));
+  vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy)*gotwater+inverse(gotwater)*vec3(0,1,0);
   vec3 sunpos = vec3(4,10.0f,.0);
   float cost = dot(n,normalize(vec3(n.x,0.0f,n.z)));
   int altbiome = getAltBiome(height);

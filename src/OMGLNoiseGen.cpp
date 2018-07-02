@@ -156,7 +156,7 @@ float OMGLNoiseBiome6::compute(float x, float y){
     (*iter_noise)->SetFrequency(pow(m_Lacunarity, d) * 0.01f / m_Zoom);
     d++;
   }
-  return a*a*a*m_Zoom/5.0f;
+  return a*a*a/5.0f;
 }
 
 float OMGLNoiseBiome7::compute(float x, float y){
@@ -177,7 +177,7 @@ float OMGLNoiseBiome7::compute(float x, float y){
     (*iter_noise)->SetFrequency(pow(m_Lacunarity, d) * 0.01f / m_Zoom);
     d++;
   }
-  return a*a*a*m_Zoom/5.0f;
+  return a*a*a/5.0f;
 }
 
 

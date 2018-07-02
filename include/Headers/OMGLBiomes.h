@@ -19,13 +19,31 @@ class OMGLDesert : public Biome{
 class OMGLBlocky : public Biome{
 
   public:
-    OMGLBlocky() : Biome(new OMGLNoiseBiome2(), 200, 0) {}
+    OMGLBlocky();
 
 };
 class OMGLPeanuts : public Biome{
 
   public:
-    OMGLPeanuts() : Biome(new OMGLNoiseBiome4(), 200, 0) {}
+    OMGLPeanuts();
+
+};
+class OMGLPeanutsReversed : public Biome{
+
+  public:
+    OMGLPeanutsReversed();
+
+};
+class OMGLMartian : public Biome{
+
+  public:
+    OMGLMartian();
+
+};
+class OMGLMartian2 : public Biome{
+
+  public:
+    OMGLMartian2();
 
 };
 #endif
