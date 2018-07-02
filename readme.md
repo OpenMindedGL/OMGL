@@ -1,5 +1,8 @@
 ## Read me : 
 
+Le Terrain : 
+[![OMGL_TERRAIN_LOD](https://img.youtube.com/vi/fisfBXuztiY/0.jpg)](https://www.youtube.com/watch?v=fisfBXuztiY)
+
 Le principe de notre solution est de proposer un ensemble de classes et de fonctions permettant de simplifier l’utilisation d’OpenGL avec C++. 
 Il est donc possible créer des objets tels que de cubes, ou de charger des fichiers .obj et ainsi d’utiliser des créations faites avec des logiciels de modélisation tel que blender. 
 Ces objets peuvent ensuite être facilement modifiable, en y faisant des translations, rotations, changements d’échelles, y affecter des textures, des shaders…
