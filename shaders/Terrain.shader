@@ -48,9 +48,10 @@ void main(){
   d1 = tex.xyz;
   rd = 1-tex.y;
   
-  biom = floor(tex.w*255.0) ;
+  //biom = floor(tex.w*255.0) ;
+  biom = tex.w;
   height = (dot(d1*255.0f, vec3(256.0 * 256.0, 256.0, 1.0)) / max24int );
-  height = clamp(height,0.5,1);
+  height = clamp(height,0.49999,1);
   pos.y = height*(u_MaxHeight-u_MinHeight)+u_MinHeight;
   //pos.y = clamp(pos.y,0,u_MaxHeight);
   gl_Position =  u_VP * pos;
@@ -75,6 +76,8 @@ struct BiomeMaterial {
   float mincost;
   int tex;
   int texspread;
+  float noiserange;
+  float noisefreq;
   float Ns;
   vec3 Ka;
   vec3 Kd;
@@ -83,6 +86,8 @@ struct BiomeMaterial {
 struct AltitudeBiome {
   float minaltitude;
   int nbBiomesMat;
+  float noiserange;
+  float noisefreq;
   BiomeMaterial biomemats[MAX_BIOMES_MAT];
 };
 struct Biome {
@@ -126,7 +131,7 @@ uniform vec3 u_ViewerPos;
 //uniform sampler2D u_DefaultSampler;
 uniform sampler2D u_HeightMapLinear;
 //out vec3 color;
-int biome = int(biom);
+int biome = int(floor((biom+0.001)*255.0));
 
 //----------------------------------------------------//
 // Simplex 2D noise
@@ -212,9 +217,15 @@ int getAltBiome(float height){
   int nb = biomes[biome].nbAltBiomes;
   int res = 0;
   float limit;
+  float range;
+  float freq;
+  float noise;
   for(int i = 0;i<nb;i++){
+    freq = biomes[biome].altbiomes[i].noisefreq;
+    range = biomes[biome].altbiomes[i].noiserange;
+    noise = snoise(pp.xz*freq) * range +1 -range/2.0f;
     limit = biomes[biome].altbiomes[i].minaltitude;
-    res += pos_sign(height-limit);
+    res += pos_sign(height*noise-limit);
   }
   return clamp(res-1,0,nb);
 }
@@ -223,9 +234,15 @@ int getBiomeMat(const int altbiome, float cost){
   int nb = biomes[biome].altbiomes[altbiome].nbBiomesMat;
   int res = 0;
   float limit;
+  float range;
+  float freq;
+  float noise;
   for(int i = 0;i<nb;i++){
+    freq = biomes[biome].altbiomes[altbiome].biomemats[i].noisefreq;
+    range = biomes[biome].altbiomes[altbiome].biomemats[i].noiserange;
+    noise = snoise(pp.xz*freq) * range +1 -range/2.0f;
     limit = biomes[biome].altbiomes[altbiome].biomemats[i].mincost;
-    res += pos_sign(cost-limit);
+    res += pos_sign(cost*noise-limit);
   }
   return clamp(res-1,0,nb);
 }
@@ -236,11 +253,9 @@ void main(){
   int isnotwater = int(mod(iswater+1,2));
   vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy)*iswater+isnotwater*vec3(0,1,0);
   vec3 sunpos = vec3(4,10.0f,.0);
-  float noiseinfl = 0.01f;
-  float noise = snoise(pp.xz*0.05f) * noiseinfl +1 - noiseinfl/2.0f;
   float cost = dot(n,normalize(vec3(n.x,0.0f,n.z)));
-  int altbiome = getAltBiome(height*noise);
-  int biomemat = getBiomeMat(altbiome,cost*noise);
+  int altbiome = getAltBiome(height);
+  int biomemat = getBiomeMat(altbiome,cost);
 
   float Ns = biomes[biome].altbiomes[altbiome].biomemats[biomemat].Ns;
   vec3 Ka = biomes[biome].altbiomes[altbiome].biomemats[biomemat].Ka;

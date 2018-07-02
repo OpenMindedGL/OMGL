@@ -102,13 +102,13 @@ void Camera::ComputeMatricesFromInputs()
   }
   if (glfwGetKey(&m_Window, GLFW_KEY_P) == GLFW_PRESS) {
     //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-    m_Speed=200;
+    m_Speed=100;
   }
 
   float FoV = m_InitialFoV;// - 5 * glfwGetMouseWheel(); // Now GLFW 3 requires setting up a callback for this. It's a bit too complicated for this beginner's tutorial, so it's disabled instead.
 
   // Projection matrix : 45° Field of View, 4:3 ratio, display range : 0.1 unit <-> 100 units
-  m_Proj = glm::perspective(glm::radians(FoV), 16.0f/9.0f, 0.1f, 8192.0f*4);
+  m_Proj = glm::perspective(glm::radians(FoV), 16.0f/9.0f, 0.1f, 8192.0f*16);
   // Camera matrix
   m_View = glm::lookAt(
       m_Position,             // Camera is here

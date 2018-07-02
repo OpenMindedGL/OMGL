@@ -14,6 +14,8 @@
 class BiomeMaterial : public Material {
   private:
     float m_MinCost;
+    float m_NoiseRange;
+    float m_NoiseFrequency;
     int m_Tex;
     int m_TexSpread;
   public:
@@ -25,12 +27,16 @@ class BiomeMaterial : public Material {
         glm::vec3 Ka = glm::vec3(1),
         glm::vec3 Kd = glm::vec3(1),
         glm::vec3 Ks = glm::vec3(1),
+        float noiseRange = 0.001,
+        float noiseFrequency = 0.1,
         Texture* t = NULL,
         int texspread = 1
         ) :
       Material(t),
       m_MinCost(mincost),
-      m_TexSpread(texspread)
+      m_TexSpread(texspread),
+      m_NoiseRange(noiseRange),
+      m_NoiseFrequency(noiseFrequency)
   {
     SetNs(Ns);
     SetKa(Ka);
@@ -44,13 +50,23 @@ class BiomeMaterial : public Material {
 class AltitudeBiome {
   private:
     float m_MinAltitude;
+    float m_NoiseRange;
+    float m_NoiseFrequency;
     std::vector<BiomeMaterial>* m_BiomeMaterials;
   public:
     static void* FillEmptyUniform(void* buffer);
     void* FillUniformBuffer(void* buffer);
-    AltitudeBiome(float minalt,std::vector<BiomeMaterial>* biomemats) :
+    AltitudeBiome(
+        float minalt,
+        std::vector<BiomeMaterial>* biomemats,
+        float noiseRange = 0.001f,
+        float noiseFrequency = 0.1f
+        ) :
       m_MinAltitude(minalt),
-      m_BiomeMaterials(biomemats) {}
+      m_BiomeMaterials(biomemats),
+      m_NoiseRange(noiseRange),
+      m_NoiseFrequency(noiseFrequency)
+  {}
 
     static unsigned int UniformSize;
 };

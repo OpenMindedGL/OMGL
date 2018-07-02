@@ -122,11 +122,11 @@ float OMGLNoiseBiome2::compute(float x, float y){
 }
 
 float OMGLNoiseBiome3::compute(float x, float y){
-  float variation = (*(*((*(m_Noises.end() - 1)).begin()))).GetNoise(x,y);
+  float variation = (*(*((*(m_Noises.end() - 1)).begin()))).GetNoise(x*10,y*10)*0.1f;
   float ret_value;
   float temp_m_Persistence = m_Persistence;
   m_Persistence = 0.154f;
-  ret_value = glm::abs(compute1(x,y)) * (-1);
+  ret_value = glm::abs(compute1(x*10,y*10)) * (-1)*0.1f;
   m_Persistence = temp_m_Persistence;
   return ret_value + (glm::abs(variation)/3.5f);
 }

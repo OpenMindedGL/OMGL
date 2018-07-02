@@ -17,7 +17,7 @@ class LODLevel;
 #include "Biome.h"
 #include "DynamicBiomeHeightMap.h"
 
-#define NB_LEVELS 7
+#define NB_LEVELS 10
 #define DEFAULT_SCALE   64
 #define DEFAULT_SPAWN   glm::i32vec2(0,0)
 #define DEFAULT_BIOME_MAT_UNIFORM       "u_Mat"
