@@ -14,6 +14,7 @@ out mat4 MV;
  out float biom;
  out float height;
  out float rd;
+out vec3 d1;
 
   
 // Values that stay constant for the whole mesh.
