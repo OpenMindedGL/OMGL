@@ -1,0 +1,56 @@
+## Design :
+
+### 1)	Principe de la mise en œuvre de la solution
+Nous avois choisis d’utiliser comme langage de programmation le C++ qui est l’un des plus adapté pour la programmation d’application OpenGL. 
+De plus, comme l’idée dans ce projet était principalement de découvrir le fonctionnement d’OpenGL et de la modélisation 3D nous avons choisis d’utiliser le moins possible les bibliothèques déjà existantes. 
+Nous utilisons donc : 
+Glew : Une bibliothèque qui permet une gestion simple des extensions OpenGL.
+GLFW : Une bibliothèque qui permet la gestion de fenêtres OpenGL.
+GLM : Une bibliothèque mathématique qui permet entre autres la gestion de matrices, vecteurs.
+STBI : Une bibliothèque qui permet de parser et décompresser des fichiers images.
+FASTNOISE : Une bibliothèque qui permet la génération de bruit
+Ces bibliothèques nous semblaient nécessaires car elles nous facilitent la gestion de certains, qui auraient pu être très chronophage, sans être vraiment pertinent dans notre projet.
+
+### 2)	Règles d’architectures 
+Notre solution se compose en trois niveaux d’abstraction : 
+Les plus basses sont les classes qui permettent de faire le lien entre notre application et la carte graphique : 
+-	VertexBuffer : Permet de créer un buffer pour envoyer des ‘vertices’ à la carte graphique.
+-	IndexBuffer : Même principe que VertexBuffer mais pour des indices.
+-	VertexBufferLayout : Pour séparer les différentes données comprises dans un vertex, un vertex pouvant avoir jusqu’à trois types de données en même temps, des coordonnées dans l’espace, des coordonnées pour les textures, 
+	et des coordonnées pour les normales. Cette classe permet de dire à OpenGL de quel type de donnée il s’agit. 
+-	VertexArray : Permet de lier une instance de VertexBuffer avec une instance de VertexBufferLayout.
+-	Shader : Permet de récupérer un fichier txt pour générer le code GLSL (langage de programmation des shader pour OpenGL) qui sert à programmer les shaders (ils calculent la couleur de chaque pixel à afficher).
+-	Texture : Permet d’ouvrir un fichier image (png, dds, jpg...) de créer une texture OpenGL et d’envoyer à la carte graphique les différentes données associées à cette image.
+Chacune de ces classes possèdent des méthodes Bind/Unbind qui permettent de lier l’instance de la classe à la carte graphique pour pouvoir les utiliser à n’importe quel moment, et de s’y détacher une fois qu’on en a plus besoin.
+
+
+Viennent ensuite deux autres classes : 
+-	La classe Mesh : contient la liste des ‘vertices’, informations de chaque point du modèle, et la liste des ‘indices’ qui détermine l’ordre dans lequel afficher chaque point.
+-	La classe Materials : contient les informations des différents shaders et textures. 
+
+Puis le dernier niveau, qui contient les classes Objects, Terrain, Cloud, qui utilisent les classes Mesh et Material pour définir des objects plus complexe, ayant une forme et un ou plusieurs matériaux.
+
+Il y’a en plus deux autres classes: 
+-	Camera : qui permet à l’utilisateur de se déplacer dans l’espace, et de pouvoir utiliser certaines macros.
+-	Renderer : qui permet d’afficher les différents modèles à l’écran.
+
+### 3)	Modèle dynamique
+Une fois les différents assets (objets, terrain…) chargés, on entre dans une boucle qui permet d’afficher tous ces éléments.
+Mais à chaque frame, avant de les afficher il faut déterminer leurs nouvelles positions, car lorsque l’utilisateur déplace la caméra c’est en fait tout le monde autour qui se déplace et la caméra qui reste fixe. 
+Il faut donc appliquer à chaque objet à afficher un déplacement en fonction des mouvements fait par l’utilisateur.
+De plus, comme dis plus haut, on a défini quelque macro sur le clavier on peut par exemple, avec les touches E et R changer le mode d’affichage :
+	E permet d’afficher uniquement les lignes qui relie chaque vertex alors que R est l’affichage plein. 
+	On peut aussi, par exemple, quitter le mode FPS, pour utiliser la souris sans faire bouger la caméra avec J et y revenir avec ESPACE. 
+
+### 4)	Contraintes
+La principale difficulté pour nous a été de devoir apprendre et comprendre le fonctionnement d'OpenGL et de faire l’application en même temps. 
+A chaque grande partie il a fallu se documenter pour comprendre comme ça fonctionne puis réussir à en faire quelque chose de fonctionnel pouvant être intégrer dans notre solution.
+L’autre grande contrainte a été de devoir rendre cette solution multi-plateforme. 
+En effet, certains travaillaient sur Linux, d’autres sur Windows, nous avons aussi du faire fonctionner notre solution sur Mac. 
+On est donc quelques fois tombé sur des fonctions nécessaires, mais qui n’existaient que sur Linux ou sur windows. 
+Pour pallier à ce problème il nous a suffi de créer un fichier ayant le même nom pour linux et windows, avec le contenu adapté, que l’on ne push pas sur Github. 
+Ainsi le code avait toujours le même include quel que soit la plateforme, mais son contenu été différent. 
+Il a aussi fallu s’adapter à Github, pour la plupart d’entre nous c’était la première que nous l’utilisions et ce n’est pas simple d’intégrer tout le fonctionnement au début.
+
+### 5)	Cadre de production  
+Pour la production de ce projet nous avons donc utiliser différents logiciels, sur windows nous étions sur VisualStudio et sur Linux nous utilisions VIM, en utilisant Make, gdb et GCC, pour compiler et déboguer le programme.

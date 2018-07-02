@@ -5,5 +5,9 @@
 !/shaders/
 !/lib/
 !Makefile
+!readme.md
+!postmortem.md
+!gestionProjet.md
+!design.md
 /src/Debug.cpp
 /include/Headers/Debug.h
