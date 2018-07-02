@@ -2,8 +2,11 @@
 
 ## Vidéos :
 
+Chargement d'objets  
 [![Chargement d'objets](https://img.youtube.com/vi/gQ1umVHBQwQ/0.jpg)](https://www.youtube.com/watch?v=gQ1umVHBQwQ)  
+Terrain avec Level Of Details et dynamic loading  
 [![Terrain avec Level Of Details et dynamic loading](https://img.youtube.com/vi/fisfBXuztiY/0.jpg)](https://www.youtube.com/watch?v=fisfBXuztiY)  
+Nuages volumétriques procéduraux  
 [![Nuages volumétriques procéduraux](https://img.youtube.com/vi/PXKE34vR3rY/0.jpg)](https://www.youtube.com/watch?v=PXKE34vR3rY)  
 (Désolé pour le framerate, ma machine n'est pas très puissante)
 
