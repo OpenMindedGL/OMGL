@@ -153,6 +153,7 @@ void Renderer::Draw(Terrain& t)
     t.GetLevel(i).SetUniforms();
     t.GetLevel(i).GetHeightMap()->Bind(1);
     t.GetLevel(i).GetHeightMapLinear()->Bind(1);
+//    t.GetLevel(i).GetMixMap()->Bind(2);
     //
     
     Draw(t.GetLevel(i));

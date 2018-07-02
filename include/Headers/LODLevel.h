@@ -13,6 +13,7 @@ class Terrain;
 #include "NoiseGen.h"
 #include "Terrain.h"
 #include "DynamicBiomeHeightMap.h"
+#include "DynamicHeightMap.h"
 #include "Sampler.h"
 #include <math.h>
 
@@ -61,6 +62,7 @@ class LODLevel {
     Terrain * m_Terrain;
     Material * m_Material;
     DynamicBiomeHeightMap* m_HeightMap;
+    DynamicHeightMap* m_BiomeMixMap;
     Sampler* m_HeightMapLinear;
     LODLevel* m_Previous;
 
@@ -106,6 +108,7 @@ class LODLevel {
     inline int GetUnitSize() { return m_UnitSize; }
     inline DynamicBiomeHeightMap* GetHeightMap() { return m_HeightMap; }
     inline Sampler* GetHeightMapLinear() { return m_HeightMapLinear; }
+    inline DynamicHeightMap* GetMixMap() { return m_BiomeMixMap; }
 };
 
 #endif

@@ -13,9 +13,22 @@ class OMGLNoiseGen : public virtual NoiseGen {
     std::vector<std::vector<FastNoise*>> m_Noises;
   
   public:
-    OMGLNoiseGen(unsigned int nbNoises = DEFAULT_NB_NOISES);
+    OMGLNoiseGen(
+        unsigned int nbNoises = DEFAULT_NB_NOISES,
+        long long int seed = DEFAULT_SEED,
+        unsigned char nbOctaves = DEFAULT_NB_OCTAVES,
+        float lacunarity = DEFAULT_LACUNARITY,
+        float persistence = DEFAULT_PERSISTENCE,
+        float zoom = DEFAULT_ZOOM
+        );
         
 
+};
+
+class OMGLBiomeMatMixer: public OMGLNoiseGen {
+  public:
+    OMGLBiomeMatMixer() : OMGLNoiseGen(1,6969) {}
+    float compute(float x, float y);
 };
 
 class OMGLNoiseCloud : public virtual OMGLNoiseGen{

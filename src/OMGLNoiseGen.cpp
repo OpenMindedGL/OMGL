@@ -6,8 +6,8 @@
 #include "OMGLNoiseGen.h"
 
 
-OMGLNoiseGen::OMGLNoiseGen( unsigned int nbNoises ) :
-  NoiseGen()
+OMGLNoiseGen::OMGLNoiseGen( unsigned int nbNoises,long long int seed , unsigned char nbOctaves , float lacunarity , float persistence , float zoom) :
+  NoiseGen(seed , nbOctaves , lacunarity , persistence , zoom )
 {
   m_Noises.resize(nbNoises);
   long long int sd;
@@ -178,4 +178,18 @@ float OMGLNoiseBiome7::compute(float x, float y){
     d++;
   }
   return a*a*a*m_Zoom/5.0f;
+}
+
+
+float OMGLBiomeMatMixer::compute(float x, float y){
+  float a;
+  int d = 0;
+  for(std::vector<FastNoise*>::iterator iter_noise = 
+  m_Noises[0].begin(); 
+  (iter_noise < m_Noises[0].end()); iter_noise++){
+    a += (*iter_noise)->GetNoise(x*10,y*10) * pow(m_Persistence, d); 
+    d++;
+  }
+  return ((a/3.0f)+1)/2.0f;
+
 }

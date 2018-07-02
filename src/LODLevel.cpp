@@ -1,4 +1,5 @@
 #include "LODLevel.h"
+#include "DynamicHeightMap.h"
 #include "Debug.h"
 #include "Log.h"
 #include "Sampler.h"
@@ -59,6 +60,10 @@ LODLevel::LODLevel(unsigned int l, glm::vec2& center, Terrain* t, LODLevel* prev
   m_HeightMapLinear = new Sampler("u_HeightMapLinear", 1, GL_LINEAR);
   m_HeightMapLinear->LinkToShader(m_Terrain->GetShader());
 
+  /*m_BiomeMixMap = new DynamicHeightMap(m_Terrain->GetBiomeMatMixer(),size,m_UnitSize, glm::vec2(1.0f/m_Terrain->GetScale()), m_NewActiveR-glm::i32vec2(HEIGHT_MAP_EXCESS*m_UnitSize));
+  m_BiomeMixMap->SetInterp(GL_LINEAR);
+  m_BiomeMixMap->LinkToShader(m_Terrain->GetShader(), "u_BiomeMixMap",2);
+*/
   m_Material = new Material(m_HeightMap,m_Terrain->GetShader());
 
   MakeObjs();
@@ -338,6 +343,7 @@ void LODLevel::Update( glm::i32vec2 center ){
     if(m_NewActiveR.y - m_HeightMap->GetBase().y < q || m_HeightMap->GetBase().y+m_HeightMap->GetWidth()*m_UnitSize - (m_NewActiveR.y + m_Size*m_UnitSize) < q )
       d.y = dir.y;
     m_HeightMap->Update(d);
+    //m_BiomeMixMap->Update(d);
 
     // Move all meshes
     for(unsigned int i = 0 ; i < m_Objs.size() ; i++){

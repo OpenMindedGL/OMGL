@@ -15,9 +15,10 @@ class LODLevel;
 #include "LODLevel.h"
 #include "UniformBuffer.h"
 #include "Biome.h"
+#include "YGen.h"
 #include "DynamicBiomeHeightMap.h"
 
-#define NB_LEVELS 10
+#define NB_LEVELS 8
 #define DEFAULT_SCALE   64
 #define DEFAULT_SPAWN   glm::i32vec2(0,0)
 #define DEFAULT_BIOME_MAT_UNIFORM       "u_Mat"
@@ -43,6 +44,7 @@ class Terrain {
     ProcMixer * m_Mixer;
     UniformBuffer* m_Ub;
     std::vector<Biome*>* m_Biomes;
+    YGen* m_BiomeMatMixer;
 
     static std::vector<YGen*>* GetNoises(std::vector<Biome*>* biomes);
 
@@ -93,6 +95,7 @@ class Terrain {
     inline ProcMixer* GetMixer(){ return m_Mixer; }
     inline float GetScale(){ return m_Scale; }
     inline UniformBuffer* GetUniformBuffer(){ return m_Ub; }
+    inline YGen* GetBiomeMatMixer(){ return m_BiomeMatMixer; }
 //    inline Texture * GetNormalMap(){ return m_NormalMap;}
 
 

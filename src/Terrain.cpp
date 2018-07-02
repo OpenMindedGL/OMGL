@@ -9,6 +9,7 @@
 #include "Log.h"
 #include <vector>
 #include "NoiseGen.h"
+#include "OMGLNoiseGen.h"
 #include <glm/glm.hpp>
 
 
@@ -20,7 +21,8 @@ Terrain::Terrain( std::vector<Biome*>* biomes, ProcMixer* mixer, glm::vec2 spawn
   m_Center(static_cast<glm::i32vec2>(spawn)),
   m_Size(s),
   m_NbLevels(n),
-  m_Scale(scale)
+  m_Scale(scale),
+  m_BiomeMatMixer(new OMGLBiomeMatMixer())
 {
   FillUniformBuffer();
 

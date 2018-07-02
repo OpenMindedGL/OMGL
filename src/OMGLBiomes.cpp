@@ -26,8 +26,8 @@ OMGLMountains::OMGLMountains()  :
   AltitudeBiome* tops = new AltitudeBiome(
       0.53, 
       b,
-      0.01,
-      0.05
+      0.02,
+      0.01
       );
 
 

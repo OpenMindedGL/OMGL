@@ -51,7 +51,8 @@ void main(){
   //biom = floor(tex.w*255.0) ;
   biom = tex.w;
   height = (dot(d1*255.0f, vec3(256.0 * 256.0, 256.0, 1.0)) / max24int );
-  height = clamp(height,0.49999,1);
+  int a = int(mod(floor((biom+0.001)*255.0)+1,2));
+  height = clamp(height,0.49999*a,1);
   pos.y = height*(u_MaxHeight-u_MinHeight)+u_MinHeight;
   //pos.y = clamp(pos.y,0,u_MaxHeight);
   gl_Position =  u_VP * pos;
@@ -129,6 +130,7 @@ uniform vec3 u_ViewerPos;
 
 //uniform sampler2D u_NormalMap;
 //uniform sampler2D u_DefaultSampler;
+uniform sampler2D u_BiomeMixMap;
 uniform sampler2D u_HeightMapLinear;
 //out vec3 color;
 int biome = int(floor((biom+0.001)*255.0));
@@ -213,44 +215,81 @@ float rand(vec2 co){
     return fract(sin(dot(co.xy ,vec2(12.9898,78.233))) * 43758.5453);
 }
 
+float getNoise(vec2 uv){
+  return dot( texture(u_BiomeMixMap, uv), vec4(1.0, 1/255.0, 1/65025.0, 1/16581375.0) ) ;
+}
+float fractalPerlin1(vec2 c, float freq){
+ return snoise(c*freq*4)*0.25f +snoise(c*freq*2)*0.5f ;
+}
+
+float fractalPerlin(vec2 c, float freq){
+ return snoise(c*freq*16)*0.0625f +snoise(c*freq*8)*0.125f +snoise(c*freq*4)*0.25f +snoise(c*freq*2)*0.5f ;
+}
+
+int inverse(int a){
+  return int(mod(a+1,2));
+}
+
 int getAltBiome(float height){
   int nb = biomes[biome].nbAltBiomes;
   int res = 0;
   float limit;
-  float range;
-  float freq;
   float noise;
-  for(int i = 0;i<nb;i++){
-    freq = biomes[biome].altbiomes[i].noisefreq;
-    range = biomes[biome].altbiomes[i].noiserange;
-    noise = snoise(pp.xz*freq) * range +1 -range/2.0f;
+  int i;
+  for(i = 0;i<nb;i++){
     limit = biomes[biome].altbiomes[i].minaltitude;
-    res += pos_sign(height*noise-limit);
+    res += pos_sign(height-limit);
   }
-  return clamp(res-1,0,nb);
+  float uplimit = biomes[biome].altbiomes[res].minaltitude;
+  float upfreq = biomes[biome].altbiomes[res].noisefreq;
+  float uprange = biomes[biome].altbiomes[res].noiserange;
+  int upeligible = pos_sign(height+uprange/2.0f-uplimit) * clamp(nb-res,0,1);
+  float downlimit = biomes[biome].altbiomes[res-1].minaltitude;
+  float downfreq = biomes[biome].altbiomes[res-1].noisefreq;
+  float downrange = biomes[biome].altbiomes[res-1].noiserange;
+  int downeligible = inverse(pos_sign(height-downrange/2.0f-downlimit)) * pos_sign(res);
+  float upnoise =  (  fractalPerlin(pp.xz, upfreq) * uprange +1 -uprange/2.0f ) *upeligible;
+  float downoise = ( fractalPerlin(pp.xz, downfreq) * downrange +1 -downrange/2.0f ) *downeligible;
+  res += pos_sign(height*upnoise-uplimit)*upeligible;
+  res -= inverse(pos_sign(height*downoise-downlimit))*downeligible;
+  res = clamp(res-1,0,nb);
+  return res;
 }
 
 int getBiomeMat(const int altbiome, float cost){
   int nb = biomes[biome].altbiomes[altbiome].nbBiomesMat;
   int res = 0;
   float limit;
-  float range;
-  float freq;
   float noise;
-  for(int i = 0;i<nb;i++){
-    freq = biomes[biome].altbiomes[altbiome].biomemats[i].noisefreq;
-    range = biomes[biome].altbiomes[altbiome].biomemats[i].noiserange;
-    noise = snoise(pp.xz*freq) * range +1 -range/2.0f;
+  int i;
+  for(i = 0;i<nb;i++){
     limit = biomes[biome].altbiomes[altbiome].biomemats[i].mincost;
-    res += pos_sign(cost*noise-limit);
+    res += pos_sign(cost-limit);
   }
-  return clamp(res-1,0,nb);
+  float uplimit = biomes[biome].altbiomes[altbiome].biomemats[res].mincost;
+  float upfreq = biomes[biome].altbiomes[altbiome].biomemats[res].noisefreq;
+  float uprange = biomes[biome].altbiomes[altbiome].biomemats[res].noiserange;
+  int upeligible = pos_sign(cost+uprange/2.0f-uplimit) * clamp(nb-res,0,1);
+
+  float downlimit = biomes[biome].altbiomes[altbiome].biomemats[res-1].mincost;
+  float downfreq = biomes[biome].altbiomes[altbiome].biomemats[res-1].noisefreq;
+  float downrange = biomes[biome].altbiomes[altbiome].biomemats[res-1].noiserange;
+  int downeligible = inverse(pos_sign(cost-downrange/2.0f-downlimit)) * pos_sign(res);
+
+  float upnoise =  (  fractalPerlin1(pp.xz, upfreq) * uprange +1 -uprange/2.0f ) *upeligible;
+  float downoise = ( fractalPerlin1(pp.xz, downfreq) * downrange +1 -downrange/2.0f ) *downeligible;
+  res += pos_sign(cost*upnoise-uplimit)*upeligible;
+  res -= inverse(pos_sign(cost*downoise-downlimit))*downeligible;
+
+  res = clamp(res-1,0,nb);
+  return res;
 }
 
 void main(){
   vec3 objColor = vec3(1);
   int iswater = pos_sign(height-0.5f);
   int isnotwater = int(mod(iswater+1,2));
+  //vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy)*iswater+isnotwater*vec3(0,1,0);
   vec3 n = normalize(getnormals(u_HeightMapLinear, pp.xz).xzy)*iswater+isnotwater*vec3(0,1,0);
   vec3 sunpos = vec3(4,10.0f,.0);
   float cost = dot(n,normalize(vec3(n.x,0.0f,n.z)));
